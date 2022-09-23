@@ -1,0 +1,1 @@
+The behavior FSM specifies general states, in each of which the cart will track a given trajectory. For further explanation, see the initial architecture document.
