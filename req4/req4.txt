@@ -1,0 +1,4 @@
+The map representation will be topological.
+
+The rationale for this decision is that OpenStreetMap's map system is topological and we will be using their data as the basis for our offline map.
+
