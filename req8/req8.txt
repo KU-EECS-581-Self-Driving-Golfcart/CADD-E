@@ -1,0 +1,6 @@
+req8.png is a screenshot of the part order through the EECS Shop.
+
+The GPS we will be using is the SparkFun GPS-RTK-SMA Kit.
+
+We are intending on using a third-party service to acquire Real-Time Kinematics.
+Skylark may be a good option to provide this service. (https://www.swiftnav.com/skylark)

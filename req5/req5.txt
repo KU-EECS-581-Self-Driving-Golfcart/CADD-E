@@ -1,0 +1,14 @@
+OpenStreetMap's map system is topological, meaning it is implemented with a graph data structure. Nodes are connected by edges to form the map.
+
+Each node is a point-shaped geometric element.
+Nodes contain information like an ID value as well as latitude, longitude, and a series of other information called "tags". 
+Nodes may be interconnected by "ways".
+
+Ways model line-shaped geometric objects (roads, paths, etc.)
+Ways contain information like an ID, a layer (relevant for highways which go over other roads, etc.), a set of nodes representing the geometry of the way, and a set of tags.
+
+Tags contain other relevant information like:
+A node description (streetlight, building, etc.)
+Road speed limit
+Road width
+Etc.
