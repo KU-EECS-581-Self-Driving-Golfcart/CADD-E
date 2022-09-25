@@ -1,0 +1,1 @@
+The JPEG in this folder is an image of a Raspberry Pi 3B+ which we will be using as an embedded system.
