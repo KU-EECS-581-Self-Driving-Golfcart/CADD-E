@@ -1,0 +1,46 @@
+<NMEA(GNRMC, time=21:03:22, status=A, lat=38.9553953333, NS=N, lon=-95.2363313333, EW=W, spd=0.02, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:22, lat=38.9553953333, NS=N, lon=-95.2363313333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=257.5, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553953333, NS=N, lon=-95.2363313333, EW=W, time=21:03:22, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:23, status=A, lat=38.9553953333, NS=N, lon=-95.2363313333, EW=W, spd=0.006, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:23, lat=38.9553953333, NS=N, lon=-95.2363313333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=257.8, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553953333, NS=N, lon=-95.2363313333, EW=W, time=21:03:23, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:24, status=A, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, spd=0.02, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:24, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=258.0, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, time=21:03:24, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:25, status=A, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, spd=0.016, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:25, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=258.2, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, time=21:03:25, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:26, status=A, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, spd=0.008, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:26, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=258.3, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553951667, NS=N, lon=-95.2363313333, EW=W, time=21:03:26, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:27, status=A, lat=38.9553951667, NS=N, lon=-95.2363315, EW=W, spd=0.01, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:27, lat=38.9553951667, NS=N, lon=-95.2363315, EW=W, quality=1, numSV=12, HDOP=0.53, alt=258.5, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553951667, NS=N, lon=-95.2363315, EW=W, time=21:03:27, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:28, status=A, lat=38.9553953333, NS=N, lon=-95.2363315, EW=W, spd=0.011, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:28, lat=38.9553953333, NS=N, lon=-95.2363315, EW=W, quality=1, numSV=12, HDOP=0.53, alt=258.7, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553953333, NS=N, lon=-95.2363315, EW=W, time=21:03:28, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:29, status=A, lat=38.9553955, NS=N, lon=-95.2363316667, EW=W, spd=0.013, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:29, lat=38.9553955, NS=N, lon=-95.2363316667, EW=W, quality=1, numSV=12, HDOP=0.53, alt=258.9, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553955, NS=N, lon=-95.2363316667, EW=W, time=21:03:29, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:30, status=A, lat=38.9553956667, NS=N, lon=-95.2363316667, EW=W, spd=0.009, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:30, lat=38.9553956667, NS=N, lon=-95.2363316667, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.0, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553956667, NS=N, lon=-95.2363316667, EW=W, time=21:03:30, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:31, status=A, lat=38.955396, NS=N, lon=-95.2363318333, EW=W, spd=0.006, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:31, lat=38.955396, NS=N, lon=-95.2363318333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.2, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.955396, NS=N, lon=-95.2363318333, EW=W, time=21:03:31, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:32, status=A, lat=38.9553963333, NS=N, lon=-95.2363318333, EW=W, spd=0.012, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:32, lat=38.9553963333, NS=N, lon=-95.2363318333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.3, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553963333, NS=N, lon=-95.2363318333, EW=W, time=21:03:32, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:33, status=A, lat=38.9553966667, NS=N, lon=-95.2363318333, EW=W, spd=0.013, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:33, lat=38.9553966667, NS=N, lon=-95.2363318333, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.4, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553966667, NS=N, lon=-95.2363318333, EW=W, time=21:03:33, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:34, status=A, lat=38.955397, NS=N, lon=-95.236332, EW=W, spd=0.017, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:34, lat=38.955397, NS=N, lon=-95.236332, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.5, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.955397, NS=N, lon=-95.236332, EW=W, time=21:03:34, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:35, status=A, lat=38.9553971667, NS=N, lon=-95.236332, EW=W, spd=0.01, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:35, lat=38.9553971667, NS=N, lon=-95.236332, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.6, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553971667, NS=N, lon=-95.236332, EW=W, time=21:03:35, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:36, status=A, lat=38.9553973333, NS=N, lon=-95.236332, EW=W, spd=0.022, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
+<NMEA(GNGGA, time=21:03:36, lat=38.9553973333, NS=N, lon=-95.236332, EW=W, quality=1, numSV=12, HDOP=0.53, alt=259.7, altUnit=M, sep=-28.4, sepUnit=M, diffAge=, diffStation=)>
+<NMEA(GNGLL, lat=38.9553973333, NS=N, lon=-95.236332, EW=W, time=21:03:36, status=A, posMode=A)>
+<NMEA(GNRMC, time=21:03:37, status=A, lat=38.9553973333, NS=N, lon=-95.236332, EW=W, spd=0.012, cog=, date=2022-10-11, mv=, mvEW=, posMode=A, navStatus=V)>
