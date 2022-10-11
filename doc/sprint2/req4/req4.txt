@@ -1,2 +1,4 @@
 The script nmeapoller.py decodes the NMEA messages provided by the GPS module and writes latitude & longitude to a log file.
 In log/GPS/GPS_log_2022-10-11_16:03:21.581201.txt, there is a log of the GPS signals picked up while testing the GPS at my house.
+
+Necessary requirements for the code to run are found in requirements.txt
