@@ -3,7 +3,7 @@ Using a MATLAB package called [OpenStreetMap Functions](https://www.mathworks.co
 Using this software package, I was able to parse and interact with the map, including access to information about individual nodes and ways.
 This will allow us to start implementing route planning.
 
-The MATLAB code is found in the MatLab_OSM directory included in the directory this .txt file is in.
+The MATLAB code I used for this requirement is found in localization/openstreetmap.
 I primarily used the usage_example.m script to run my preliminary tests.
 
 Below are some screenshots showing off the functionality of this MATLAB package.
