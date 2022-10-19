@@ -1,0 +1,3 @@
+[submodule "openstreetmap"]
+	path = localization/openstreetmap
+	url = https://github.com/johnyf/openstreetmap
