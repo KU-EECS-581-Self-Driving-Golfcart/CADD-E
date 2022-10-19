@@ -2,6 +2,6 @@
 	path = localization/openstreetmap
 	url = https://github.com/cskroonenberg/openstreetmap
 
-[submodule "localization/openstreetmap"]
+[submodule "doc/sprint2/req2/MatLab_OSM"]
 	path = doc/sprint2/req2/MatLab_OSM
 	url = https://github.com/johnyf/openstreetmap
