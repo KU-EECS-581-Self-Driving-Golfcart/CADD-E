@@ -1,0 +1,1 @@
+Requirement 2 was not completed. The work for Requirement 4 was a lot more intensive than I initially anticipated so I ultimately ran out of time. I will complete Requirement 2 (Combine GPS with Offline Map) in Sprint 4.
