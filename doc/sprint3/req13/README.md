@@ -1,0 +1,1 @@
+Requirement 13 was not completed. Alex and Caden had their hands full with Requirements 4 and 7 and ultimately ran out of time. Rather than rushing and ordering ultrasonic sensors, we decided to push this requirement back to Sprint 4 so we can do proper research before placing the order.

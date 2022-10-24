@@ -1,0 +1,1 @@
+Requirement 9 was not completed. The work for Requirement 4 was a lot more intensive than I initially anticipated so I ultimately ran out of time. I will complete Requirement 9 (GPS testing (precision, latency, etc.)) in a future sprint.
