@@ -1,0 +1,1 @@
+I did not get the camera setup done in order to head out to the golf course and get pictures on the raspberry pi camera. We will push off this requirement until we can get a mobile setup for the pi.
