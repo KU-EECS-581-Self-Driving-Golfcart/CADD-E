@@ -6,6 +6,9 @@ To do this, I added functionality to calculate the longitude and latitude values
 This whole process was a lot of guessing and checking what weighted averages of latitude and longitude would work to add nodes in beneficial locations.
 
 In the following screenshots, red nodes were established beforehand, and green nodes are nodes I added to provide a more precise representation of the area.
+
+The code for these changes can be found [here](https://github.com/cskroonenberg/openstreetmap) in the `extract_adjacency_list.m` file.
+
 ![Screenshot showing new nodes added to graph](ss_4.png "Screenshot showing new nodes added to graph")
 ![Screenshot showing new nodes added to graph](ss_1.png "Screenshot showing new nodes added to graph")
 ![Screenshot showing new nodes added to graph](ss_2.png "Screenshot showing new nodes added to graph")
