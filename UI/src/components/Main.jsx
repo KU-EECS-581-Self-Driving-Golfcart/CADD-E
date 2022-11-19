@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polygon} from 're
 import L from 'leaflet';
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
-import RoutingControl from './RoutingControl'
+import { useLocation } from 'react-router-dom'
 // import { MapContainer } from 'react-leaflet';
 // import { TileLayer } from 'leaflet';
 // import { Marker } from 'react-leaflet';
@@ -13,20 +13,100 @@ import RoutingControl from './RoutingControl'
 // import { useMap } from 'react-leaflet';
 const Main = () => {
 
+  const tee1 = {
+    blackPos: [38.9776672, -95.2634994],
+    bronzePos: [38.97771, -95.26372],
+    silverPos: [38.97777, -95.26396],
+    goldPos: [38.97785, -95.26433],
+    greenPos: [38.97858, -95.26700]
+  }
 
-  const [count, setCount] = useState(1);
-  const [counter, setCounter] = useState(1);
-  const [routeCount, setrouteCount] = useState(0);
+  const tee2 = {
+    blackPos: [38.9786234, -95.2675139],
+    bronzePos: [38.97861,-95.26771],
+    silverPos: [38.97860,-95.26792],
+    goldPos: [38.97860,-95.26810],
+    greenPos: [38.97853,-95.26923]
+  }
+
+  const tee3 = {
+    blackPos: [38.9788485, -95.2688737],
+    bronzePos: [38.97853,-95.26923],
+    silverPos: [38.97965,-95.26857],
+    goldPos: [38.97965,-95.26857],
+    greenPos: [38.98292,-95.26895]
+  }
+
+  const tee4 = {
+    blackPos: [38.9829038, -95.2683226],
+    bronzePos: [38.98272,-95.26826],
+    silverPos: [38.98257,-95.26823],
+    goldPos: [38.98179,-95.26784],
+    greenPos: [38.97945,-95.26793]
+  }
+
+  const tee5 = {
+    blackPos: [38.9788209, -95.2676372],
+    bronzePos: [38.97945,-95.26793],
+    silverPos: [38.97913,-95.26746],
+    goldPos: [38.97933,-95.26722],
+    greenPos: [38.98179,-95.26600]
+  }
+
+  const tee6 = {
+    blackPos: [38.9819392, -95.2653599],
+    bronzePos: [38.98163,-95.26515],
+    silverPos: [38.98140,-95.26503],
+    goldPos: [38.98118,-95.26490],
+    greenPos: [38.97901,-95.26372]
+  }
+
+  const tee7 = {
+    blackPos: [38.9780217, -95.2634658],
+    bronzePos: [38.97809,-95.26325],
+    silverPos: [38.97815,-95.26301],
+    goldPos: [38.97821,-95.26279],
+    greenPos: [38.97857,-95.26146]
+  }
+
+  const tee8 = {
+    blackPos: [38.9787367, -95.2607026],
+    bronzePos: [38.97857,-95.26077],
+    silverPos: [38.97839,-95.26084],
+    goldPos: [38.97794,-95.26109],
+    greenPos: [38.97547,-95.26184]
+  }
+
+  const tee9 = {
+    blackPos: [38.9752793, -95.2623357],
+    bronzePos: [38.97549,-95.26235],
+    silverPos: [38.97564,-95.26245],
+    goldPos: [38.97589,-95.26246],
+    greenPos: [38.97794,-95.26232]
+  }
+
+  const tee = useLocation().state.state.tee;
+
+  let startPos = [];
+  if(tee === "black") startPos = tee1.blackPos;
+  if(tee === "bronze") startPos = tee1.bronzePos;
+  if(tee === "silver") startPos = tee1.silverPos;
+  if(tee === "gold") startPos = tee1.goldPos;
+
+
   const [isActive, setIsActive] = useState(false);
+  const [validTarget, setValidTarget] = useState(false)
+  const [targetTee, setTargetTee] = useState(2);
+  const [currentTee, setCurrentTee] = useState(1);
+  const [targetGreen, setTargetGreen] = useState(1);
   const timerId = useRef();
   const [speed, setSpeed] = useState(0);
-  let position1 = []
-  let position2 = []
-
-
-  let position3 = [
-    [0,0]
-  ];
+  const [currentPosition, setCurrentPosition] = useState(startPos)
+  const [nextPosition, setNextPosition] = useState([0,0])
+  const [routePos, setRoutePos] = useState([[0,0]])
+  const [validNextTee, setValidNextTee] = useState(true);
+  const [validGreenTee, setValidGreenTee] = useState(true);
+  const [isGo, setIsGo] = useState(false);
 
   const startTimer = () => {
     clearInterval(timerId.current);
@@ -36,139 +116,6 @@ const Main = () => {
           i +=1;
           if(i >= 20) clearInterval(timerId.current);
       }, 200)
-  }
-
-  if(routeCount === 1) {
-    position3 = [
-      [38.9776672, -95.2634994],
-      [38.9786234, -95.2675139]
-    ];
-  }
-  if((routeCount === 2) || (routeCount === 4) || (routeCount === 6) || (routeCount === 8) || (routeCount === 10) || (routeCount === 12) || (routeCount === 14) || (routeCount === 16) || (routeCount === 18)) {
-    position3 = [
-        [0,0]
-    ];
-  }
-  if(routeCount === 3) {
-    position3 = [
-      [38.9786234, -95.2675139],
-      [38.9788485, -95.2688737]
-    ];
-  }
-  if(routeCount === 5) {
-    position3 = [
-      [38.9788485, -95.2688737],
-      [38.9829038, -95.2683226]
-    ];
-  }
-  if(routeCount === 7) {
-    position3 = [
-      [38.9829038, -95.2683226],
-      [38.9788209, -95.2676372]
-    ];
-  }
-  if(routeCount === 9) {
-    position3 = [
-      [38.9788209, -95.2676372],
-      [38.9819392, -95.2653599]
-    ];
-  }
-  if(routeCount === 11) {
-    position3 = [
-      [38.9819392, -95.2653599],
-      [38.9780217, -95.2634658]
-    ];
-  }
-  if(routeCount === 13) {
-    position3 = [
-      [38.9780217, -95.2634658],
-      [38.9787367, -95.2607026]
-    ];
-  }
-  if(routeCount === 15) {
-    position3 = [
-      [38.9787367, -95.2607026],
-      [38.9752793, -95.2623357]
-    ];
-  }
-  if(routeCount === 17) {
-    position3 = [
-      [38.9752793, -95.2623357],
-      [38.9752793, -95.2623357]
-    ];
-  }
-  
-  if(count===1) {
-    position1 = [38.9776672, -95.2634994];
-    position2 = [38.9786234, -95.2675139];
-  }
-  if(count==2) {
-    position1 = [38.9786234, -95.2675139];
-    position2 = [0,0];
-  }
-  if(count===3) {
-    position1 = [38.9786234, -95.2675139];
-    position2 = [38.9788485, -95.2688737];
-  }
-  if(count==4) {
-    position1 = [38.9788485, -95.2688737];
-    position2 = [0,0];
-  }
-  if(count===5) {
-    position1 = [38.9788485, -95.2688737];
-    position2 = [38.9829038, -95.2683226];
-  }
-  if(count==6) {
-    position1 = [38.9829038, -95.2683226];
-    position2 = [0,0];
-  }
-  if(count===7) {
-    position1 = [38.9829038, -95.2683226];
-    position2 = [38.9788209, -95.2676372];
-  }
-  if(count==8) {
-    position1 = [38.9788209, -95.2676372];
-    position2 = [0,0];
-  }
-  if(count===9) {
-    position1 = [38.9788209, -95.2676372];
-    position2 = [38.9819392, -95.2653599];
-  }
-  if(count==10) {
-    position1 = [38.9819392, -95.2653599];
-    position2 = [0,0];
-  }
-  if(count===11) {
-    position1 = [38.9819392, -95.2653599];
-    position2 = [38.9780217, -95.2634658];
-  }
-  if(count==12) {
-    position1 = [38.9780217, -95.2634658];
-    position2 = [0,0];
-  }
-  if(count===13) {
-    position1 = [38.9780217, -95.2634658];
-    position2 = [38.9787367, -95.2607026];
-  }
-  if(count==14) {
-    position1 = [38.9787367, -95.2607026];
-    position2 = [0,0];
-  }
-  if(count===15) {
-    position1 = [38.9787367, -95.2607026];
-    position2 = [38.9752793, -95.2623357];
-  }
-  if(count==16) {
-    position1 = [38.9752793, -95.2623357];
-    position2 = [0,0];
-  }
-  if(count===17) {
-    position1 = [38.9752793, -95.2623357];
-    position2 = [38.9752793, -95.2623357];
-  }
-  if(count==18) {
-    position1 = [38.9752793, -95.2623357];
-    position2 = [0,0];
   }
 
   const myIcon = new L.Icon({
@@ -189,27 +136,112 @@ const Main = () => {
 }
 
 function go() {
-  handleClick();
-  startTimer();
-  goInc();
-  console.log(routeCount);
-}
+  if(!validTarget)
+  {
+    alert("Error!")
+  }
+  else
+  {
+    setIsGo(!isGo);
+    setIsActive(!isActive)
+    startTimer();
+    if(targetTee<9) setTargetTee(targetTee+1)
+    if(targetGreen<9) setTargetGreen(targetGreen+1)
+    setRoutePos([currentPosition,nextPosition])
+  }
 
-function goInc() {
-  if(routeCount<18) setrouteCount(routeCount+1);
 }
 
 function stop() {
-  handleClick();
+  setIsGo(!isGo)
+  setValidTarget(!validTarget)
   stopTimer();
-  goInc();
-  console.log(routeCount);
-  if(count<18) setCount(count+1);
+  setIsActive(!isActive)
+  setCurrentPosition(nextPosition)
+  setNextPosition([0,0])
+  setRoutePos([[0,0]])
+  if(currentTee<9) setCurrentTee(currentTee+1);
+  setValidNextTee(true);
+  setValidGreenTee(true);
 }
 
-  const handleClick = () => {
-    setIsActive(current => !current);
-  };
+function incTee() {
+  if(validNextTee && !isGo)
+  {
+    setValidNextTee(false);
+    setValidGreenTee(true);
+    setValidTarget(true)
+    console.log(targetTee)
+    if(targetTee===2) {
+      if(tee === "black") setNextPosition(tee2.blackPos);
+      if(tee === "bronze") setNextPosition(tee2.bronzePos);
+      if(tee === "silver") setNextPosition(tee2.silverPos);
+      if(tee === "gold") setNextPosition(tee2.goldPos);
+    }
+    if(targetTee===3) {
+      if(tee === "black") setNextPosition(tee3.blackPos);
+      if(tee === "bronze") setNextPosition(tee3.bronzePos);
+      if(tee === "silver") setNextPosition(tee3.silverPos);
+      if(tee === "gold") setNextPosition(tee3.goldPos);
+    }
+    if(targetTee===4) {
+      if(tee === "black") setNextPosition(tee4.blackPos);
+      if(tee === "bronze") setNextPosition(tee4.bronzePos);
+      if(tee === "silver") setNextPosition(tee4.silverPos);
+      if(tee === "gold") setNextPosition(tee4.goldPos);
+    }
+    if(targetTee===5) {
+      if(tee === "black") setNextPosition(tee5.blackPos);
+      if(tee === "bronze") setNextPosition(tee5.bronzePos);
+      if(tee === "silver") setNextPosition(tee5.silverPos);
+      if(tee === "gold") setNextPosition(tee5.goldPos);
+    }
+    if(targetTee===6) {
+      if(tee === "black") setNextPosition(tee6.blackPos);
+      if(tee === "bronze") setNextPosition(tee6.bronzePos);
+      if(tee === "silver") setNextPosition(tee6.silverPos);
+      if(tee === "gold") setNextPosition(tee6.goldPos);
+    }
+    if(targetTee===7) {
+      if(tee === "black") setNextPosition(tee7.blackPos);
+      if(tee === "bronze") setNextPosition(tee7.bronzePos);
+      if(tee === "silver") setNextPosition(tee7.silverPos);
+      if(tee === "gold") setNextPosition(tee7.goldPos);
+    }
+    if(targetTee===8) {
+      if(tee === "black") setNextPosition(tee8.blackPos);
+      if(tee === "bronze") setNextPosition(tee8.bronzePos);
+      if(tee === "silver") setNextPosition(tee8.silverPos);
+      if(tee === "gold") setNextPosition(tee8.goldPos);
+    }
+    if(targetTee===9) {
+      if(tee === "black") setNextPosition(tee9.blackPos);
+      if(tee === "bronze") setNextPosition(tee9.bronzePos);
+      if(tee === "silver") setNextPosition(tee9.silverPos);
+      if(tee === "gold") setNextPosition(tee9.goldPos);
+    }
+  }
+}
+
+function incGreen() {
+  if(validGreenTee && !isGo)
+  {
+    setValidGreenTee(false);
+    setValidNextTee(true);
+    setValidTarget(true)
+    console.log(targetGreen)
+    if(targetGreen===1) setNextPosition(tee1.greenPos);
+    if(targetGreen===2) setNextPosition(tee2.greenPos);
+    if(targetGreen===3) setNextPosition(tee3.greenPos);
+    if(targetGreen===4) setNextPosition(tee4.greenPos);
+    if(targetGreen===5) setNextPosition(tee5.greenPos);
+    if(targetGreen===6) setNextPosition(tee6.greenPos);
+    if(targetGreen===7) setNextPosition(tee7.greenPos);
+    if(targetGreen===8) setNextPosition(tee8.greenPos);
+    if(targetGreen===8) setNextPosition(tee9.greenPos);
+  }
+}
+
 
   function LocationMarker() {
     const [position, setPosition] = useState(null)
@@ -232,17 +264,17 @@ function stop() {
   
   return (
     <div className='flex h-[100vh]'>
-      <div className='w-[60%] h-[100vh] flex flex-col items-center'>
-          <div className='flex flex-row justify-center border-[#3E3B3B] border-[3px] drop-shadow-2xl shadow-2xl border-solid rounded-xl py-16 mt-12 w-[350px]'>
+      <div className='w-[60%] h-[100vh] flex flex-col items-center justify-center'>
+          <div className='flex flex-row justify-center border-[#3E3B3B] border-[3px] drop-shadow-2xl shadow-2xl border-solid rounded-xl py-16 mt-12 w-[350px] mt-[-1em]'>
             <h1 className='text-[#3E3B3B] text-5xl'>{speed}</h1>
             <h1 className='text-[#3E3B3B] text-5xl ml-2'>mph</h1>
           </div>
           <div className='flex text-6xl justify-center bg-[#3E3B3B] text-white w-[200px] py-2 rounded-b-2xl shadow-xl'>
             <Icon icon="game-icons:golf-tee" className=''/>
-            <h2 className='ml-2 tee'>{counter}</h2>
+            <h2 className='ml-2 tee'>{currentTee}</h2>
           </div>
-          <button style={{display: isActive ? 'none' : 'block'}} className='my-6' onClick={go}>
-            <div class="flex bg-green-700 aspect-square shrink-0 rounded-full grow-0 w-[260px] h-[260px] justify-center items-center flex-col shadow-2xl drop-shadow-2xl">
+          <button style={{display: isActive ? 'none' : 'block'}} className='my-10' onClick={go}>
+            <div className="flex bg-green-700 aspect-square shrink-0 rounded-full grow-0 w-[260px] h-[260px] justify-center items-center flex-col shadow-2xl drop-shadow-2xl">
             <Icon icon="mdi:golf-cart" className='text-white text-9xl mt-[1rem]'/>
             <Icon icon="file-icons:go" className='text-white text-9xl mt-[-.35em] mr-[.2em]'/>
             </div>
@@ -250,30 +282,30 @@ function stop() {
           <button style={{display: isActive ? 'block' : 'none'}} onClick={stop} className='my-6 hidden'>
               <Icon icon="game-icons:stop-sign"  className='text-[275px] text-red-700 border-[#3E3B3B] drop-shadow-2xl'/>
           </button>
-          <button onClick={function incTee() {if(count<18) setCount(count+1); if(counter<9) setCounter(counter+1)}} className='bg-[#3E3B3B] text-white py-4 w-[275px] rounded-xl shadow-lg text-3xl'>Next Teebox</button>
-          <button className='bg-[#3E3B3B] text-white py-4 w-[275px] rounded-xl shadow-lg mt-4 text-3xl'>Next Green</button>
+          <button onClick={incTee} className='bg-[#3E3B3B] text-white py-4 w-[275px] rounded-xl shadow-lg text-3xl'>Next Teebox</button>
+          <button onClick={incGreen} className='bg-[#3E3B3B] text-white py-4 w-[275px] rounded-xl shadow-lg mt-4 text-3xl'>Next Green</button>
       </div>
 
 
       
-      <div className='bg-[#3E3B3B] pl-4 py-3 rounded-l-xl'>
+      <div className='bg-[#3E3B3B] pl-6 py-7 rounded-l-xl w-[40%]'>
          {/* <iframe title="map" className='map rounded-l-xl' width="500" height="780" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=-95.26860415935516%2C38.976263117537805%2C-95.26184499263765%2C38.97992040605664&amp;layer=mapnik&amp;marker=38.978091785409354%2C-95.2652245759964"></iframe> */}
-         <MapContainer style={{height: 780, width: 500}} center = {[38.979, -95.266]} zoom = {16}>
+         <MapContainer style={{height: 950, width:600}} center = {[38.979, -95.266]} zoom = {16}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> 
               contributors'
             />
-            <Polygon color="red" positions={position3}/>
-            <Marker position={position1} icon={myIcon}>
+            <Polygon color="red" positions={routePos}/>
+            <Marker position={currentPosition} icon={myIcon}>
               <Popup>
-                Hole {count}
+                Hole {targetTee}
               </Popup>
             </Marker>
             
-            <Marker position={position2}>
+            <Marker position={nextPosition}>
               <Popup>
-                Hole 2
+                Hole {targetTee+1}
               </Popup>
             </Marker>
             <LocationMarker/>
