@@ -1,0 +1,6 @@
+# Req 7
+
+For this requirement I have found two possible implementations that might be used in order to plan paths using the Frenet Frame technique.
+- [this](https://github.com/tommy1900/Path-Planning-Frenet-Frame-Optimal-Trajectory-Generation-JMT) C++ implementation is well-documented and has some performance upsides considering it is built with C++. Because the route planning pipeline was created using MATLAB, we'd need to determine some sort of way to bridge the gap between the two langauges.
+
+- [this](https://www.mathworks.com/help/nav/ref/trajectoryoptimalfrenet.html) MATLAB implementation could serve as a natural extension of the route planning pipeline given that that is written in MATLAB. It requires a reference trajectory (a list of XY coordinates) and an occupancy map object which denotes the positions of potential obstacles. The reference trajectory will be provided by the route planning module while the occupancy map object would be created using information from the sensors (camera and ultrasonic sensor).
