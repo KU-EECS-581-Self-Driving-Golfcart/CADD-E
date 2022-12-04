@@ -39,6 +39,7 @@ Determines the currect driving behavior by choosing a reference path to follow a
 <img src=assets/behavior.png>
 <figcaption align = "center"><b>Figure 2: Finite State Machine for Cart Behavior</b></figcaption>
 </figure>
+
 Usually, the reference path will be the pre-planned cart path stored in the offline maps. But if the user inputs a stop command in the user interface, for example, the behavior selector will switch to the softStop trajectory which pulls off the path and slows to a stop. Such a stop trajectory will be a pre-defined curve. Once the user wants to continue along the path, the behavior selector will switch back to following the path reference at the path speed limit. The behavior selector can be programmed as a finite state machine, for example in [2][5][3].
 
 ### Motion Planner
@@ -57,6 +58,7 @@ The left section will always provide any relevant information about the cart’s
 <img src=assets/initial_ui.png>
 <figcaption align = "center"><b>Figure 3: Draft UI Design</b></figcaption>
 </figure>
+
 The right section of the UI will display a map of the golf course that the cart is currently navigating. This map will provide the user with a simple view of how the cart will navigate to its next destination according to the online map of the cart.
 
 ## References
