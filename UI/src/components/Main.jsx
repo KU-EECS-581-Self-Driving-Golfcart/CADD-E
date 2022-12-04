@@ -1,7 +1,8 @@
 import React, {useState, useRef} from 'react'
+import {pathOne, pathTwo, pathThree} from '../paths.js'
 import { Icon } from '@iconify/react';
 import icon from '../Images/icon.svg'
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polygon} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
@@ -147,7 +148,15 @@ function go() {
     startTimer();
     if(targetTee<9) setTargetTee(targetTee+1)
     if(targetGreen<9) setTargetGreen(targetGreen+1)
-    setRoutePos([currentPosition,nextPosition])
+    if(currentTee === 1) setRoutePos(pathOne);
+    else if(currentTee === 2) setRoutePos(pathTwo);
+    else if(currentTee === 3) setRoutePos(pathThree);
+    else 
+    {
+      let path = [currentPosition, nextPosition];
+      console.log(path);
+      (setRoutePos(path));
+    }
   }
 
 }
@@ -296,7 +305,7 @@ function incGreen() {
               attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> 
               contributors'
             />
-            <Polygon color="red" positions={routePos}/>
+            <Polyline color="red" positions={routePos}/>
             <Marker position={currentPosition} icon={myIcon}>
               <Popup>
                 Hole {targetTee}
