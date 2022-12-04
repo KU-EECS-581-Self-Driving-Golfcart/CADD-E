@@ -5,3 +5,6 @@
 [submodule "doc/sprint2/req2/MatLab_OSM"]
 	path = doc/sprint2/req2/MatLab_OSM
 	url = https://github.com/johnyf/openstreetmap
+[submodule "deepracer_api"]
+	path = deep_racer/deepracer_api
+	url = https://github.com/cskroonenberg/deepracer_api
