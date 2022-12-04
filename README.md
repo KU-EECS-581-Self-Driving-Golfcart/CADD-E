@@ -36,9 +36,9 @@ Determines the currect driving behavior by choosing a reference path to follow a
 - softStop: Pull off the path and slow to a stop. Useful for stopping at a tee box or to play a ball.
 - hardStop: Stop on the path. Parametrized by the distance to stop. Useful for avoiding pop-up obstacles.
 <figure>
-<img src=assets/behavior.png>
+<img width="400" src=assets/behavior.png>
 <figcaption align = "center"><b>Figure 2: Finite State Machine for Cart Behavior</b></figcaption>
-</figure><br>
+</figure><br><br>
 
 Usually, the reference path will be the pre-planned cart path stored in the offline maps. But if the user inputs a stop command in the user interface, for example, the behavior selector will switch to the softStop trajectory which pulls off the path and slows to a stop. Such a stop trajectory will be a pre-defined curve. Once the user wants to continue along the path, the behavior selector will switch back to following the path reference at the path speed limit. The behavior selector can be programmed as a finite state machine, for example in [2][5][3].
 
@@ -55,9 +55,9 @@ Generates actuator (brake, throttle, steering) commands to implement a given tra
 Lets the user start and stop the golf cart. The golf cart will feature an easily accessible touch screen that will serve as a User Interface. The UI will be a simple display split into two sections.
 The left section will always provide any relevant information about the cart’s motion such as vehicle speed. Below this telemetry data will be a set of buttons that are shown depending on the state of the vehicle. If the vehicle is currently stopped, the user will be presented with a large “Go” button followed by two buttons that allow the user to choose where they would like to go. Once the user has selected either the “Next TeeBox” button or the “Next Green” button, they can press the “Go” button and the cart will switch states and begin transit. Once the golf cart is in transit, the user will be presented with a simple “Stop” button. Once pressed, this button will apply the brakes until the cart is back to the stop state. This simple system of stopping the cart will be necessary in case user input is needed to stop the cart. Similarly, if the user needs to apply corrective steering, they can do this directly through the steering wheel rather than interacting with the UI.
 <figure>
-<img src=assets/initial_ui.png>
+<img width="400" src=assets/initial_ui.png>
 <figcaption align = "center"><b>Figure 3: Draft UI Design</b></figcaption>
-</figure><br>
+</figure><br><br>
 
 The right section of the UI will display a map of the golf course that the cart is currently navigating. This map will provide the user with a simple view of how the cart will navigate to its next destination according to the online map of the cart.
 
