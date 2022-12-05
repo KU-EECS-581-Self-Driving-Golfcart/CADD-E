@@ -1,0 +1,1 @@
+I spent this sprint doing research on how to calculate the distance of objects within the camera's vision. The main way people accomplish this is calculating the pixel height of known objects and creating an equation that can be used to measure the distance of unknown objects. The main website I used was here: https://www.scantips.com/lights/subjectdistance.html#math.
