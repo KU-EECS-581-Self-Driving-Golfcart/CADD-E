@@ -45,12 +45,14 @@ def read_messages(stream, lock, nmeareader):
     dt = datetime.datetime.now()
     dt = str(dt).replace(' ', '_')
 
-    # 
     log = 'log/GPS/GPS_log_{}.txt'.format(dt)
     raw_log = 'log/GPS/nmea_{}.txt'.format(dt)
+    two_line_output = 'out/gps.txt'
 
     if not os.path.exists('log'):
         os.mkdir('log')
+    if not os.path.exists('out'):
+        os.mkdir('out')
 
     if not os.path.exists('log/GPS'):
         os.mkdir('log/GPS')
@@ -68,7 +70,7 @@ def read_messages(stream, lock, nmeareader):
                         lat = abs(parsed_data.lat)
                         lon = abs(parsed_data.lon)
                         simple_str = '{:.7f} {}, {:.7f} {}'.format(lat, NS, lon, EW)
-                        print('deez {}'.format(simple_str))
+                        print(simple_str)
                         print('\t{}'.format(parsed_data))
                         with open(log, 'a') as f:
                             f.write(simple_str)
@@ -78,6 +80,11 @@ def read_messages(stream, lock, nmeareader):
                             f.write(str(parsed_data))
                             f.write('\n')
                             f.close()    
+                        with open(two_line_output, 'w') as f:
+                            f.write(str(lat))
+                            f.write(str('\n'))
+                            f.write(str(lon))
+                            f.close()
                     #quit()
             except Exception as err:
                 print(f"\n\nSomething went wrong {err}\n\n")
@@ -114,7 +121,7 @@ if __name__ == "__main__":
     else:  # Linux
         port = "/dev/ttyACM1"
     baudrate = 38400
-    timeout = 0.1
+    timeout = 0.05
 
     with Serial(port, baudrate, timeout=timeout) as serial:
 
