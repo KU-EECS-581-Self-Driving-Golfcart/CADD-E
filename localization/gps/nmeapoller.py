@@ -22,6 +22,7 @@ from io import BufferedReader
 from threading import Thread, Lock
 from time import sleep
 from serial import Serial
+import argparse
 import datetime
 import os
 from pynmeagps import (
@@ -34,8 +35,15 @@ from pynmeagps import (
 # initialise global variables
 reading = False
 
+def parse_args():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-v',
+						help='Verbose. Set this flag to print readings as the script executes',
+						dest='verbose',
+						action='store_true')
+	return parser.parse_args()
 
-def read_messages(stream, lock, nmeareader):
+def read_messages(stream, lock, nmeareader, verbose):
     """
     Reads, parses and prints out incoming UBX messages
     """
@@ -47,7 +55,7 @@ def read_messages(stream, lock, nmeareader):
 
     log = 'log/GPS/GPS_log_{}.txt'.format(dt)
     raw_log = 'log/GPS/nmea_{}.txt'.format(dt)
-    two_line_output = 'out/gps.txt'
+    dump_output = 'out/gps.txt'
 
     if not os.path.exists('log'):
         os.mkdir('log')
@@ -57,6 +65,11 @@ def read_messages(stream, lock, nmeareader):
     if not os.path.exists('log/GPS'):
         os.mkdir('log/GPS')
 
+    # Init readings
+    lat = 0.0
+    lon = 0.0
+    speed_mps = 0.0
+
     while reading:
         if stream.in_waiting:
             try:
@@ -64,39 +77,46 @@ def read_messages(stream, lock, nmeareader):
                 (raw_data, parsed_data) = nmeareader.read()
                 lock.release()
                 if parsed_data:
-                    if parsed_data._msgID in ['RMC', 'GLL', 'GGA']:
+                    if parsed_data._msgID in ['RMC','GLL','GGA']:
                         NS = parsed_data.NS
                         EW = parsed_data.EW
                         lat = abs(parsed_data.lat)
                         lon = abs(parsed_data.lon)
-                        simple_str = '{:.7f} {}, {:.7f} {}'.format(lat, NS, lon, EW)
+                    elif parsed_data._msgID in ['VTG']: # VGA
+                        speed_mps = float(parsed_data.sogk)/3.6
+
+                    simple_str = '{:.7f} {}, {:.7f} {}, {:.7f} mps'.format(lat, NS, lon, EW, speed_mps)
+                    if verbose:
                         print(simple_str)
                         print('\t{}'.format(parsed_data))
-                        with open(log, 'a') as f:
-                            f.write(simple_str)
-                            f.write('\n')
-                            f.close()    
-                        with open(raw_log, 'a') as f:
-                            f.write(str(parsed_data))
-                            f.write('\n')
-                            f.close()    
-                        with open(two_line_output, 'w') as f:
-                            f.write(str(lat))
-                            f.write(str('\n'))
-                            f.write(str(lon))
-                            f.close()
-                    #quit()
+
+                    with open(log, 'a') as f:
+                        f.write('{}\n'.format(datetime.datetime.now()))
+                        f.write(simple_str)
+                        f.write('\n\n')
+                        f.close()
+                    with open(raw_log, 'a') as f:
+                        f.write(str(parsed_data))
+                        f.write('\n')
+                        f.close()    
+                    with open(dump_output, 'w') as f:
+                        f.write(str(lat))
+                        f.write('\n')
+                        f.write(str(lon))
+                        f.write('\n')
+                        f.write(str(speed_mps))
+                        f.close()
             except Exception as err:
                 print(f"\n\nSomething went wrong {err}\n\n")
                 continue
 
 
-def start_thread(stream, lock, nmeareader):
+def start_thread(stream, lock, nmeareader, verbose):
     """
     Start read thread
     """
 
-    thr = Thread(target=read_messages, args=(stream, lock, nmeareader), daemon=True)
+    thr = Thread(target=read_messages, args=(stream, lock, nmeareader, verbose), daemon=True)
     thr.start()
     return thr
 
@@ -112,6 +132,7 @@ def send_message(stream, lock, message):
 
 
 if __name__ == "__main__":
+    args = parse_args()
 
     # set port, baudrate and timeout to suit your device configuration
     if platform == "win32":  # Windows
@@ -131,7 +152,7 @@ if __name__ == "__main__":
         print("\nStarting read thread...\n")
         reading = True
         serial_lock = Lock()
-        read_thread = start_thread(serial, serial_lock, nmr)
+        read_thread = start_thread(serial, serial_lock, nmr, args.verbose)
 
         # DO OTHER STUFF HERE WHILE THREAD RUNS IN BACKGROUND...
         MSGIDS = ['GNRMC', 'GNGLL', 'GNGGA']
