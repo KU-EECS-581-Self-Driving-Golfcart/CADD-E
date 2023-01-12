@@ -68,6 +68,8 @@ def read_messages(stream, lock, nmeareader, verbose):
     # Init readings
     lat = 0.0
     lon = 0.0
+    NS = ''
+    EW = ''
     speed_mps = 0.0
 
     while reading:
