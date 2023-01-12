@@ -51,11 +51,11 @@ if __name__ == '__main__':
 
 	# Enable verbose debug logging if -v is passed as a parameter.
 	if len(sys.argv) == 2 and sys.argv[1].lower() == '-v':
-	    logging.basicConfig(level=logging.DEBUG)
+		logging.basicConfig(level=logging.DEBUG)
 
 	# Initialize the BNO055 and stop if something went wrong.
 	if not bno.begin():
-	    raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')
+		raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')
 
 	# Print system status and self test result.
 	status, self_test, error = bno.get_system_status()
@@ -63,16 +63,16 @@ if __name__ == '__main__':
 	print('Self test result (0x0F is normal): 0x{0:02X}'.format(self_test))
 	# Print out an error if system status is in error mode.
 	if status == 0x01:
-	    print('System error: {0}'.format(error))
-	    print('See datasheet section 4.3.59 for the meaning.')
+		print('System error: {0}'.format(error))
+		print('See datasheet section 4.3.59 for the meaning.')
 
 	# Print BNO055 software revision and other diagnostic data.
 	sw, bl, accel, mag, gyro = bno.get_revision()
 	print('Software version:   {0}'.format(sw))
 	print('Bootloader version: {0}'.format(bl))
 	print('Accelerometer ID:   0x{0:02X}'.format(accel))
-	print('Magnetometer ID:    0x{0:02X}'.format(mag))
-	print('Gyroscope ID:       0x{0:02X}\n'.format(gyro))
+	print('Magnetometer ID:	0x{0:02X}'.format(mag))
+	print('Gyroscope ID:	   0x{0:02X}\n'.format(gyro))
 
 	print('Reading BNO055 data, press Ctrl-C to quit...')
 	dt = datetime.datetime.now()
@@ -81,60 +81,60 @@ if __name__ == '__main__':
 	log = 'log/IMU/IMU_log_{}.txt'.format(dt)
 	dump_output = 'out/imu.txt'
 	if not os.path.exists('log'):
-	    os.mkdir('log')
+		os.mkdir('log')
 	if not os.path.exists('log/IMU'):
-	    os.mkdir('log/IMU')
+		os.mkdir('log/IMU')
 	if not os.path.exists('out'):
-	    os.mkdir('out')
+		os.mkdir('out')
 
 	while True:
-	    # Read the Euler angles for heading, roll, pitch (all in degrees).
-	    heading, roll, pitch = bno.read_euler()
+		# Read the Euler angles for heading, roll, pitch (all in degrees).
+		heading, roll, pitch = bno.read_euler()
 
-	    # Read the calibration status, 0=uncalibrated and 3=fully calibrated.
-	    sys, gyro, accel, mag = bno.get_calibration_status()
+		# Read the calibration status, 0=uncalibrated and 3=fully calibrated.
+		sys, gyro, accel, mag = bno.get_calibration_status()
 
-	    # Print everything out.
-	    if args.verbose:
-		    print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
-		          heading, roll, pitch, sys, gyro, accel, mag))
+		# Print everything out.
+		if args.verbose:
+			print('Heading={0:0.2F} Roll={1:0.2F} Pitch={2:0.2F}\tSys_cal={3} Gyro_cal={4} Accel_cal={5} Mag_cal={6}'.format(
+				  heading, roll, pitch, sys, gyro, accel, mag))
 
-	    # Other values you can optionally read:
-	    # Orientation as a quaternion:
-	    #x,y,z,w = bno.read_quaterion()
+		# Other values you can optionally read:
+		# Orientation as a quaternion:
+		#x,y,z,w = bno.read_quaterion()
 
-	    # Gyroscope data (in degrees per second):
-	    #x,y,z = bno.read_gyroscope()
+		# Gyroscope data (in degrees per second):
+		#x,y,z = bno.read_gyroscope()
 
-	    # Accelerometer data (in meters per second squared):
-	    #acc_x,acc_y,acc_z = bno.read_accelerometer()
+		# Accelerometer data (in meters per second squared):
+		#acc_x,acc_y,acc_z = bno.read_accelerometer()
 
-	    # Linear acceleration data (i.e. acceleration from movement, not gravity--
-	    # returned in meters per second squared):
-	    lin_acc_x,lin_acc_y,lin_acc_z = bno.read_linear_acceleration()
+		# Linear acceleration data (i.e. acceleration from movement, not gravity--
+		# returned in meters per second squared):
+		lin_acc_x,lin_acc_y,lin_acc_z = bno.read_linear_acceleration()
 
-	    # Write output
-	    with open(log, 'a') as f:
-	        f.write('{}\n'.format(datetime.datetime.now()))
-	        f.write('heading: {}'.format(heading))
-	        f.write('\n')
-	        f.write('linear acceleration (X): {}'.format(str(lin_acc_x)))
-	        f.write('\n')
-	        f.write('linear acceleration (Y): {}'.format(str(lin_acc_y)))
-	        f.write('\n')
-	        f.write('linear acceleration (Z): {}'.format(str(lin_acc_z)))
-	        f.write('\n\n')
-	        f.close()
-	    with open(dump_output, 'w') as f:
-	        f.write(str(heading))
-	        f.write('\n')
-	        f.write(str(lin_acc_x))
-	        f.write('\n')
-	        f.write(str(lin_acc_y))
-	        f.write('\n')
-	        f.write(str(lin_acc_z))
-	        f.write('\n')
-	        f.close()
+		# Write output
+		with open(log, 'a') as f:
+			f.write('{}\n'.format(datetime.datetime.now()))
+			f.write('heading: {}'.format(heading))
+			f.write('\n')
+			f.write('linear acceleration (X): {}'.format(str(lin_acc_x)))
+			f.write('\n')
+			f.write('linear acceleration (Y): {}'.format(str(lin_acc_y)))
+			f.write('\n')
+			f.write('linear acceleration (Z): {}'.format(str(lin_acc_z)))
+			f.write('\n\n')
+			f.close()
+		with open(dump_output, 'w') as f:
+			f.write(str(heading))
+			f.write('\n')
+			f.write(str(lin_acc_x))
+			f.write('\n')
+			f.write(str(lin_acc_y))
+			f.write('\n')
+			f.write(str(lin_acc_z))
+			f.write('\n')
+			f.close()
 
-	    # Sleep for 1/20th second until the next reading.
-	    time.sleep(0.05)
+		# Sleep for 1/20th second until the next reading.
+		time.sleep(0.05)
