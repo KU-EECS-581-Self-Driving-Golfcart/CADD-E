@@ -7,6 +7,8 @@ import L from 'leaflet';
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import { useLocation } from 'react-router-dom'
+import data from '../test_routeXY_T.json';
+
 // import { MapContainer } from 'react-leaflet';
 // import { TileLayer } from 'leaflet';
 // import { Marker } from 'react-leaflet';
@@ -109,6 +111,8 @@ const Main = () => {
   const [validGreenTee, setValidGreenTee] = useState(true);
   const [isGo, setIsGo] = useState(false);
 
+  let teeOrGreen = 0; //0 for tee, 1 for green;
+
   const startTimer = () => {
     clearInterval(timerId.current);
       let i = 0;
@@ -137,6 +141,7 @@ const Main = () => {
 }
 
 function go() {
+  handleSaveToPC(obj);
   if(!validTarget)
   {
     alert("Error!")
@@ -148,7 +153,8 @@ function go() {
     startTimer();
     if(targetTee<9) setTargetTee(targetTee+1)
     if(targetGreen<9) setTargetGreen(targetGreen+1)
-    if(currentTee === 1) setRoutePos(pathOne);
+    if(currentTee === 1) setRoutePos(data.test_routeXY);
+    //if(currentTee === 1) setRoutePos(pathOne);
     else if(currentTee === 2) setRoutePos(pathTwo);
     else if(currentTee === 3) setRoutePos(pathThree);
     else 
@@ -229,6 +235,7 @@ function incTee() {
       if(tee === "silver") setNextPosition(tee9.silverPos);
       if(tee === "gold") setNextPosition(tee9.goldPos);
     }
+    teeOrGreen = 0;
   }
 }
 
@@ -249,6 +256,7 @@ function incGreen() {
     if(targetGreen===8) setNextPosition(tee8.greenPos);
     if(targetGreen===8) setNextPosition(tee9.greenPos);
   }
+  teeOrGreen = 1;
 }
 
 
@@ -270,6 +278,22 @@ function incGreen() {
       </Marker>
     )
   }
+
+  let obj = {
+    teeBox: useLocation().state.state.tee,
+    target: teeOrGreen
+  }
+
+const handleSaveToPC = jsonData => {
+  const fileData = JSON.stringify(jsonData);
+  const blob = new Blob([fileData], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = 'pathInfo.json';
+  link.href = url;
+  link.click();
+}
+  
   
   return (
     <div className='flex h-[100vh]'>
