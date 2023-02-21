@@ -1,1 +1,7 @@
 .DS_STORE
+localization/gps/log
+localization/gps/out
+localization/imu/log
+localization/imu/out
+localization/build
+deep_racer/deepracer_api/deepracer-config.yaml
