@@ -17,29 +17,38 @@ class Map {
 public:
     std::map<long, int> nd_id_2_idx_map;
 
+    // Constructor
     Map(){
         N = 0;
         init = false;
     }
+
+    // Destructor
     ~Map(){}
 
-    void PrintGraph() {
-        if(!init) {
-            std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
+    // Initialize graph with .mat files
+    void Init() {
+        if(init) {
+            std::cout << "Init called twice. Not initializing again.\n";
             return;
         }
-        int adj_list_size = adj_list.size();
-        // Print entries for each node        
-        for(int i = 0; i < adj_list_size; i++){
-            std::cout << "Node idx: " << i << "\n";
-            // Print all entries
-            for(int j = 0; j < adj_list[i].size(); j++) {
-                std::cout << "\t" << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
-            }
-        }
-        std::cout << "N = " << adj_list.size() << "\n";
+
+        InitNodeID2Idx();
+        // Reserve space for entries for each node
+        adj_list.resize(N);
+        node_xy.resize(N);
+        node_id.resize(N);
+        InitGraph();
+
+        init = true;
     }
 
+    // Return # of nodes in graph
+    int Size() {
+        return N;
+    }
+
+    // Find shortest route from source node to destination node using Dijkstra's algorithm
     std::vector<int> ShortestRoute(long src_id, long dst_id) {
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
@@ -122,30 +131,32 @@ public:
         return route;
     }
 
-    void PrintRoute(std::vector<int> route) {
+    // Print Adjacency List contents
+    void PrintGraph() {
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
             return;
         }
-        for(int i = 0; i < route.size(); i++) {
-            std::cout << route[i] << "\t" << node_id[route[i]] << "\n";
+        int adj_list_size = adj_list.size();
+        // Print entries for each node        
+        for(int i = 0; i < adj_list_size; i++){
+            std::cout << "Node idx: " << i << "\n";
+            // Print all entries
+            for(int j = 0; j < adj_list[i].size(); j++) {
+                std::cout << "\t" << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
+            }
         }
+        std::cout << "N = " << adj_list.size() << "\n";
     }
 
-    void Init() {
-        if(init) {
-            std::cout << "Init called twice. Not initializing again.\n";
-            return;
-        }
+    // Return vector of node coordinates
+    std::vector<std::pair<double, double>> NodeXY() {
+        return node_xy;
+    }
 
-        InitNodeID2Idx();
-        // Reserve space for entries for each node
-        adj_list.resize(N);
-        node_xy.resize(N);
-        node_id.resize(N);
-        InitGraph();
-
-        init = true;
+    // Return vector of node IDs
+    std::vector<long> NodeID() {
+        return node_id;
     }
 
 private:
@@ -163,6 +174,7 @@ private:
     int N; // Number of nodes
     bool init;
 
+    // Build graph using adj_list_mat_file - an adjancency list created in MATLAB
     void InitGraph() {
         // Print all digits of a number
         std::cout << std::fixed;
@@ -236,6 +248,7 @@ private:
         }
     }
 
+    // Build a hashmap to made Node IDs to their indexes in the adjacency list
     void InitNodeID2Idx(){
         // Init file handler for Matlab IO
         matioCpp::File file_handler;
@@ -261,7 +274,6 @@ private:
             nd_id_2_idx_map.insert({static_cast<long>(node_id_ML[idx]), i});
         }
     }
-
 };
 
 #endif // MAP_H
