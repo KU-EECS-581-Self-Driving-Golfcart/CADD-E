@@ -49,62 +49,54 @@ public:
     }
 
     // Find shortest route from source node to destination node using Dijkstra's algorithm
-    std::vector<int> ShortestRoute(long src_id, long dst_id) {
+    std::vector<std::pair<double, double>> ShortestRoute(long src_id, long dst_id) {
+        // Check that graph has been initialized
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            std::vector<int> empty_return;
+            std::vector<std::pair<double, double>> empty_return;
             return empty_return;
         }
 
-        std::vector<int> route;
-        route.reserve(N);
-        //std::cout << "fetching S, D idxs... ";
+        // Convert node IDs to indexes
         int s_idx = nd_id_2_idx_map[src_id];
         int d_idx = nd_id_2_idx_map[dst_id];
-        //std::cout << "Done.\n";
 
+        // Track distance to source node and predecessor node
         float dist[N];
         int prev[N];
-        //std::cout << "Init dist and prev arrays... ";
+
+        // Init distance to source node and predecessor nodes
         for(int i = 0; i < N; i++) {
             dist[i] = std::numeric_limits<float>::max();
             prev[i] = -1;
         }
 
+        // Distance from source to source is 0
         dist[s_idx] = 0;
 
-        //std::cout << "Done.\n";
-
+        // Init priority queue to order closer nodes first
         std::priority_queue<edge_entry_pair, std::vector<edge_entry_pair>, std::greater<edge_entry_pair>> Q;
 
-        //std::cout << "PQ made\n";
-
+        // Push source node
         Q.push(edge_entry_pair(0, s_idx));
 
-        //std::cout << "Inserted (0, " << s_idx << ") to PQ\n";
-
-
+        // Iterate and look for shorter paths to target node
         while(!Q.empty()) {
             edge_entry_pair U = Q.top();
             Q.pop();
 
-            //std::cout << "U = " << U.second << "\n";
-
+            // Check if top of priority queue is destination node
             if(U.second == d_idx) {
-                //std::cout << U.second << " == " << d_idx << "... breaking\n";
                 break;
             }
 
+            // Iterate through U's edges
             std::vector<edge_entry_pair> E = adj_list[U.second];
-            //std::cout << "Node " << U.second << " has " << E.size() << " edges.\n";
             for(int i = 0; i < E.size(); i++) {
                 int V = E[i].second;
                 float W = E[i].first;
 
-                //std::cout << "\t" << i << ") V = " << V << " W = " << W << "\n";
-
-                //std::cout << "\tdist[V] = " << dist[V] << " > dist[" << U.second << "] + W = " << dist[U.second] << " + " << W << " = " << dist[U.second] + W << "\n";
-                //std::cout << "\t->" << (dist[V] > dist[U.second] + W) << "\n";
+                // Check for improved path
                 if(dist[V] > dist[U.second] + W) {
                     dist[V] = dist[U.second] + W;
                     Q.push(E[i]);
@@ -113,12 +105,16 @@ public:
             }
         }
 
-        //std::cout << "Exit while loop\n";
+        // Create vector of waypoint coordinates from route indexes
+        std::vector<std::pair<double, double>> route;
+        route.reserve(N);
 
+        // Trace optimal route from target to source
         int U = d_idx;
         if(prev[U] != -1 || U == s_idx) {
             while(U > 0){
-                route.push_back(U);
+                route.push_back(node_xy[U]);
+                // Stop after adding source node
                 if(U == s_idx) {
                     break;
                 }
@@ -126,6 +122,7 @@ public:
             }
         }
 
+        // Reverse route (D->S) -> (S->D)
         std::reverse(route.begin(), route.end());
 
         return route;
