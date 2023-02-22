@@ -28,16 +28,21 @@ public:
 
     // Initialize graph with .mat files
     void Init() {
+        // Prevent initalizing twice
         if(init) {
             std::cout << "Init called twice. Not initializing again.\n";
             return;
         }
 
+        // Create hash map mapping Node IDs to vector indexes
         InitNodeID2Idx();
+
         // Reserve space for entries for each node
         adj_list.resize(N);
         node_xy.resize(N);
         node_id.resize(N);
+
+        // Create adjacency list and store node IDs and coordinates in vectors
         InitGraph();
 
         init = true;
@@ -130,6 +135,7 @@ public:
 
     // Print Adjacency List contents
     void PrintGraph() {
+        // Prevent printing an empty map
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
             return;

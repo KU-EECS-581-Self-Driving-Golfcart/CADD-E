@@ -178,9 +178,9 @@ R_Tree Init_RTree_TEST(std::vector<int> route, std::vector<std::pair<double, dou
     return RT;
 }
 
-void PrintRoute(std::vector<int> route, std::vector<long> node_ids) {
+void PrintRoute(std::vector<std::pair<double, double>> route) {
     for(int i = 0; i < route.size(); i++) {
-        std::cout << route[i] << "\t" << node_ids[route[i]] << "\n";
+        std::cout << i << ") " << route[i].first << "\t" << route[i].second << "\n";
     }
 }
 
@@ -188,13 +188,16 @@ int main() {
     Map M;
     M.Init();
 
-    std::vector<int> route(M.size());
+    std::vector<std::pair<double, double>> route(M.Size());
 
-    //route = M.ShortestRoute(7208400631, 7208400684);
+    route = M.ShortestRoute(7208400631, 7208400684);
 
-    R_Tree RT = Init_RTree_TEST(route, M.NodeXY(), M.NodeID());
+	PrintRoute(route);
+
+    //R_Tree RT = Init_RTree_TEST(route, M.NodeXY(), M.NodeID());
     
-    RT.print();
+    //RT.print();
+
 
     // Read in map
     // Init R Tree with map nodes
