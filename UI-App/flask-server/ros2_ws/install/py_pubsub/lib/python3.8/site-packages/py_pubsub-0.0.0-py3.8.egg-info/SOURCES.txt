@@ -9,6 +9,7 @@ setup.py
 ../../build/py_pubsub/py_pubsub.egg-info/top_level.txt
 ../../build/py_pubsub/py_pubsub.egg-info/zip-safe
 py_pubsub/__init__.py
+py_pubsub/publisher1_member_function.py
 py_pubsub/publisher_member_function.py
 py_pubsub/subscriber_member_function.py
 resource/py_pubsub

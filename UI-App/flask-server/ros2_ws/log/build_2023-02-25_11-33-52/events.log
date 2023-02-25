@@ -1,0 +1,260 @@
+[0.000000] (-) TimerEvent: {}
+[0.001268] (py_pubsub) JobQueued: {'identifier': 'py_pubsub', 'dependencies': OrderedDict()}
+[0.002397] (py_pubsub) JobStarted: {'identifier': 'py_pubsub'}
+[0.094584] (-) TimerEvent: {}
+[0.196682] (-) TimerEvent: {}
+[0.297812] (-) TimerEvent: {}
+[0.399065] (-) TimerEvent: {}
+[0.501766] (-) TimerEvent: {}
+[0.602899] (-) TimerEvent: {}
+[0.704042] (-) TimerEvent: {}
+[0.805027] (-) TimerEvent: {}
+[0.906775] (-) TimerEvent: {}
+[1.008170] (-) TimerEvent: {}
+[1.109856] (-) TimerEvent: {}
+[1.211168] (-) TimerEvent: {}
+[1.314296] (-) TimerEvent: {}
+[1.415730] (-) TimerEvent: {}
+[1.520394] (-) TimerEvent: {}
+[1.621751] (-) TimerEvent: {}
+[1.725356] (-) TimerEvent: {}
+[1.826304] (-) TimerEvent: {}
+[1.927372] (-) TimerEvent: {}
+[2.029881] (-) TimerEvent: {}
+[2.132276] (-) TimerEvent: {}
+[2.234841] (-) TimerEvent: {}
+[2.335992] (-) TimerEvent: {}
+[2.437447] (-) TimerEvent: {}
+[2.538637] (-) TimerEvent: {}
+[2.640007] (-) TimerEvent: {}
+[2.741386] (-) TimerEvent: {}
+[2.843266] (-) TimerEvent: {}
+[2.944617] (-) TimerEvent: {}
+[3.046746] (-) TimerEvent: {}
+[3.148625] (-) TimerEvent: {}
+[3.250625] (-) TimerEvent: {}
+[3.351681] (-) TimerEvent: {}
+[3.453388] (-) TimerEvent: {}
+[3.554336] (-) TimerEvent: {}
+[3.655533] (-) TimerEvent: {}
+[3.756887] (-) TimerEvent: {}
+[3.858447] (-) TimerEvent: {}
+[3.960015] (-) TimerEvent: {}
+[4.062715] (-) TimerEvent: {}
+[4.163871] (-) TimerEvent: {}
+[4.266241] (-) TimerEvent: {}
+[4.367438] (-) TimerEvent: {}
+[4.468631] (-) TimerEvent: {}
+[4.569642] (-) TimerEvent: {}
+[4.670675] (-) TimerEvent: {}
+[4.772175] (-) TimerEvent: {}
+[4.873335] (-) TimerEvent: {}
+[4.974687] (-) TimerEvent: {}
+[5.075815] (-) TimerEvent: {}
+[5.177392] (-) TimerEvent: {}
+[5.278728] (-) TimerEvent: {}
+[5.381366] (-) TimerEvent: {}
+[5.483615] (-) TimerEvent: {}
+[5.585834] (-) TimerEvent: {}
+[5.687026] (-) TimerEvent: {}
+[5.789627] (-) TimerEvent: {}
+[5.890512] (-) TimerEvent: {}
+[5.991731] (-) TimerEvent: {}
+[6.093018] (-) TimerEvent: {}
+[6.194093] (-) TimerEvent: {}
+[6.295290] (-) TimerEvent: {}
+[6.398140] (-) TimerEvent: {}
+[6.499047] (-) TimerEvent: {}
+[6.600362] (-) TimerEvent: {}
+[6.702778] (-) TimerEvent: {}
+[6.803851] (-) TimerEvent: {}
+[6.905226] (-) TimerEvent: {}
+[7.006343] (-) TimerEvent: {}
+[7.107781] (-) TimerEvent: {}
+[7.208971] (-) TimerEvent: {}
+[7.310767] (-) TimerEvent: {}
+[7.412280] (-) TimerEvent: {}
+[7.514150] (-) TimerEvent: {}
+[7.616359] (-) TimerEvent: {}
+[7.718570] (-) TimerEvent: {}
+[7.820129] (-) TimerEvent: {}
+[7.922104] (-) TimerEvent: {}
+[8.023154] (-) TimerEvent: {}
+[8.124257] (-) TimerEvent: {}
+[8.225220] (-) TimerEvent: {}
+[8.326540] (-) TimerEvent: {}
+[8.428002] (-) TimerEvent: {}
+[8.529725] (-) TimerEvent: {}
+[8.630952] (-) TimerEvent: {}
+[8.733070] (-) TimerEvent: {}
+[8.835748] (-) TimerEvent: {}
+[8.936906] (-) TimerEvent: {}
+[9.037983] (-) TimerEvent: {}
+[9.139108] (-) TimerEvent: {}
+[9.240422] (-) TimerEvent: {}
+[9.341418] (-) TimerEvent: {}
+[9.442827] (-) TimerEvent: {}
+[9.544011] (-) TimerEvent: {}
+[9.645989] (-) TimerEvent: {}
+[9.747085] (-) TimerEvent: {}
+[9.848986] (-) TimerEvent: {}
+[9.950736] (-) TimerEvent: {}
+[10.052865] (-) TimerEvent: {}
+[10.154120] (-) TimerEvent: {}
+[10.255898] (-) TimerEvent: {}
+[10.357528] (-) TimerEvent: {}
+[10.458803] (-) TimerEvent: {}
+[10.560244] (-) TimerEvent: {}
+[10.661773] (-) TimerEvent: {}
+[10.762802] (-) TimerEvent: {}
+[10.864994] (-) TimerEvent: {}
+[10.966159] (-) TimerEvent: {}
+[11.068738] (-) TimerEvent: {}
+[11.169658] (-) TimerEvent: {}
+[11.270787] (-) TimerEvent: {}
+[11.373754] (-) TimerEvent: {}
+[11.474785] (-) TimerEvent: {}
+[11.576172] (-) TimerEvent: {}
+[11.677503] (-) TimerEvent: {}
+[11.779234] (-) TimerEvent: {}
+[11.880992] (-) TimerEvent: {}
+[11.982796] (-) TimerEvent: {}
+[12.084342] (-) TimerEvent: {}
+[12.185843] (-) TimerEvent: {}
+[12.287265] (-) TimerEvent: {}
+[12.315315] (py_pubsub) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/py_pubsub', 'build', '--build-base', '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build', 'install', '--record', '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/install.log', '--install-scripts', '$base/lib/py_pubsub', '--single-version-externally-managed'], 'cwd': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/src/py_pubsub', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'jtsizoo', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/home/jtsizoo', 'OLDPWD': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server', 'ROS_PYTHON_VERSION': '3', 'PS1': '(venv) \\[\\e]0;\\u@\\h: \\w\\a\\]${debian_chroot:+($debian_chroot)}\\[\\033[01;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$', 'WSL_DISTRO_NAME': 'Ubuntu-20.04', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/install', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'jtsizoo', 'NAME': 'Justin-PC', 'WSL_INTEROP': '/run/WSL/939_interop', 'PULSE_SERVER': '/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files/Intel/WiFi/bin/:/mnt/c/Program Files/Common Files/Intel/WirelessCommon/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/nodejs/:/mnt/c/Program Files/PuTTY/:/mnt/c/Program Files/dotnet/:/mnt/c/Users/Justin/AppData/Local/Programs/Python/Python311/Scripts/:/mnt/c/Users/Justin/AppData/Local/Programs/Python/Python311/:/mnt/c/Users/Justin/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/Justin/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/Justin/AppData/Local/GitHubDesktop/bin:/mnt/c/Users/Justin/AppData/Roaming/npm:/mnt/c/Users/Justin/.dotnet/tools:/mnt/c/Users/Justin/AppData/Roaming/TinyTeX/bin/win32:/snap/bin', 'XDG_RUNTIME_DIR': '/mnt/wslg/runtime-dir', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/install/py_pubsub:/opt/ros/foxy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'VIRTUAL_ENV': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/venv', 'PWD': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/install/py_pubsub/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'WSLENV': ''}, 'shell': False}
+[12.387487] (-) TimerEvent: {}
+[12.488744] (-) TimerEvent: {}
+[12.591373] (-) TimerEvent: {}
+[12.692534] (-) TimerEvent: {}
+[12.793623] (-) TimerEvent: {}
+[12.894743] (-) TimerEvent: {}
+[12.996302] (-) TimerEvent: {}
+[13.098831] (-) TimerEvent: {}
+[13.199661] (-) TimerEvent: {}
+[13.301258] (-) TimerEvent: {}
+[13.403639] (-) TimerEvent: {}
+[13.505063] (-) TimerEvent: {}
+[13.606379] (-) TimerEvent: {}
+[13.707649] (-) TimerEvent: {}
+[13.808710] (-) TimerEvent: {}
+[13.909785] (-) TimerEvent: {}
+[14.010778] (-) TimerEvent: {}
+[14.112473] (-) TimerEvent: {}
+[14.213589] (-) TimerEvent: {}
+[14.315474] (-) TimerEvent: {}
+[14.416680] (-) TimerEvent: {}
+[14.518469] (-) TimerEvent: {}
+[14.620081] (-) TimerEvent: {}
+[14.721377] (-) TimerEvent: {}
+[14.822512] (-) TimerEvent: {}
+[14.923885] (-) TimerEvent: {}
+[15.024865] (-) TimerEvent: {}
+[15.126051] (-) TimerEvent: {}
+[15.227224] (-) TimerEvent: {}
+[15.328303] (-) TimerEvent: {}
+[15.429611] (-) TimerEvent: {}
+[15.530599] (-) TimerEvent: {}
+[15.631963] (-) TimerEvent: {}
+[15.734340] (-) TimerEvent: {}
+[15.835788] (-) TimerEvent: {}
+[15.937596] (-) TimerEvent: {}
+[16.038783] (-) TimerEvent: {}
+[16.140049] (-) TimerEvent: {}
+[16.241810] (-) TimerEvent: {}
+[16.342821] (-) TimerEvent: {}
+[16.444065] (-) TimerEvent: {}
+[16.544916] (-) TimerEvent: {}
+[16.646787] (-) TimerEvent: {}
+[16.747817] (-) TimerEvent: {}
+[16.849192] (-) TimerEvent: {}
+[16.951011] (-) TimerEvent: {}
+[17.053706] (-) TimerEvent: {}
+[17.155253] (-) TimerEvent: {}
+[17.256644] (-) TimerEvent: {}
+[17.357706] (-) TimerEvent: {}
+[17.459785] (-) TimerEvent: {}
+[17.517465] (py_pubsub) StdoutLine: {'line': b'running egg_info\n'}
+[17.537412] (py_pubsub) StdoutLine: {'line': b'writing ../../build/py_pubsub/py_pubsub.egg-info/PKG-INFO\n'}
+[17.560254] (-) TimerEvent: {}
+[17.573503] (py_pubsub) StdoutLine: {'line': b'writing dependency_links to ../../build/py_pubsub/py_pubsub.egg-info/dependency_links.txt\n'}
+[17.593934] (py_pubsub) StdoutLine: {'line': b'writing entry points to ../../build/py_pubsub/py_pubsub.egg-info/entry_points.txt\n'}
+[17.614756] (py_pubsub) StdoutLine: {'line': b'writing requirements to ../../build/py_pubsub/py_pubsub.egg-info/requires.txt\n'}
+[17.629520] (py_pubsub) StdoutLine: {'line': b'writing top-level names to ../../build/py_pubsub/py_pubsub.egg-info/top_level.txt\n'}
+[17.660337] (-) TimerEvent: {}
+[17.761329] (-) TimerEvent: {}
+[17.862513] (-) TimerEvent: {}
+[17.963738] (-) TimerEvent: {}
+[18.022618] (py_pubsub) StdoutLine: {'line': b"reading manifest file '../../build/py_pubsub/py_pubsub.egg-info/SOURCES.txt'\n"}
+[18.063934] (-) TimerEvent: {}
+[18.165535] (-) TimerEvent: {}
+[18.268389] (-) TimerEvent: {}
+[18.319009] (py_pubsub) StdoutLine: {'line': b"writing manifest file '../../build/py_pubsub/py_pubsub.egg-info/SOURCES.txt'\n"}
+[18.328631] (py_pubsub) StdoutLine: {'line': b'running build\n'}
+[18.332394] (py_pubsub) StdoutLine: {'line': b'running build_py\n'}
+[18.368867] (-) TimerEvent: {}
+[18.379409] (py_pubsub) StdoutLine: {'line': b'copying py_pubsub/publisher1_member_function.py -> /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build/lib/py_pubsub\n'}
+[18.469071] (-) TimerEvent: {}
+[18.489247] (py_pubsub) StdoutLine: {'line': b'copying py_pubsub/publisher_member_function.py -> /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build/lib/py_pubsub\n'}
+[18.569700] (-) TimerEvent: {}
+[18.673233] (-) TimerEvent: {}
+[18.680901] (py_pubsub) StdoutLine: {'line': b'running install\n'}
+[18.719127] (py_pubsub) StdoutLine: {'line': b'running install_lib\n'}
+[18.773471] (-) TimerEvent: {}
+[18.852897] (py_pubsub) StdoutLine: {'line': b'copying /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build/lib/py_pubsub/publisher1_member_function.py -> /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub\n'}
+[18.873674] (-) TimerEvent: {}
+[18.974897] (-) TimerEvent: {}
+[19.023665] (py_pubsub) StdoutLine: {'line': b'copying /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build/lib/py_pubsub/publisher_member_function.py -> /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub\n'}
+[19.075172] (-) TimerEvent: {}
+[19.176747] (-) TimerEvent: {}
+[19.277711] (-) TimerEvent: {}
+[19.379114] (-) TimerEvent: {}
+[19.401844] (py_pubsub) StdoutLine: {'line': b'byte-compiling /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub/publisher1_member_function.py to publisher1_member_function.cpython-38.pyc\n'}
+[19.479279] (-) TimerEvent: {}
+[19.581134] (-) TimerEvent: {}
+[19.591576] (py_pubsub) StdoutLine: {'line': b'byte-compiling /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub/publisher_member_function.py to publisher_member_function.cpython-38.pyc\n'}
+[19.681326] (-) TimerEvent: {}
+[19.782688] (-) TimerEvent: {}
+[19.803211] (py_pubsub) StdoutLine: {'line': b'running install_data\n'}
+[19.882973] (-) TimerEvent: {}
+[19.921794] (py_pubsub) StdoutLine: {'line': b'running install_egg_info\n'}
+[19.982878] (py_pubsub) StdoutLine: {'line': b"removing '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub-0.0.0-py3.8.egg-info' (and everything under it)\n"}
+[19.986514] (-) TimerEvent: {}
+[20.088601] (-) TimerEvent: {}
+[20.191684] (-) TimerEvent: {}
+[20.237574] (py_pubsub) StdoutLine: {'line': b'Copying ../../build/py_pubsub/py_pubsub.egg-info to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub-0.0.0-py3.8.egg-info\n'}
+[20.291819] (-) TimerEvent: {}
+[20.393301] (-) TimerEvent: {}
+[20.494128] (-) TimerEvent: {}
+[20.595185] (-) TimerEvent: {}
+[20.696223] (-) TimerEvent: {}
+[20.797452] (-) TimerEvent: {}
+[20.898649] (-) TimerEvent: {}
+[21.000061] (-) TimerEvent: {}
+[21.101484] (-) TimerEvent: {}
+[21.203987] (-) TimerEvent: {}
+[21.212849] (py_pubsub) StdoutLine: {'line': b'running install_scripts\n'}
+[21.304443] (-) TimerEvent: {}
+[21.407157] (-) TimerEvent: {}
+[21.508737] (-) TimerEvent: {}
+[21.543915] (py_pubsub) StdoutLine: {'line': b'Installing listener script to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub\n'}
+[21.595647] (py_pubsub) StdoutLine: {'line': b'Installing talker script to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub\n'}
+[21.608959] (-) TimerEvent: {}
+[21.647133] (py_pubsub) StdoutLine: {'line': b'Installing talker1 script to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub\n'}
+[21.704428] (py_pubsub) StdoutLine: {'line': b"writing list of installed files to '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/install.log'\n"}
+[21.709184] (-) TimerEvent: {}
+[21.745871] (py_pubsub) CommandEnded: {'returncode': 0}
+[21.809343] (-) TimerEvent: {}
+[21.910289] (-) TimerEvent: {}
+[22.011231] (-) TimerEvent: {}
+[22.112390] (-) TimerEvent: {}
+[22.213417] (-) TimerEvent: {}
+[22.314801] (-) TimerEvent: {}
+[22.416276] (-) TimerEvent: {}
+[22.517950] (-) TimerEvent: {}
+[22.619369] (-) TimerEvent: {}
+[22.722287] (-) TimerEvent: {}
+[22.824352] (-) TimerEvent: {}
+[22.909108] (py_pubsub) JobEnded: {'identifier': 'py_pubsub', 'rc': 0}
+[22.938007] (-) TimerEvent: {}
+[22.938927] (-) EventReactorShutdown: {}

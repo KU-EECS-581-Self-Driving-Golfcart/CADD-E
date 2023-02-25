@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import rclpy
+import time
 from rclpy.node import Node
 
 from std_msgs.msg import String
@@ -42,6 +43,7 @@ def main(args=None):
     minimal_publisher = MinimalPublisher()
 
     rclpy.spin(minimal_publisher)
+    time.sleep(3)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically

@@ -1,12 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {tee2,tee3,tee4,tee5,tee6,tee7,tee8,tee9} from '../Data/tees';
-
 //Buttons Componenet will be used to render the "Next Tee" & "Next Green" Buttons
 const Buttons = (props) => {
-
+  const [data, setData] = useState({}) //Used to inform target locations 
   //incTee is called onClick if the Button is a "Next Tee"
   function incTee() {
-
     if(props.validNextTee && !props.isGo) //Ensure that incramenting the tee is valid
     {
       //Set proper state variables
@@ -65,7 +63,15 @@ const Buttons = (props) => {
         if(props.tee === "silver") props.setNextPosition(tee9.silverPos);
         if(props.tee === "gold") props.setNextPosition(tee9.goldPos);
       }
-      props.teeOrGreen = 0; //Set 0 to signal that the current target is a Tee
+      props.setTeeOrGreen(0); //Set 0 to signal that the current target is a Tee
+        fetch("/TargetLoc").then(
+          res => res.json()
+      ).then(
+        data => {
+          setData(data);
+          console.log(data);
+        }
+      )
     }
   }
 
@@ -90,7 +96,7 @@ const Buttons = (props) => {
       if(props.targetGreen===8) props.setNextPosition(props.tee8.greenPos);
       if(props.targetGreen===8) props.setNextPosition(props.tee9.greenPos);
     }
-    props.teeOrGreen = 1; //Set 1 to signal that the current target is a green
+    props.setTeeOrGreen(1); //Set 1 to signal that the current target is a green
   }
 
   let isTee = false;
