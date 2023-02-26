@@ -1,0 +1,25 @@
+[8.744s] Invoking command in '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/src/py_pubsub': PS1=(venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/py_pubsub build --build-base /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build install --record /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/install.log --install-scripts $base/lib/py_pubsub --single-version-externally-managed
+[13.032s] running egg_info
+[13.050s] writing ../../build/py_pubsub/py_pubsub.egg-info/PKG-INFO
+[13.072s] writing dependency_links to ../../build/py_pubsub/py_pubsub.egg-info/dependency_links.txt
+[13.091s] writing entry points to ../../build/py_pubsub/py_pubsub.egg-info/entry_points.txt
+[13.106s] writing requirements to ../../build/py_pubsub/py_pubsub.egg-info/requires.txt
+[13.115s] writing top-level names to ../../build/py_pubsub/py_pubsub.egg-info/top_level.txt
+[13.416s] reading manifest file '../../build/py_pubsub/py_pubsub.egg-info/SOURCES.txt'
+[13.624s] writing manifest file '../../build/py_pubsub/py_pubsub.egg-info/SOURCES.txt'
+[13.632s] running build
+[13.635s] running build_py
+[13.675s] copying py_pubsub/publisher_member_function.py -> /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build/lib/py_pubsub
+[13.812s] running install
+[13.842s] running install_lib
+[13.974s] copying /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build/lib/py_pubsub/publisher_member_function.py -> /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub
+[14.250s] byte-compiling /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub/publisher_member_function.py to publisher_member_function.cpython-38.pyc
+[14.444s] running install_data
+[14.524s] running install_egg_info
+[14.573s] removing '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub-0.0.0-py3.8.egg-info' (and everything under it)
+[14.746s] Copying ../../build/py_pubsub/py_pubsub.egg-info to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py_pubsub-0.0.0-py3.8.egg-info
+[15.488s] running install_scripts
+[15.705s] Installing listener script to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub
+[15.734s] Installing talker script to /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub
+[15.775s] writing list of installed files to '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/install.log'
+[15.803s] Invoked command in '/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/src/py_pubsub' returned '0': PS1=(venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/py_pubsub build --build-base /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build install --record /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/install.log --install-scripts $base/lib/py_pubsub --single-version-externally-managed

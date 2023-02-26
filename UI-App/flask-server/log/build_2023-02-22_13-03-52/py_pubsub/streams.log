@@ -1,0 +1,24 @@
+[5.697s] Invoking command in '/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub': PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub/build --no-deps install_data
+[8.651s] running develop
+[9.599s] running egg_info
+[9.603s] creating py_pubsub.egg-info
+[9.607s] writing py_pubsub.egg-info/PKG-INFO
+[9.634s] writing dependency_links to py_pubsub.egg-info/dependency_links.txt
+[9.649s] writing entry points to py_pubsub.egg-info/entry_points.txt
+[9.662s] writing requirements to py_pubsub.egg-info/requires.txt
+[9.671s] writing top-level names to py_pubsub.egg-info/top_level.txt
+[9.703s] writing manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[9.983s] reading manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[10.214s] writing manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[10.721s] running build_ext
+[10.732s] Creating /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/lib/python3.8/site-packages/site.py
+[10.958s] Creating /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/lib/python3.8/site-packages/py-pubsub.egg-link (link to .)
+[11.084s] 
+[11.090s] Installed /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub
+[11.105s] running install_data
+[11.155s] creating /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/share/ament_index
+[11.169s] creating /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/share/ament_index/resource_index
+[11.185s] creating /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/share/ament_index/resource_index/packages
+[11.275s] copying resource/py_pubsub -> /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/share/ament_index/resource_index/packages
+[11.443s] copying package.xml -> /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/share/py_pubsub
+[11.556s] Invoked command in '/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub' returned '0': PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /mnt/c/Users/Justin/OneDrive/Documents/github/CADD-E/UI-App/flask-server/build/py_pubsub/build --no-deps install_data

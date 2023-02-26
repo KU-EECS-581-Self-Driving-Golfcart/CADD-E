@@ -17,13 +17,125 @@ class Map {
 public:
     std::map<long, int> nd_id_2_idx_map;
 
+    // Constructor
     Map(){
         N = 0;
         init = false;
     }
+
+    // Destructor
     ~Map(){}
 
+    // Initialize graph with .mat files
+    void Init() {
+        // Prevent initalizing twice
+        if(init) {
+            std::cout << "Init called twice. Not initializing again.\n";
+            return;
+        }
+
+        // Create hash map mapping Node IDs to vector indexes
+        InitNodeID2Idx();
+
+        // Reserve space for entries for each node
+        adj_list.resize(N);
+        node_xy.resize(N);
+        node_id.resize(N);
+
+        // Create adjacency list and store node IDs and coordinates in vectors
+        InitGraph();
+
+        init = true;
+    }
+
+    // Return # of nodes in graph
+    int Size() {
+        return N;
+    }
+
+    // Find shortest route from source node to destination node using Dijkstra's algorithm
+    std::vector<std::pair<double, double>> ShortestRoute(long src_id, long dst_id) {
+        // Check that graph has been initialized
+        if(!init) {
+            std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
+            std::vector<std::pair<double, double>> empty_return;
+            return empty_return;
+        }
+
+        // Convert node IDs to indexes
+        int s_idx = nd_id_2_idx_map[src_id];
+        int d_idx = nd_id_2_idx_map[dst_id];
+
+        // Track distance to source node and predecessor node
+        float dist[N];
+        int prev[N];
+
+        // Init distance to source node and predecessor nodes
+        for(int i = 0; i < N; i++) {
+            dist[i] = std::numeric_limits<float>::max();
+            prev[i] = -1;
+        }
+
+        // Distance from source to source is 0
+        dist[s_idx] = 0;
+
+        // Init priority queue to order closer nodes first
+        std::priority_queue<edge_entry_pair, std::vector<edge_entry_pair>, std::greater<edge_entry_pair>> Q;
+
+        // Push source node
+        Q.push(edge_entry_pair(0, s_idx));
+
+        // Iterate and look for shorter paths to target node
+        while(!Q.empty()) {
+            edge_entry_pair U = Q.top();
+            Q.pop();
+
+            // Check if top of priority queue is destination node
+            if(U.second == d_idx) {
+                break;
+            }
+
+            // Iterate through U's edges
+            std::vector<edge_entry_pair> E = adj_list[U.second];
+            for(int i = 0; i < E.size(); i++) {
+                int V = E[i].second;
+                float W = E[i].first;
+
+                // Check for improved path
+                if(dist[V] > dist[U.second] + W) {
+                    dist[V] = dist[U.second] + W;
+                    Q.push(E[i]);
+                    prev[E[i].second] = U.second;
+                }
+            }
+        }
+
+        // Create vector of waypoint coordinates from route indexes
+        std::vector<std::pair<double, double>> route;
+        route.reserve(N);
+
+        // Trace optimal route from target to source
+        int U = d_idx;
+        if(prev[U] != -1 || U == s_idx) {
+            while(U > 0){
+                route.push_back(node_xy[U]);
+                // Stop after adding source node
+                if(U == s_idx) {
+                    break;
+                }
+                U = prev[U];
+            }
+        }
+
+        // Reverse route (D->S) -> (S->D)
+        std::reverse(route.begin(), route.end());
+
+        return route;
+    }
+
+    // Print Adjacency List contents
     void PrintGraph() {
+        // Prevent printing an empty map
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
             return;
@@ -40,112 +152,14 @@ public:
         std::cout << "N = " << adj_list.size() << "\n";
     }
 
-    std::vector<int> ShortestRoute(long src_id, long dst_id) {
-        if(!init) {
-            std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            std::vector<int> empty_return;
-            return empty_return;
-        }
-
-        std::vector<int> route;
-        route.reserve(N);
-        //std::cout << "fetching S, D idxs... ";
-        int s_idx = nd_id_2_idx_map[src_id];
-        int d_idx = nd_id_2_idx_map[dst_id];
-        //std::cout << "Done.\n";
-
-        float dist[N];
-        int prev[N];
-        //std::cout << "Init dist and prev arrays... ";
-        for(int i = 0; i < N; i++) {
-            dist[i] = std::numeric_limits<float>::max();
-            prev[i] = -1;
-        }
-
-        dist[s_idx] = 0;
-
-        //std::cout << "Done.\n";
-
-        std::priority_queue<edge_entry_pair, std::vector<edge_entry_pair>, std::greater<edge_entry_pair>> Q;
-
-        //std::cout << "PQ made\n";
-
-        Q.push(edge_entry_pair(0, s_idx));
-
-        //std::cout << "Inserted (0, " << s_idx << ") to PQ\n";
-
-
-        while(!Q.empty()) {
-            edge_entry_pair U = Q.top();
-            Q.pop();
-
-            //std::cout << "U = " << U.second << "\n";
-
-            if(U.second == d_idx) {
-                //std::cout << U.second << " == " << d_idx << "... breaking\n";
-                break;
-            }
-
-            std::vector<edge_entry_pair> E = adj_list[U.second];
-            //std::cout << "Node " << U.second << " has " << E.size() << " edges.\n";
-            for(int i = 0; i < E.size(); i++) {
-                int V = E[i].second;
-                float W = E[i].first;
-
-                //std::cout << "\t" << i << ") V = " << V << " W = " << W << "\n";
-
-                //std::cout << "\tdist[V] = " << dist[V] << " > dist[" << U.second << "] + W = " << dist[U.second] << " + " << W << " = " << dist[U.second] + W << "\n";
-                //std::cout << "\t->" << (dist[V] > dist[U.second] + W) << "\n";
-                if(dist[V] > dist[U.second] + W) {
-                    dist[V] = dist[U.second] + W;
-                    Q.push(E[i]);
-                    prev[E[i].second] = U.second;
-                }
-            }
-        }
-
-        //std::cout << "Exit while loop\n";
-
-        int U = d_idx;
-        if(prev[U] != -1 || U == s_idx) {
-            while(U > 0){
-                route.push_back(U);
-                if(U == s_idx) {
-                    break;
-                }
-                U = prev[U];
-            }
-        }
-
-        std::reverse(route.begin(), route.end());
-
-        return route;
+    // Return vector of node coordinates
+    std::vector<std::pair<double, double>> NodeXY() {
+        return node_xy;
     }
 
-    void PrintRoute(std::vector<int> route) {
-        if(!init) {
-            std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            return;
-        }
-        for(int i = 0; i < route.size(); i++) {
-            std::cout << route[i] << "\t" << node_id[route[i]] << "\n";
-        }
-    }
-
-    void Init() {
-        if(init) {
-            std::cout << "Init called twice. Not initializing again.\n";
-            return;
-        }
-
-        InitNodeID2Idx();
-        // Reserve space for entries for each node
-        adj_list.resize(N);
-        node_xy.resize(N);
-        node_id.resize(N);
-        InitGraph();
-
-        init = true;
+    // Return vector of node IDs
+    std::vector<long> NodeID() {
+        return node_id;
     }
 
 private:
@@ -163,6 +177,7 @@ private:
     int N; // Number of nodes
     bool init;
 
+    // Build graph using adj_list_mat_file - an adjancency list created in MATLAB
     void InitGraph() {
         // Print all digits of a number
         std::cout << std::fixed;
@@ -236,6 +251,7 @@ private:
         }
     }
 
+    // Build a hashmap to made Node IDs to their indexes in the adjacency list
     void InitNodeID2Idx(){
         // Init file handler for Matlab IO
         matioCpp::File file_handler;
@@ -261,7 +277,6 @@ private:
             nd_id_2_idx_map.insert({static_cast<long>(node_id_ML[idx]), i});
         }
     }
-
 };
 
 #endif // MAP_H
