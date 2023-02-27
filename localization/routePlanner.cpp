@@ -155,45 +155,36 @@ long sig_loc(int hole, int loc) {
         }
 }
 
-R_Tree Init_RTree(Map m) {
+R_Tree Init_RTree(LCC::Map m) {
     R_Tree RT;
     std::vector<std::pair<double, double>> XY = m.NodeXY();
     std::vector<long> ID = m.NodeID();
 
     for(size_t i = 0; i < XY.size(); i++) {
-        RT.insert(Point(XY[i].first, XY[i].second, ID[i]));
+        RT.insert(TreePoint(XY[i].first, XY[i].second, ID[i]));
     }
 
     return RT;
 }
 
-R_Tree Init_RTree_TEST(std::vector<int> route, std::vector<std::pair<double, double>> node_xy, std::vector<long> node_ids) {
-    R_Tree RT;
-
-    for(size_t i = 0; i < route.size(); i++) {
-        int idx = route[i];
-        RT.insert(Point(node_xy[idx].first, node_xy[idx].second, node_ids[idx]));
-    }
-
-    return RT;
-}
-
-void PrintRoute(std::vector<std::pair<double, double>> route) {
-    for(int i = 0; i < route.size(); i++) {
-        std::cout << i << ") " << route[i].first << "\t" << route[i].second << "\n";
+void PrintRoute(std::vector<double> routeX, std::vector<double> routeY) {
+    for(int i = 0; i < routeX.size(); i++) {
+        std::cout << i << ") " << routeX[i] << "\t" << routeY[i] << "\n";
     }
 }
 
 int main() {
-    Map M;
+    LCC::Map M;
     M.Init();
 
-    std::vector<std::pair<double, double>> route(M.Size());
+    std::vector<double> routeX(M.Size());
+    std::vector<double> routeY(M.Size());
 
-    route = M.ShortestRoute(7208400631, 7208400684);
+    std::tie(routeX, routeY) = M.ShortestRoute(7208400631, 7208400684);
 
-	PrintRoute(route);
+	PrintRoute(routeX, routeY);
 
+    //R_Tree RT = Init_RTree(M);
     //R_Tree RT = Init_RTree_TEST(route, M.NodeXY(), M.NodeID());
     
     //RT.print();

@@ -54,11 +54,11 @@ public:
     }
 
     // Find shortest route from source node to destination node using Dijkstra's algorithm
-    std::vector<std::pair<double, double>> ShortestRoute(long src_id, long dst_id) {
+    std::pair<std::vector<double>, std::vector<double>> ShortestRoute(long src_id, long dst_id) {
         // Check that graph has been initialized
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            std::vector<std::pair<double, double>> empty_return;
+            std::pair<std::vector<double>, std::vector<double>> empty_return;
             return empty_return;
         }
 
@@ -111,14 +111,16 @@ public:
         }
 
         // Create vector of waypoint coordinates from route indexes
-        std::vector<std::pair<double, double>> route;
-        route.reserve(N);
+        std::vector<double> routeX, routeY;
+        routeX.reserve(N);
+        routeY.reserve(N);
 
         // Trace optimal route from target to source
         int U = d_idx;
         if(prev[U] != -1 || U == s_idx) {
             while(U > 0){
-                route.push_back(node_xy[U]);
+                routeX.push_back(node_xy[U].first);
+                routeY.push_back(node_xy[U].second);
                 // Stop after adding source node
                 if(U == s_idx) {
                     break;
@@ -128,9 +130,10 @@ public:
         }
 
         // Reverse route (D->S) -> (S->D)
-        std::reverse(route.begin(), route.end());
+        std::reverse(routeX.begin(), routeX.end());
+        std::reverse(routeY.begin(), routeY.end());
 
-        return route;
+        return std::pair<std::vector<double>, std::vector<double>>(routeX, routeY);
     }
 
     // Print Adjacency List contents
