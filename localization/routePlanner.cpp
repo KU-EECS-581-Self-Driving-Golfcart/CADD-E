@@ -187,6 +187,12 @@ int main() {
     //R_Tree RT = Init_RTree(M);
     //R_Tree RT = Init_RTree_TEST(route, M.NodeXY(), M.NodeID());
     
+	R_Tree RT = Init_RTree(M);
+
+	std::cout << "Plot time\n";
+
+	RT.plot();
+
     //RT.print();
 
 

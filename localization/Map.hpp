@@ -12,6 +12,8 @@
 
 typedef std::pair<float, int> edge_entry_pair;
 
+namespace LCC{
+
 class Map {
 
 public:
@@ -97,7 +99,7 @@ public:
 
             // Iterate through U's edges
             std::vector<edge_entry_pair> E = adj_list[U.second];
-            for(int i = 0; i < E.size(); i++) {
+            for(size_t i = 0; i < E.size(); i++) {
                 int V = E[i].second;
                 float W = E[i].first;
 
@@ -143,12 +145,12 @@ public:
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
             return;
         }
-        int adj_list_size = adj_list.size();
+        size_t adj_list_size = adj_list.size();
         // Print entries for each node        
-        for(int i = 0; i < adj_list_size; i++){
+        for(size_t i = 0; i < adj_list_size; i++){
             std::cout << "Node idx: " << i << "\n";
             // Print all entries
-            for(int j = 0; j < adj_list[i].size(); j++) {
+            for(size_t j = 0; j < adj_list[i].size(); j++) {
                 std::cout << "\t" << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
             }
         }
@@ -280,6 +282,6 @@ private:
             nd_id_2_idx_map.insert({static_cast<long>(node_id_ML[idx]), i});
         }
     }
-};
-
+}; // Class Map
+}; // Namespace LCC
 #endif // MAP_H

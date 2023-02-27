@@ -10,3 +10,6 @@
 [submodule "localization/frenet_optimal_trajectory_planner"]
 	path = localization/frenet_optimal_trajectory_planner
 	url = https://github.com/erdos-project/frenet_optimal_trajectory_planner
+[submodule "localization/matio-cpp"]
+	path = localization/matio-cpp
+	url = https://github.com/ami-iit/matio-cpp
