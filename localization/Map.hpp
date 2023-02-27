@@ -12,6 +12,8 @@
 
 typedef std::pair<float, int> edge_entry_pair;
 
+namespace LCC{
+
 class Map {
 
 public:
@@ -54,11 +56,11 @@ public:
     }
 
     // Find shortest route from source node to destination node using Dijkstra's algorithm
-    std::vector<std::pair<double, double>> ShortestRoute(long src_id, long dst_id) {
+    std::pair<std::vector<double>, std::vector<double>> ShortestRoute(long src_id, long dst_id) {
         // Check that graph has been initialized
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            std::vector<std::pair<double, double>> empty_return;
+            std::pair<std::vector<double>, std::vector<double>> empty_return;
             return empty_return;
         }
 
@@ -97,7 +99,7 @@ public:
 
             // Iterate through U's edges
             std::vector<edge_entry_pair> E = adj_list[U.second];
-            for(int i = 0; i < E.size(); i++) {
+            for(size_t i = 0; i < E.size(); i++) {
                 int V = E[i].second;
                 float W = E[i].first;
 
@@ -111,14 +113,16 @@ public:
         }
 
         // Create vector of waypoint coordinates from route indexes
-        std::vector<std::pair<double, double>> route;
-        route.reserve(N);
+        std::vector<double> routeX, routeY;
+        routeX.reserve(N);
+        routeY.reserve(N);
 
         // Trace optimal route from target to source
         int U = d_idx;
         if(prev[U] != -1 || U == s_idx) {
             while(U > 0){
-                route.push_back(node_xy[U]);
+                routeX.push_back(node_xy[U].first);
+                routeY.push_back(node_xy[U].second);
                 // Stop after adding source node
                 if(U == s_idx) {
                     break;
@@ -128,9 +132,10 @@ public:
         }
 
         // Reverse route (D->S) -> (S->D)
-        std::reverse(route.begin(), route.end());
+        std::reverse(routeX.begin(), routeX.end());
+        std::reverse(routeY.begin(), routeY.end());
 
-        return route;
+        return std::pair<std::vector<double>, std::vector<double>>(routeX, routeY);
     }
 
     // Print Adjacency List contents
@@ -140,12 +145,12 @@ public:
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
             return;
         }
-        int adj_list_size = adj_list.size();
+        size_t adj_list_size = adj_list.size();
         // Print entries for each node        
-        for(int i = 0; i < adj_list_size; i++){
+        for(size_t i = 0; i < adj_list_size; i++){
             std::cout << "Node idx: " << i << "\n";
             // Print all entries
-            for(int j = 0; j < adj_list[i].size(); j++) {
+            for(size_t j = 0; j < adj_list[i].size(); j++) {
                 std::cout << "\t" << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
             }
         }
@@ -277,6 +282,6 @@ private:
             nd_id_2_idx_map.insert({static_cast<long>(node_id_ML[idx]), i});
         }
     }
-};
-
+}; // Class Map
+}; // Namespace LCC
 #endif // MAP_H
