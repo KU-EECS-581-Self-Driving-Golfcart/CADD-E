@@ -157,7 +157,7 @@ long sig_loc(int hole, int loc) {
 
 R_Tree Init_RTree(LCC::Map m) {
     R_Tree RT;
-    std::vector<std::pair<double, double>> XY = m.NodeXY();
+    std::vector<std::pair<float, float>> XY = m.NodeXY();
     std::vector<long> ID = m.NodeID();
 
     for(size_t i = 0; i < XY.size(); i++) {
@@ -167,7 +167,7 @@ R_Tree Init_RTree(LCC::Map m) {
     return RT;
 }
 
-void PrintRoute(std::vector<double> routeX, std::vector<double> routeY) {
+void PrintRoute(std::vector<float> routeX, std::vector<float> routeY) {
     for(int i = 0; i < routeX.size(); i++) {
         std::cout << i << ") " << routeX[i] << "\t" << routeY[i] << "\n";
     }
@@ -177,8 +177,8 @@ int main() {
     LCC::Map M;
     M.Init();
 
-    std::vector<double> routeX(M.Size());
-    std::vector<double> routeY(M.Size());
+    std::vector<float> routeX(M.Size());
+    std::vector<float> routeY(M.Size());
 
     std::tie(routeX, routeY) = M.ShortestRoute(7208400631, 7208400684);
 
@@ -188,10 +188,6 @@ int main() {
     //R_Tree RT = Init_RTree_TEST(route, M.NodeXY(), M.NodeID());
     
 	R_Tree RT = Init_RTree(M);
-
-	std::cout << "Plot time\n";
-
-	RT.plot();
 
     //RT.print();
 
