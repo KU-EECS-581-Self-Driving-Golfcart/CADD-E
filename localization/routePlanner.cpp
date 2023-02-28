@@ -167,7 +167,7 @@ R_Tree Init_RTree(LCC::Map m) {
     return RT;
 }
 
-void PrintRoute(std::vector<float> routeX, std::vector<float> routeY) {
+void PrintRoute(std::vector<double> routeX, std::vector<double> routeY) {
     for(int i = 0; i < routeX.size(); i++) {
         std::cout << i << ") " << routeX[i] << "\t" << routeY[i] << "\n";
     }
@@ -177,8 +177,8 @@ int main() {
     LCC::Map M;
     M.Init();
 
-    std::vector<float> routeX(M.Size());
-    std::vector<float> routeY(M.Size());
+    std::vector<double> routeX(M.Size());
+    std::vector<double> routeY(M.Size());
 
     std::tie(routeX, routeY) = M.ShortestRoute(7208400631, 7208400684);
 
