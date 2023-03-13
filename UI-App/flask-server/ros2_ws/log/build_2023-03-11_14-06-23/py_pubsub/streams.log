@@ -1,0 +1,19 @@
+[10.943s] Invoking command in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub': PS1=(venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build --no-deps install_data
+[15.298s] running develop
+[16.899s] running egg_info
+[16.906s] writing py_pubsub.egg-info/PKG-INFO
+[16.921s] writing dependency_links to py_pubsub.egg-info/dependency_links.txt
+[16.935s] writing entry points to py_pubsub.egg-info/entry_points.txt
+[16.945s] writing requirements to py_pubsub.egg-info/requires.txt
+[16.954s] writing top-level names to py_pubsub.egg-info/top_level.txt
+[17.194s] reading manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[17.432s] writing manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[17.951s] running build_ext
+[17.977s] Creating /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages/py-pubsub.egg-link (link to .)
+[18.030s] Installing listener script to /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub
+[18.087s] Installing talker script to /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub
+[18.144s] Installing talker1 script to /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/py_pubsub
+[18.207s] 
+[18.210s] Installed /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub
+[18.220s] running install_data
+[18.360s] Invoked command in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub' returned '0': PS1=(venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build --no-deps install_data

@@ -1,7 +1,12 @@
 import React, {useEffect, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {tee2,tee3,tee4,tee5,tee6,tee7,tee8,tee9} from '../Data/tees';
+export const selectFilter = state => state.filter;
+
 //Buttons Componenet will be used to render the "Next Tee" & "Next Green" Buttons
 const Buttons = (props) => {
+  const targetTee = props.targetTee;
+  const dispatch = props.dispatch;
   const [data, setData] = useState({}) //Used to inform target locations 
   //incTee is called onClick if the Button is a "Next Tee"
   function incTee() {
@@ -64,19 +69,22 @@ const Buttons = (props) => {
         if(props.tee === "gold") props.setNextPosition(tee9.goldPos);
       }
       props.setTeeOrGreen(0); //Set 0 to signal that the current target is a Tee
-        fetch("/TargetLoc").then(
+        fetch("/TargetLoc", {
+          'method': "POST",
+          headers: {
+            "Content-Type":"application/json",
+          },
+          body:JSON.stringify(props.targetTee)
+        }).then(
           res => res.json()
-      ).then(
-        data => {
-          setData(data);
-          console.log(data);
-        }
-      )
+      ).then(response => response.json())
+      .catch(error => console.log(error))
     }
   }
 
   //incTee is called onClick if the Button is a "Next Tee"
   function incGreen() {
+    console.log(props.validGreenTee)
     if(props.validGreenTee && !props.isGo) //Ensure that incramenting the green is valid
     {
       //Set proper state variables
@@ -95,8 +103,8 @@ const Buttons = (props) => {
       if(props.targetGreen===7) props.setNextPosition(props.tee7.greenPos);
       if(props.targetGreen===8) props.setNextPosition(props.tee8.greenPos);
       if(props.targetGreen===8) props.setNextPosition(props.tee9.greenPos);
+      props.setTeeOrGreen(1); //Set 1 to signal that the current target is a green
     }
-    props.setTeeOrGreen(1); //Set 1 to signal that the current target is a green
   }
 
   let isTee = false;

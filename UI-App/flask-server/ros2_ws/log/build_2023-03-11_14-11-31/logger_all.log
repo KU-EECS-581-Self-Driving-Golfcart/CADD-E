@@ -1,0 +1,134 @@
+[2.658s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[2.659s] DEBUG:colcon:Parsed command line arguments: Namespace(allow_overriding=[], ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=None, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=False, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f91315eefd0>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=8, paths=None, symlink_install=True, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f91315eefd0>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f9131579490>)
+[3.006s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[3.007s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[3.007s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[3.008s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[3.009s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[3.009s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[3.010s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws'
+[3.015s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[3.015s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[3.016s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[3.018s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[3.018s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[3.019s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[3.019s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[3.020s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[3.020s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[3.064s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[3.064s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[3.065s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[3.066s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[3.067s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[3.074s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[3.075s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[3.078s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[3.086s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[3.086s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[3.090s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[3.100s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[3.101s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[3.103s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[3.109s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[3.110s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[3.112s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[3.117s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[3.117s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[3.120s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[3.120s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[3.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[3.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[3.133s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[3.134s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[3.137s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[3.139s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[3.140s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[3.152s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extensions ['ignore', 'ignore_ament_install']
+[3.153s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extension 'ignore'
+[3.156s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extension 'ignore_ament_install'
+[3.164s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extensions ['colcon_pkg']
+[3.164s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extension 'colcon_pkg'
+[3.168s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extensions ['colcon_meta']
+[3.169s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extension 'colcon_meta'
+[3.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extensions ['ros']
+[3.174s] Level 1:colcon.colcon_core.package_identification:_identify(src/py_pubsub) by extension 'ros'
+[3.211s] DEBUG:colcon.colcon_core.package_identification:Package 'src/py_pubsub' with type 'ros.ament_python' and name 'py_pubsub'
+[3.212s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[3.213s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[3.214s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[3.214s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[3.215s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[3.544s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[3.544s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[3.669s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 1 installed packages in /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install
+[3.778s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 1 installed packages in /mnt/c/Users/Justin/OneDrive/Documents/GitHub/CADD-E/UI-App/flask-server/install
+[3.802s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 256 installed packages in /opt/ros/foxy
+[3.804s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[3.948s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'cmake_args' from command line to 'None'
+[3.949s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'cmake_target' from command line to 'None'
+[3.950s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[3.950s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'cmake_clean_cache' from command line to 'False'
+[3.951s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'cmake_clean_first' from command line to 'False'
+[3.951s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'cmake_force_configure' from command line to 'False'
+[3.952s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'ament_cmake_args' from command line to 'None'
+[3.953s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'catkin_cmake_args' from command line to 'None'
+[3.954s] Level 5:colcon.colcon_core.verb:set package 'py_pubsub' build argument 'catkin_skip_building_tests' from command line to 'False'
+[3.954s] DEBUG:colcon.colcon_core.verb:Building package 'py_pubsub' with the following arguments: {'ament_cmake_args': None, 'build_base': '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub', 'merge_install': False, 'path': '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/src/py_pubsub', 'symlink_install': True, 'test_result_base': None}
+[3.955s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[3.960s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[3.960s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/src/py_pubsub' with build type 'ament_python'
+[3.961s] Level 1:colcon.colcon_core.shell:create_environment_hook('py_pubsub', 'ament_prefix_path')
+[4.020s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[4.021s] INFO:colcon.colcon_core.shell:Creating environment hook '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/hook/ament_prefix_path.ps1'
+[4.061s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/hook/ament_prefix_path.dsv'
+[4.101s] INFO:colcon.colcon_core.shell:Creating environment hook '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/hook/ament_prefix_path.sh'
+[4.144s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.145s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[8.139s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/src/py_pubsub'
+[8.141s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[8.142s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[14.840s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub': PS1=(venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build --no-deps install_data
+[22.726s] Level 1:colcon.colcon_core.shell:create_environment_hook('py_pubsub', 'pythonpath_develop')
+[22.728s] INFO:colcon.colcon_core.shell:Creating environment hook '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/share/py_pubsub/hook/pythonpath_develop.ps1'
+[22.731s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub' returned '0': PS1=(venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/prefix_override:/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/build --no-deps install_data
+[22.771s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/share/py_pubsub/hook/pythonpath_develop.dsv'
+[22.814s] INFO:colcon.colcon_core.shell:Creating environment hook '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/build/py_pubsub/share/py_pubsub/hook/pythonpath_develop.sh'
+[22.911s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub' for CMake module files
+[23.096s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub' for CMake config files
+[23.404s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib'
+[23.416s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/bin'
+[23.419s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/pkgconfig/py_pubsub.pc'
+[23.424s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/lib/python3.8/site-packages'
+[23.436s] Level 1:colcon.colcon_core.shell:create_environment_hook('py_pubsub', 'pythonpath')
+[23.438s] INFO:colcon.colcon_core.shell:Creating environment hook '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/hook/pythonpath.ps1'
+[23.479s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/hook/pythonpath.dsv'
+[23.523s] INFO:colcon.colcon_core.shell:Creating environment hook '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/hook/pythonpath.sh'
+[23.568s] Level 1:colcon.colcon_core.environment:checking '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/bin'
+[23.572s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(py_pubsub)
+[23.576s] INFO:colcon.colcon_core.shell:Creating package script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/package.ps1'
+[23.609s] INFO:colcon.colcon_core.shell:Creating package descriptor '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/package.dsv'
+[23.644s] INFO:colcon.colcon_core.shell:Creating package script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/package.sh'
+[23.682s] INFO:colcon.colcon_core.shell:Creating package script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/package.bash'
+[23.715s] INFO:colcon.colcon_core.shell:Creating package script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/py_pubsub/package.zsh'
+[23.749s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/py_pubsub/share/colcon-core/packages/py_pubsub)
+[23.778s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[23.780s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[23.781s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[23.782s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[24.004s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[24.005s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[24.006s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[24.006s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[24.014s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.Notifications was not provided by any .service files
+[24.015s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[24.017s] INFO:colcon.colcon_core.shell:Creating prefix script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/local_setup.ps1'
+[24.033s] INFO:colcon.colcon_core.shell:Creating prefix util module '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/_local_setup_util_ps1.py'
+[24.048s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/setup.ps1'
+[24.117s] INFO:colcon.colcon_core.shell:Creating prefix script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/local_setup.sh'
+[24.132s] INFO:colcon.colcon_core.shell:Creating prefix util module '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/_local_setup_util_sh.py'
+[24.147s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/setup.sh'
+[24.215s] INFO:colcon.colcon_core.shell:Creating prefix script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/local_setup.bash'
+[24.230s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/setup.bash'
+[24.295s] INFO:colcon.colcon_core.shell:Creating prefix script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/local_setup.zsh'
+[24.311s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/mnt/c/Users/Justin/OneDrive/Documents/Github/CADD-E/UI-App/flask-server/ros2_ws/install/setup.zsh'

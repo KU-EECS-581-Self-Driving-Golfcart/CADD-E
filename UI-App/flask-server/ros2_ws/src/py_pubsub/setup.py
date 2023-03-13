@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
              'talker = py_pubsub.publisher_member_function:main',
              'talker1 = py_pubsub.publisher1_member_function:main',
+             'talker2 = py_pubsub.publisher2_member_function:main',
              'listener = py_pubsub.subscriber_member_function:main',
         ],
     },
