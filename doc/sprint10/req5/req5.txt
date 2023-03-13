@@ -1,0 +1,1 @@
+In order to convert local objects to the global map, we need to get the location of the cart via gps add that to the local object location based on the direction the robot is facing. This week we tired to get all of our code base loaded on to the raspberry pi; however, there was an issue with the camera compatibility, so this code will hopefully be able to be tested over break.
