@@ -1,4 +1,5 @@
 .DS_STORE
+.vscode/
 localization/gps/log
 localization/gps/out
 localization/imu/log
