@@ -47,6 +47,18 @@ public:
         // Create adjacency list and store node IDs and coordinates in vectors
         InitGraph();
 
+        adj_list[8][0].second = 9;
+        adj_list[97][0].second = 98;
+        adj_list[217][0].second = 218;
+        adj_list[284][0].second = 285;
+        adj_list[323][0].second = 324;
+        adj_list[576][0].second = 577;
+        adj_list[781][0].second = 782;
+        adj_list[810][0].second = 811;
+        adj_list[1254][0].second = 1255;
+        adj_list[1255][1].second = 1256;
+        adj_list[1304][0].second = 1305;
+
         init = true;
     }
 
@@ -103,6 +115,8 @@ public:
                 int V = E[i].second;
                 float W = E[i].first;
 
+                //std::cout << "U = " << U.second << " V = " << V << "\n";
+
                 // Check for improved path
                 if(dist[V] > dist[U.second] + W) {
                     dist[V] = dist[U.second] + W;
@@ -138,6 +152,34 @@ public:
         return std::pair<std::vector<double>, std::vector<double>>(routeX, routeY);
     }
 
+    // Print Adjacency List contents between (and including) upper and lower bounds
+    void PrintGraphSlice(size_t lower_bound, size_t upper_bound) {
+        // Prevent printing an empty map
+        if(!init) {
+            std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
+            return;
+        }
+
+        size_t adj_list_size = adj_list.size();
+        if (upper_bound > adj_list_size) {
+            upper_bound = adj_list_size;
+        }
+
+        if(lower_bound < 0) {
+            lower_bound = 0;
+        }
+
+        // Print entries for each node        
+        for(size_t i = lower_bound; i < upper_bound; i++){
+            std::cout << "Node idx: " << i << "\n";
+            // Print all entries
+            for(size_t j = 0; j < adj_list[i].size(); j++) {
+                std::cout << "\t" << j << ") " << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
+            }
+        }
+        std::cout << "N = " << adj_list.size() << "\n";
+    }
+
     // Print Adjacency List contents
     void PrintGraph() {
         // Prevent printing an empty map
@@ -145,13 +187,15 @@ public:
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
             return;
         }
+
         size_t adj_list_size = adj_list.size();
+
         // Print entries for each node        
         for(size_t i = 0; i < adj_list_size; i++){
             std::cout << "Node idx: " << i << "\n";
             // Print all entries
             for(size_t j = 0; j < adj_list[i].size(); j++) {
-                std::cout << "\t" << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
+                std::cout << "\t" << j << ") " << adj_list[i][j].second << "\t" << adj_list[i][j].first << "\n";
             }
         }
         std::cout << "N = " << adj_list.size() << "\n";
@@ -169,11 +213,11 @@ public:
 
 private:
     // File names relative to build directory
-    const std::string nodes_mat_file = "../maps/lcc_nodes_localized.mat";
+    const std::string nodes_mat_file = "../localization/maps/lcc_nodes_localized.mat";
     const std::string nodes_mat_var = "nodes";
-    const std::string connected_mat_file = "../maps/lcc_connected.mat";
+    const std::string connected_mat_file = "../localization/maps/lcc_connected.mat";
     const std::string connected_mat_var = "connected";
-    const std::string adj_list_mat_file = "../maps/lcc_adj_list_localized.mat";
+    const std::string adj_list_mat_file = "../localization/maps/lcc_adj_list_localized.mat";
     const std::string adj_list_mat_var = "adjacency_list";
 
     std::vector<std::vector<edge_entry_pair>> adj_list; // Graph representation
