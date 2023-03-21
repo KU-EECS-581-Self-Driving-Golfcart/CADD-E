@@ -5,3 +5,10 @@ localization/imu/log
 localization/imu/out
 localization/build
 deep_racer/deepracer_api/deepracer-config.yaml
+
+UI-App/flask-server/build
+UI-App/flask-server/install
+UI-App/flask-server/log
+UI-App/flask-server/ros2_ws/build
+UI-App/flask-server/ros2_ws/install
+UI-App/flask-server/ros2_ws/log
