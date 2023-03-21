@@ -6,11 +6,13 @@ Computer Science capstone project at the University of Kansas - an autonomous go
 ```console
 # Clone the repository
 git clone --recurse-submodules https://github.com/KU-EECS-581-Self-Driving-Golfcart/CADD-E
+
 # Enter the repository
 cd CADD-E
+
+# Setup code for execution (this only needs to be done once)
 chmod +x setup.sh
-# Update submodules to latest versions
-git submodule update --init
+./setup.sh
 ```
 
 ## Architecture
