@@ -1,0 +1,9 @@
+mv src/localization/frenet_optimal_trajectory_planner/src/Car/* src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
+rmdir src/localization/frenet_optimal_trajectory_planner/src/Car
+mv src/localization/frenet_optimal_trajectory_planner/src/CubicSpline/* src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
+rmdir src/localization/frenet_optimal_trajectory_planner/src/CubicSpline
+mv src/localization/frenet_optimal_trajectory_planner/src/Obstacle/* src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
+rmdir src/localization/frenet_optimal_trajectory_planner/src/Obstacle
+mv src/localization/frenet_optimal_trajectory_planner/src/Polynomials/* src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
+rmdir src/localization/frenet_optimal_trajectory_planner/src/Polynomials
+mv src/localization/frenet_optimal_trajectory_planner/src/utils.h src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
