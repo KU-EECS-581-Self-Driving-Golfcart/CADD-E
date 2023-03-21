@@ -1,15 +1,15 @@
 [submodule "localization/openstreetmap"]
-	path = localization/openstreetmap
+	path = src/localization/openstreetmap
 	url = https://github.com/cskroonenberg/openstreetmap
 [submodule "deepracer_api"]
 	path = deep_racer/deepracer_api
 	url = https://github.com/cskroonenberg/deepracer_api
 [submodule "localization/R_Tree"]
-	path = localization/R_Tree
+	path = src/localization/R_Tree
 	url = https://github.com/cskroonenberg/R_Tree
 [submodule "localization/frenet_optimal_trajectory_planner"]
-	path = localization/frenet_optimal_trajectory_planner
+	path = src/localization/frenet_optimal_trajectory_planner
 	url = https://github.com/erdos-project/frenet_optimal_trajectory_planner
 [submodule "localization/matio-cpp"]
-	path = localization/matio-cpp
+	path = src/localization/matio-cpp
 	url = https://github.com/ami-iit/matio-cpp
