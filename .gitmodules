@@ -10,3 +10,6 @@
 [submodule "localization/matio-cpp"]
 	path = src/localization/matio-cpp
 	url = https://github.com/ami-iit/matio-cpp
+[submodule "cadd_e_interface"]
+	path = cadd_e_interface
+	url = https://github.com/KU-EECS-581-Self-Driving-Golfcart/cadd_e_interface
