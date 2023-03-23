@@ -1,3 +1,4 @@
+# Restructure frenet submodule
 mv src/localization/frenet_optimal_trajectory_planner/src/Car/* src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
 rmdir src/localization/frenet_optimal_trajectory_planner/src/Car
 mv src/localization/frenet_optimal_trajectory_planner/src/CubicSpline/* src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/.
