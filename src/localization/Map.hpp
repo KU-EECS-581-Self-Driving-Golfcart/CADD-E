@@ -213,11 +213,11 @@ public:
 
 private:
     // File names relative to build directory
-    const std::string nodes_mat_file = "../localization/maps/lcc_nodes_localized.mat";
+    const std::string nodes_mat_file = "src/localization/maps/lcc_nodes_localized.mat";
     const std::string nodes_mat_var = "nodes";
-    const std::string connected_mat_file = "../localization/maps/lcc_connected.mat";
+    const std::string connected_mat_file = "src/localization/maps/lcc_connected.mat";
     const std::string connected_mat_var = "connected";
-    const std::string adj_list_mat_file = "../localization/maps/lcc_adj_list_localized.mat";
+    const std::string adj_list_mat_file = "src/localization/maps/lcc_adj_list_localized.mat";
     const std::string adj_list_mat_var = "adjacency_list";
 
     std::vector<std::vector<edge_entry_pair>> adj_list; // Graph representation
