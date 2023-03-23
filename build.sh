@@ -1,8 +1,8 @@
 # Build interfaces
 source /opt/ros/foxy/setup.bash
 
-cd cadd_e_interfaces
-colcon build --packages-select cadd_e_interfaces
+cd cadd_e_interface
+colcon build --packages-select cadd_e_interface
 . install/setup.bash
 
 cd ..
