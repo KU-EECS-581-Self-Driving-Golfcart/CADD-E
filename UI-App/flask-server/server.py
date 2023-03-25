@@ -28,7 +28,7 @@ def TargetLoc():
     return {}
 
 # Members API Route
-@app.route("/StopCommand")
+@app.route("/GoCommand")
 def StopCommand():
     #print("Testerrrrr")
     #return {"members": ["Member1", "Member2", "Member3"]}
@@ -37,7 +37,7 @@ def StopCommand():
     os.system('ros2 run py_pubsub talker1') 
     return {}
 
-@app.route("/GoCommand")
+@app.route("/StopCommand")
 def GoCommand():
     #print("Testerrrrr")
     #return {"members": ["Member1", "Member2", "Member3"]}

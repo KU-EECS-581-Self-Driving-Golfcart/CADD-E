@@ -16,22 +16,22 @@ from time import sleep
 
 import rclpy
 
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 
 
 
 def main(args=None):
   rclpy.init(args=args)
 
-  node = rclpy.create_node('minimal_publisher')
+  node = rclpy.create_node('Stop_Publisher')
 
-  publisher = node.create_publisher(String, 'topic', 10)
+  publisher = node.create_publisher(Bool, 'IsGO', 10)
 
-  msg = String()
+  msg = Bool()
   send = True
   i = 0
   while rclpy.ok():
-    msg.data = 'Received GO command'
+    msg.data = False
     i += 1
     #node.get_logger().info('Publishing: "%s"' % msg.data)
     if send:
