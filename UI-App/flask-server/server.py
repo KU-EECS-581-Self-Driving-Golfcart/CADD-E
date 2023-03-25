@@ -24,7 +24,7 @@ def TargetLoc():
     #exec("ros2 run py_pubsub talker")
     #return subprocess.Popen("echo swag", shell=True, stdout=subprocess.PIPE).stdout.read()
     #os.system('ros2 run py_pubsub listener')
-    os.system('ros2 run py_pubsub talker --ros-args -p teeInfo:=' +str(targetTee)+str(teeLoc))
+    os.system('ros2 run py_pubsub tee_publisher --ros-args -p teeInfo:=' +str(targetTee)+str(teeLoc))
     return {}
 
 # Members API Route
@@ -34,7 +34,7 @@ def StopCommand():
     #return {"members": ["Member1", "Member2", "Member3"]}
     #exec("ros2 run py_pubsub talker")
     #return subprocess.Popen("echo swag", shell=True, stdout=subprocess.PIPE).stdout.read()
-    os.system('ros2 run py_pubsub talker1') 
+    os.system('ros2 run py_pubsub go_publisher') 
     return {}
 
 @app.route("/StopCommand")
@@ -43,7 +43,7 @@ def GoCommand():
     #return {"members": ["Member1", "Member2", "Member3"]}
     #exec("ros2 run py_pubsub talker")
     #return subprocess.Popen("echo swag", shell=True, stdout=subprocess.PIPE).stdout.read()
-    os.system('ros2 run py_pubsub talker2') 
+    os.system('ros2 run py_pubsub stop_publisher') 
     return {}
 
 if __name__ == "__main__":
