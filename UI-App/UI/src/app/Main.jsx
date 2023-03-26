@@ -8,12 +8,60 @@ import Buttons from '../components/Buttons.jsx';
 import StopButton from '../components/StopButton.jsx';
 import Map from '../components/Map.jsx';
 import data from '../test_routeXY_T.json';
+import ROSLIB from 'roslib'
+
 import GoButton from '../components/GoButton.jsx';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {incrementCurrent, incrementGreen, incrementTarget} from "../components/teeInfoSlice"
+export let teePub;
 
 const Main = (props) => {
+
+  
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+
+  teePub = new ROSLIB.Topic({
+    ros : ros,
+    name : '/teeInfo',
+    messageType : 'std_msgs/String'
+  });
+
+  let goPub = new ROSLIB.Topic({
+    ros : ros,
+    name : '/IsGO',
+    messageType : 'std_msgs/Bool'
+  });
+
+
+  var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/route',
+    messageType : 'std_msgs/String'
+  });
+
+  listener.subscribe(function(message) {
+    console.log('Received message on ' + listener.name + ': ' + message.data);
+    listener.unsubscribe();
+  });
+
+
+  
+
   const dispatch = useDispatch();
   const currentTee = useSelector(state => state.teeInfo.currentTee);
   const targetGreen = useSelector(state => state.teeInfo.targetGreen);
@@ -87,16 +135,25 @@ function go() {
   }
   else
   {
-    fetch("/GoCommand").then(
-      res => res.json()
-      ).then(
-        data => {
-          setData(data);
-          console.log(data);
-        }
-      )
+    // cmdVel.publish(teeInfo);
+
+
+    // fetch("/GoCommand").then(
+    //   res => res.json()
+    //   ).then(
+    //     data => {
+    //       setData(data);
+    //       console.log(data);
+    //     }
+    //   )
+
+
     //Hide the Go button and display the stop button. Start the "speed" timer
     setIsGo(!isGo); 
+    var changeGo = new ROSLIB.Message({
+      data: isGo
+    });
+    goPub.publish(changeGo);
     setIsActive(!isActive)
     startTimer();
     dispatch(incrementCurrent());
@@ -122,14 +179,18 @@ function stop() {
   setIsGo(!isGo)
   setValidTarget(!validTarget)
   stopTimer();
-  fetch("/StopCommand").then(
-    res => res.json()
-).then(
-  data => {
-    setData(data);
-    console.log(data);
-  }
-)
+//   fetch("/StopCommand").then(
+//     res => res.json()
+// ).then(
+//   data => {
+//     setData(data);
+//     console.log(data);
+//   }
+// )
+var changeGo = new ROSLIB.Message({
+  data: isGo
+});
+goPub.publish(changeGo);
   setIsActive(!isActive)
   //Set the next positions and route
   setCurrentPosition(nextPosition)
@@ -142,10 +203,10 @@ function stop() {
 
 
   //Obj information that is used to communicate route intentions 
-  let obj = {
-    teeBox: useLocation().state.state.tee,
-    target: teeOrGreen
-  }
+  // let obj = {
+  //   teeBox: useLocation().state.state.tee,
+  //   target: teeOrGreen
+  // }
 
 //Download the the obj route data. Ultimately will be send to Route planner to determine a suitable route
 const handleSaveToPC = jsonData => {
@@ -173,4 +234,5 @@ const handleSaveToPC = jsonData => {
     </div>
   )
 }
+
 export default Main

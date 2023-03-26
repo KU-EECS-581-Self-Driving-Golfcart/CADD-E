@@ -3,6 +3,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import {tee1,tee2,tee3,tee4,tee5,tee6,tee7,tee8,tee9} from '../Data/tees';
 import { setTeeOrGreen } from './teeInfoSlice';
 import { useLocation } from 'react-router-dom'
+import ROSLIB from 'roslib'
+import {teePub} from '../app/Main'
+
 export const selectFilter = state => state.filter;
 
 //Buttons Componenet will be used to render the "Next Tee" & "Next Green" Buttons
@@ -82,21 +85,25 @@ const Buttons = (props) => {
         if(props.tee === "gold") props.setNextPosition(tee9.goldPos);
       }
       dispatch(setTeeOrGreen) //Set 0 to signal that the current target is a Tee
-      let obj = {
-        teeBox: targetTee+1,
-        type: teeType
-      }
-      console.log(obj);
-        fetch("/TargetLoc", {
-          'method': "POST",
-          headers: {
-            "Content-Type":"application/json",
-          },
-          body:JSON.stringify(obj)
-        }).then(
-          res => res.json()
-      ).then(response => response.json())
-      .catch(error => console.log(error))
+      // let obj = {
+      //   teeBox: targetTee+1,
+      //   type: teeType
+      // }
+      var teeInfo = new ROSLIB.Message({
+        data: targetTee+1 + teeType 
+      });
+      teePub.publish(teeInfo);
+      // console.log(obj);
+      //   fetch("/TargetLoc", {
+      //     'method': "POST",
+      //     headers: {
+      //       "Content-Type":"application/json",
+      //     },
+      //     body:JSON.stringify(obj)
+      //   }).then(
+      //     res => res.json()
+      // ).then(response => response.json())
+      // .catch(error => console.log(error))
     }
   }
 
@@ -121,22 +128,37 @@ const Buttons = (props) => {
       if(targetGreen===8) props.setNextPosition(tee9.greenPos);
       dispatch(setTeeOrGreen);
 
+      // var cmdVel = new ROSLIB.Topic({
+      //   ros : ros,
+      //   name : '/teeInfo',
+      //   messageType : 'std_msgs/String'
+      // });
+    
+      // var twist = new ROSLIB.Message({
+      //   data: "Hello, world!"
+      //     }    );
+      // cmdVel.publish(twist);
 
-      let obj = {
-        teeBox: targetTee,
-        type: 'H'
-      }
-      console.log(obj);
-        fetch("/TargetLoc", {
-          'method': "POST",
-          headers: {
-            "Content-Type":"application/json",
-          },
-          body:JSON.stringify(obj)
-        }).then(
-          res => res.json()
-      ).then(response => response.json())
-      .catch(error => console.log(error))
+
+      // let obj = {
+      //   teeBox: targetTee,
+      //   type: 'H'
+      // }
+      var teeInfo = new ROSLIB.Message({
+        data: targetTee + 'H' 
+      });
+      teePub.publish(teeInfo);
+      // console.log(obj);
+      //   fetch("/TargetLoc", {
+      //     'method': "POST",
+      //     headers: {
+      //       "Content-Type":"application/json",
+      //     },
+      //     body:JSON.stringify(obj)
+      //   }).then(
+      //     res => res.json()
+      // ).then(response => response.json())
+      // .catch(error => console.log(error))
     }
   }
 
@@ -144,8 +166,9 @@ const Buttons = (props) => {
   if(props.name === "Next Teebox") isTee = true;
 
   return (
-      //Render the proper button according to the isTee variable that was set through the name state. 
+    <div>
       <input style={{cursor: "pointer"}} onClick={isTee ? incTee : incGreen} type="submit" className='bg-[#3E3B3B] text-white py-4 w-[275px] rounded-xl shadow-lg text-3xl' value={props.name}></input>
+    </div>
   )
 }
 
