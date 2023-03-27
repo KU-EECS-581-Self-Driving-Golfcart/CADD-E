@@ -22,17 +22,17 @@ class Telemetry {
     std::chrono::milliseconds imu_last_updated;
 
     Telemetry() {}
-
-    start() {
-        imu_last_updated = std::chrono::system_clock::now().time_since_epoch();
-    }
-
     ~Telemetry() {}
 
-    update_imu(float new_acc_x, float new_acc_y, float new_acc_z, float new_heading, std::chrono::milliseconds record_time) {
-        vel_x = vel_x + new_acc_x*1000*(record_time - imu_last_updated);
-        vel_y = vel_y + new_acc_y*1000*(record_time - imu_last_updated);
-        vel_z = vel_z + new_acc_z*1000*(record_time - imu_last_updated);
+    void start() {
+        imu_last_updated = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    }
+
+
+    void update_imu(float new_acc_x, float new_acc_y, float new_acc_z, float new_heading, std::chrono::milliseconds record_time) {
+        vel_x = vel_x+ new_acc_x*1000*(record_time - imu_last_updated).count();
+        vel_y = vel_y+ new_acc_y*1000*(record_time - imu_last_updated).count();
+        vel_z = vel_z+ new_acc_z*1000*(record_time - imu_last_updated).count();
         acc_x = new_acc_x;
         acc_y = new_acc_y;
         acc_z = new_acc_z;
@@ -41,10 +41,5 @@ class Telemetry {
     }
 
 };
-
-class Acceleration {
-    public:
-    time 
-}
 
 #endif // TELEMETRY_H

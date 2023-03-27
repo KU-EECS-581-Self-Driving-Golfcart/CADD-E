@@ -8,9 +8,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-//#include "r_tree.h" // TODO: include
-//#include "waypoint.h" // TODO: include
-
 typedef std::pair<float, int> edge_entry_pair;
 
 namespace LCC{
