@@ -3,6 +3,7 @@
 #include <map>
 #include <limits>
 #include <queue>
+#include <cmath>
 
 #ifndef MAP_H
 #define MAP_H
@@ -36,6 +37,8 @@ public:
             return;
         }
 
+        std::tie(local_origin_x, local_origin_y) = latlon2local(38.9753690, -95.2690418);
+
         // Create hash map mapping Node IDs to vector indexes
         InitNodeID2Idx();
 
@@ -68,11 +71,11 @@ public:
     }
 
     // Find shortest route from source node to destination node using Dijkstra's algorithm
-    std::pair<std::vector<double>, std::vector<double>> ShortestRoute(long src_id, long dst_id) {
+    std::pair<std::vector<float>, std::vector<float>> ShortestRoute(long src_id, long dst_id) {
         // Check that graph has been initialized
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            std::pair<std::vector<double>, std::vector<double>> empty_return;
+            std::pair<std::vector<float>, std::vector<float>> empty_return;
             return empty_return;
         }
 
@@ -127,7 +130,7 @@ public:
         }
 
         // Create vector of waypoint coordinates from route indexes
-        std::vector<double> routeX, routeY;
+        std::vector<float> routeX, routeY;
         routeX.reserve(N);
         routeY.reserve(N);
 
@@ -149,7 +152,7 @@ public:
         std::reverse(routeX.begin(), routeX.end());
         std::reverse(routeY.begin(), routeY.end());
 
-        return std::pair<std::vector<double>, std::vector<double>>(routeX, routeY);
+        return std::pair<std::vector<float>, std::vector<float>>(routeX, routeY);
     }
 
     // Print Adjacency List contents between (and including) upper and lower bounds
@@ -211,20 +214,37 @@ public:
         return node_id;
     }
 
+    // Convert a global coordinate point to a localized system
+    std::pair<float, float> latlon2local(float lat, float lon) {
+        // Convert degrees to radians (0.0174533 = PI/180 degrees)
+        float lat_rad = lat * 0.0174533;
+        float lon_rad = lon * 0.0174533;
+
+        const int R = 6378100; // Radius of Earth in Meters
+
+        float global_x_cart = R * cos(lat_rad) * cos(lon_rad);
+
+        float global_y_cart = R * cos(lat_rad) * sin(lon_rad);
+
+        return std::pair<float, float>(global_x_cart - local_origin_x, global_y_cart - local_origin_y);
+    }
+
 private:
     // File names relative to build directory
-    const std::string nodes_mat_file = "src/localization/maps/lcc_nodes_localized.mat";
+    const std::string nodes_mat_file = "src/localization/maps/lcc_nodes.mat";
     const std::string nodes_mat_var = "nodes";
     const std::string connected_mat_file = "src/localization/maps/lcc_connected.mat";
     const std::string connected_mat_var = "connected";
-    const std::string adj_list_mat_file = "src/localization/maps/lcc_adj_list_localized.mat";
+    const std::string adj_list_mat_file = "src/localization/maps/lcc_adj_list.mat";
     const std::string adj_list_mat_var = "adjacency_list";
 
     std::vector<std::vector<edge_entry_pair>> adj_list; // Graph representation
     std::vector<std::pair<float, float>> node_xy; // Node coordinates
     std::vector<long> node_id; // Node coordinates
-    int N; // Number of nodes
-    bool init;
+    int N = 0; // Number of nodes
+    bool init = false;
+    float local_origin_x = 0.0;
+    float local_origin_y = 0.0;
 
     // Build graph using adj_list_mat_file - an adjancency list created in MATLAB
     void InitGraph() {
@@ -269,7 +289,8 @@ private:
             // std::cout << "read node_xy\n";
             // std::cout << "x: " << node_xy_ML[idx*2] << "\n";
             // std::cout << "y: " << node_xy_ML[idx*2 + 1] << "\n";
-            node_xy[i] = std::pair<float, float>(node_xy_ML[idx*2], node_xy_ML[idx*2 + 1]);
+            //node_xy[i] = std::pair<float, float>(node_xy_ML[idx*2], node_xy_ML[idx*2 + 1]);
+            node_xy[i] = latlon2local(node_xy_ML[idx*2 + 1], node_xy_ML[idx*2]);
             // std::cout << "read node_id\n";
             node_id[i] = static_cast<long>(node_id_ML[idx]);
 
@@ -326,6 +347,7 @@ private:
             nd_id_2_idx_map.insert({static_cast<long>(node_id_ML[idx]), i});
         }
     }
+
 }; // Class Map
 }; // Namespace LCC
 #endif // MAP_H

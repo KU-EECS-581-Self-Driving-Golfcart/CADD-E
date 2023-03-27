@@ -2,10 +2,12 @@ import React, {useState} from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline} from 'react-leaflet';
 import icon from '../Images/icon.svg';
 import L from 'leaflet';
+import {useSelector} from 'react-redux';
 
 //Map component displays the right-hand side map and will have route and target locations displayed. 
 const Map = (props) => {
-
+  const targetTee = useSelector(state => state.teeInfo.targetTee);
+  const currentTee = useSelector(state => state.teeInfo.currentTee);
     //When the map is clicked, this function will provide the current location of the vehicle. 
     //Eventually, this will be used with the GPS to provide accurate data. 
     function LocationMarker() {
@@ -48,13 +50,13 @@ const Map = (props) => {
        <Polyline color="red" positions={props.routePos}/>
        <Marker position={props.currentPosition} icon={myIcon}>
          <Popup>
-           Hole {props.targetTee}
+           Hole {currentTee}
          </Popup>
        </Marker>
       
        <Marker position={props.nextPosition}>
          <Popup>
-           Hole {props.targetTee+1}
+           Hole {targetTee}
          </Popup>
        </Marker>
        <LocationMarker/>
