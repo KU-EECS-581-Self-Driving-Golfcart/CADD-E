@@ -7,8 +7,7 @@ To satisfy this requirement, I found descriptions of the initial conditions and 
 
 Hyperparameters are constant values that will hold throughout the entire process while initial conditions get updated with each iteration of the control loop.
 
-I set the values for the initial conditions as follows:
- - c
+I set the values for the initial conditions following the same steps taken in the FOT repo
 
 I set the values for the hyperparameters as follows:
  - max_speed: 4 m/s ([source](https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-how-it-works-action-space.html))
