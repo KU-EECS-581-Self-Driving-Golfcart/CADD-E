@@ -1,6 +1,4 @@
 #include "localization/Map.hpp"
-#include "localization/R_Tree/r_tree.h"
-#include "localization/R_Tree/point.h"
 
 #ifndef ROUTE_PLANNER
 #define ROUTE_PLANNER
@@ -158,18 +156,6 @@ long sig_loc(int hole, char loc) {
         }
 }
 
-R_Tree* Init_RTree(LCC::Map m) {
-    R_Tree* RT = new R_Tree();
-    std::vector<std::pair<float, float>> XY = m.NodeXY();
-    std::vector<long> ID = m.NodeID();
-
-    for(size_t i = 0; i < XY.size(); i++) {
-        RT->insert(TreePoint(XY[i].first, XY[i].second, ID[i]));
-    }
-
-    return RT;
-}
-
 void PrintRoute(std::vector<double> routeX, std::vector<double> routeY) {
     for(size_t i = 0; i < routeX.size(); i++) {
         std::cout << i << ") " << routeX[i] << "\t" << routeY[i] << "\n";
@@ -179,27 +165,28 @@ void PrintRoute(std::vector<double> routeX, std::vector<double> routeY) {
 class RoutePlanner {
 	public:
 	LCC::Map m;
-	R_Tree* rt;
 
 	RoutePlanner() {
 		// Read in map
 		m.Init();
-
-		// Init R Tree with map nodes
-		rt = Init_RTree(m);
 	}
 
-	~RoutePlanner() {
-		delete rt;
-	}
+	~RoutePlanner() {}
 
 	std::pair<std::vector<float>, std::vector<float>> ShortestRoute(double lat, double lon, int hole, char loc) {
-		std::pair<float, float> local_coords = m.latlon2local(lat, lon);
-		TreePoint q(local_coords.first, local_coords.second);
-        
-        long s_id = rt->closest_point(q).id;
+		// Localize coordinates
+		float local_x, local_y;
+		std::tie(local_x, local_y) = m.latlon2local(lat, lon);
+
+		// Find closest graph node
+		long s_id = m.closest_wp_id(local_x, local_y);
+		int s_idx = m.nd_id_2_idx_map[s_id];
+		std::cout << "Closest point: ID = " << s_id<< " XY  = [" << m.NodeXY()[s_idx].first << ", " << m.NodeXY()[s_idx].second  << "]\n"; 
+
+		// Find target node
 		long t_id = sig_loc(hole, loc);
 
+		// Return shortest route from source to target
 		return m.ShortestRoute(s_id, t_id);
 	}
 
