@@ -78,6 +78,7 @@ void* spin_executor(void* exec_ptr) {
     std::cout << "Created ROS subscriber thread\n";
     rclcpp::executors::SingleThreadedExecutor* exec = (rclcpp::executors::SingleThreadedExecutor*) exec_ptr;
     exec->spin();
+    return NULL;
 }
 
 int main(int argc, char* argv[]) {
@@ -100,7 +101,7 @@ int main(int argc, char* argv[]) {
     pthread_create(&subscriber_thread, nullptr, spin_executor, (void*) &ros_sub_executor);
 
     // Init route planning and path planning modules
-    PathPlanner pp(2);
+    PathPlanner pp(1);
     RoutePlanner rp;
 
     // Init route and path variables
@@ -111,65 +112,54 @@ int main(int argc, char* argv[]) {
     // Init IMU telemetry tracker
     telem.start();
 
+    // TODO: Remove dummy variable
+    // Hole 1 Gold tee box
+    lat = 38.9777938333;
+    lon = -95.2642973333;
+
+    tgt_hole = 3;     // TODO: Remove dummy variable
+    tgt_loc = 'H';    // TODO: Remove dummy variable
+
     int i = 0;
     while(rclcpp::ok()) {
-        //if(i == 5) {    // TODO: Remove test start
-        //    std::terminate();
-        //    return 0;     // TODO: Remove test start
-        //}               // TODO: Remove test start
-        std::cout << i++ << "\n";
+        if(i == 1) {            // TODO: Remove test start
+            rclcpp::shutdown(); // TODO: Remove test start
+            return 0;           // TODO: Remove test start
+        }                       // TODO: Remove test start
+        std::cout << "Iteration (" << i++ << ")\n";
 
-        lat = 38.977750;  // TODO: Remove dummy variable
-        lon = -95.264365; // TODO: Remove dummy variable
-        tgt_hole = 1;     // TODO: Remove dummy variable
-        tgt_loc = 'H';    // TODO: Remove dummy variable
-        telem.heading = 0.0;  // TODO: Remove dummy variable
-
+        // Localize position from GPS
         std::tie(telem.pos_x, telem.pos_y) = rp.m.latlon2local(lat, lon);
 
-        std::cout << "New coords: [" << telem.pos_x << ", " << telem.pos_y << "] = [" << lat << ", " << lon << "]\n";
-        std::cout << "New telemetry: [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "]\n";
-        std::cout << "Target location: Hole " << tgt_hole << " " << tgt_loc << "\n";
+        std::cout << "Position:   [" << telem.pos_x << ", " << telem.pos_y << "] (local)\n";
+        std::cout << "            [" << lat << ", " << lon << "] (global)\n";
+        std::cout << "Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "]\n";
+        std::cout << "Target loc: [" << tgt_hole << tgt_loc << "]\n";
 
+        // Generate route
         std::tie(routeX, routeY) = rp.ShortestRoute(lat, lon, tgt_hole, tgt_loc);
 
-        // TODO: Remove
-        telem.pos_x = routeX[0];
-        telem.pos_y = routeY[0];
-
-        // TODO: Remove
         std::cout << "route = [\n";
-        for(int i = 0; i < 10; i++) {
+        for(size_t i = 0; i < routeX.size(); i++) {
             std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
         }
         std::cout << "]\n";
-        // std::tie(routeX, routeY) = rp.m.ShortestRoute(7208400605, 7220557245); // Hole 1 black tee to hole 9 green
-    
-        //PrintRoute(routeX, routeY);
 
-        // Path Planning Initial Conditions
-        FrenetInitialConditions fot_ic = pp.generate_ic(telem, routeX.data(), routeY.data(), routeX.size());
+        // Generate path
+        path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
+        //path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
-        path = pp.getPathRegular(fot_ic);
         if(path) {
             //std::cout << "got path\n";
             // TODO: Remove
             std::cout << "path = [\n";
-            for(int i = 0; i < path->x.size(); i++) {
-                std::cout << "\t[" << path->x[i] << ", " << -path->y[i] << "],\n";
+            for(size_t i = 0; i < path->x.size(); i++) {
+                std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
             }
             std::cout << "]\n";
-
-            std::cout << "yaw = [\n";
-            for(int i = 0; i < path->yaw.size(); i++) {
-                std::cout << "\t[" << path->yaw[i]*57.2958  << "],\n";
-            }
-            std::cout << "]\n";
-
         } else {
             std::cout << "no path found\n";
         }
-        return 0;
         // TODO: Convert path to clothoid
     }
     rclcpp::shutdown();

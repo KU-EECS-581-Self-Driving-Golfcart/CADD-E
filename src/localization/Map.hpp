@@ -226,6 +226,31 @@ public:
         return std::pair<float, float>(global_x_cart - local_origin_x, global_y_cart - local_origin_y);
     }
 
+    float distance(float x1, float y1, float x2, float y2) {
+        float x = x1 - x2;
+        float y = y1 - y2;
+        float dist = pow(x, 2) + pow(y, 2);       //calculating Euclidean distance
+        dist = sqrt(dist);                  
+
+        return dist;
+    }
+
+    long closest_wp_id(float x, float y) {
+        float min_distance = std::numeric_limits<float>::max();
+        long id = 0;
+
+        for(size_t i = 0; i < node_xy.size(); i++) {
+            std::pair<float, float> p_xy = node_xy[i];
+            float dist_i = distance(x, y, p_xy.first, p_xy.second);
+            if(dist_i < min_distance) {
+                min_distance = dist_i;
+                id = node_id[i];
+            }
+        }
+
+        return id;
+    }
+
 private:
     // File names relative to build directory
     const std::string nodes_mat_file = "src/localization/maps/lcc_nodes.mat";
@@ -237,7 +262,7 @@ private:
 
     std::vector<std::vector<edge_entry_pair>> adj_list; // Graph representation
     std::vector<std::pair<float, float>> node_xy; // Node coordinates
-    std::vector<long> node_id; // Node coordinates
+    std::vector<long> node_id; // Node IDs
     int N = 0; // Number of nodes
     bool init = false;
     float local_origin_x = 0.0;
