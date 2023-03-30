@@ -13,6 +13,7 @@
 // ROS includes
 #include "rclcpp/rclcpp.hpp"
 #include "cadd_e_interface/msg/gps.hpp"
+#include "cadd_e_interface/msg/route.hpp"
 #include "cadd_e_interface/msg/imu.hpp"
 #include "std_msgs/msg/string.hpp"
 
@@ -62,8 +63,7 @@ class TargetLocationSubscriber : public rclcpp::Node
 {
 	public:
     TargetLocationSubscriber() : Node("target_loc_subscriber") {
-    	subscription_ = this->create_subscription<std_msgs::msg::String>(
-    	"teeInfo", 10, std::bind(&TargetLocationSubscriber::topic_callback, this, _1));
+    	subscription_ = this->create_subscription<std_msgs::msg::String>("teeInfo", 10, std::bind(&TargetLocationSubscriber::topic_callback, this, _1));
     }
   	private:
     void topic_callback(const std_msgs::msg::String::SharedPtr msg) const {
@@ -74,7 +74,37 @@ class TargetLocationSubscriber : public rclcpp::Node
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
 
-void* spin_executor(void* exec_ptr) {
+class RoutePublisher : public rclcpp::Node
+{
+    private:
+        size_t count_;
+        rclcpp::Publisher<cadd_e_interface::msg::Route>::SharedPtr publisher_;
+        std::vector<double> lat_vec;
+        std::vector<double> lon_vec;
+
+    public:
+        RoutePublisher() : Node("route_publisher"), count_(0)
+        {
+            this->publisher_ = this->create_publisher<cadd_e_interface::msg::Route>("route", 1);
+        }
+
+        void publish(int size, std::pair<double, double>* latlon)
+        {
+            // Populate message
+            auto message = cadd_e_interface::msg::Route();
+
+            for(int i = 0; i < size; i++) {
+                message.lat.push_back((latlon + i)->first);
+                message.lon.push_back((latlon + i)->second);
+            }
+            message.route_size = size;
+            std::cout << "Publishing route of size " << message.route_size << "\n";
+            RCLCPP_INFO(this->get_logger(), "Publishing: route of size %d'", message.route_size);
+            this->publisher_->publish(message);
+        }
+};
+
+void* spin_sub_executor(void* exec_ptr) {
     std::cout << "Created ROS subscriber thread\n";
     rclcpp::executors::SingleThreadedExecutor* exec = (rclcpp::executors::SingleThreadedExecutor*) exec_ptr;
     exec->spin();
@@ -89,6 +119,7 @@ int main(int argc, char* argv[]) {
     rclcpp::Node::SharedPtr gps_sub_node = std::make_shared<GPSSubscriber>();
     rclcpp::Node::SharedPtr imu_sub_node = std::make_shared<IMUSubscriber>();
     rclcpp::Node::SharedPtr tgt_loc_sub_node = std::make_shared<TargetLocationSubscriber>();
+    std::shared_ptr<RoutePublisher> route_pub_node = std::make_shared<RoutePublisher>();
 
     // Add subscriber nodes to executor
     rclcpp::executors::SingleThreadedExecutor ros_sub_executor;
@@ -98,7 +129,11 @@ int main(int argc, char* argv[]) {
 
     // Run subscriber executor on separate thread
     pthread_t subscriber_thread;
-    pthread_create(&subscriber_thread, nullptr, spin_executor, (void*) &ros_sub_executor);
+    pthread_create(&subscriber_thread, nullptr, spin_sub_executor, (void*) &ros_sub_executor);
+
+    // Add publihser node to executor
+    rclcpp::executors::SingleThreadedExecutor ros_pub_executor;
+    ros_pub_executor.add_node(route_pub_node);
 
     // Init route planning and path planning modules
     PathPlanner pp(1);
@@ -117,7 +152,7 @@ int main(int argc, char* argv[]) {
     lat = 38.9777938333;
     lon = -95.2642973333;
 
-    tgt_hole = 3;     // TODO: Remove dummy variable
+    tgt_hole = 1;     // TODO: Remove dummy variable
     tgt_loc = 'H';    // TODO: Remove dummy variable
 
     int i = 0;
@@ -137,7 +172,12 @@ int main(int argc, char* argv[]) {
         std::cout << "Target loc: [" << tgt_hole << tgt_loc << "]\n";
 
         // Generate route
-        std::tie(routeX, routeY) = rp.ShortestRoute(lat, lon, tgt_hole, tgt_loc);
+        std::vector<int> routeIdxs = rp.ShortestRouteIdxs(lat, lon, tgt_hole, tgt_loc);
+
+        std::tie(routeX, routeY) = rp.LocalRoute(routeIdxs);
+
+        route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
+        ros_pub_executor.spin_once();
 
         std::cout << "route = [\n";
         for(size_t i = 0; i < routeX.size(); i++) {

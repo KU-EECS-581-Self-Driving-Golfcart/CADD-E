@@ -173,7 +173,7 @@ class RoutePlanner {
 
 	~RoutePlanner() {}
 
-	std::pair<std::vector<float>, std::vector<float>> ShortestRoute(double lat, double lon, int hole, char loc) {
+	std::vector<int> ShortestRouteIdxs(double lat, double lon, int hole, char loc) {
 		// Localize coordinates
 		float local_x, local_y;
 		std::tie(local_x, local_y) = m.latlon2local(lat, lon);
@@ -188,6 +188,33 @@ class RoutePlanner {
 
 		// Return shortest route from source to target
 		return m.ShortestRoute(s_id, t_id);
+	}
+
+	std::pair<std::vector<float>, std::vector<float>> LocalRoute(std::vector<int> RouteIdxs) {
+		// Init return vectors
+		std::vector<float> routeX, routeY;
+        routeX.reserve(RouteIdxs.size());
+        routeY.reserve(RouteIdxs.size());
+
+		for(size_t i = 0; i < RouteIdxs.size(); i++) {
+			std::pair<float, float> xy = m.NodeXY()[RouteIdxs[i]];
+			routeX.push_back(xy.first);
+        	routeY.push_back(xy.second);
+		}
+
+		return std::pair<std::vector<float>, std::vector<float>>(routeX, routeY);
+	}
+
+	std::vector<std::pair<double, double>> GlobalRoute(std::vector<int> RouteIdxs) {
+		// Init return vectors
+		std::vector<std::pair<double, double>> routeLatLon;
+        routeLatLon.reserve(RouteIdxs.size());
+
+		for(size_t i = 0; i < RouteIdxs.size(); i++) {
+			routeLatLon.push_back(m.NodeLatLon()[RouteIdxs[i]]);
+		}
+
+		return routeLatLon;
 	}
 
 	int size(){
