@@ -20,10 +20,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-             'talker = py_pubsub.publisher_member_function:main',
-             'talker1 = py_pubsub.publisher1_member_function:main',
-             'talker2 = py_pubsub.publisher2_member_function:main',
-             'listener = py_pubsub.subscriber_member_function:main',
+             'tee_publisher = py_pubsub.tee_publisher:main',
+             'go_publisher = py_pubsub.go_publisher:main',
+             'stop_publisher = py_pubsub.stop_publisher:main',
+             'bool_subscriber = py_pubsub.bool_subscriber:main',
+             'string_subscriber = py_pubsub.string_subscriber:main'
         ],
     },
 )

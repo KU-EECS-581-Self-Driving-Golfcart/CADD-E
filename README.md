@@ -5,17 +5,28 @@ Computer Science capstone project at the University of Kansas - an autonomous go
 ## Getting Started
 ```console
 # Clone the repository
-git clone https://github.com/KU-EECS-581-Self-Driving-Golfcart/CADD-E
+git clone --recurse-submodules https://github.com/KU-EECS-581-Self-Driving-Golfcart/CADD-E
+
 # Enter the repository
 cd CADD-E
-# Update submodules to latest versions
-git submodule update --init
+
+# Change permissions on build script to allow execution (this only needs to be done once)
+chmod +x build.sh
+```
+
+## Building and Executing
+```console
+# Build
+./build.sh
+
+# Execute
+./build/cadd-e/main
 ```
 
 ## Architecture
 Our design adapts the self-driving car architecture presented by Badue et al. (2019) [1]. Figure 1 shows our adapted architecture. At the high level, we distinguish between the perception and decision making systems. The perception system receives information via the cart’s sensors (camera, radar, and GPS) in order to estimate the car’s state and build a representation of its surroundings. The decision-making system plans and carries out actions via the car’s actuators (throttle, brake, and steering) in order to navigate between a fixed initial point and destination while satisfying certain constraints, like passenger comfort and avoiding obstacles. Within those systems a number of subsystems can be identified.
 <figure>
-<img src=assets/architecture.png>
+<img src=doc/assets/architecture.png>
 <figcaption align = "center"><b>Figure 1: CADD-E Architecture</b></figcaption>
 </figure><br>
 
@@ -36,7 +47,7 @@ Determines the currect driving behavior by choosing a reference path to follow a
 - softStop: Pull off the path and slow to a stop. Useful for stopping at a tee box or to play a ball.
 - hardStop: Stop on the path. Parametrized by the distance to stop. Useful for avoiding pop-up obstacles.
 <figure>
-<img width="400" src=assets/behavior.png>
+<img width="400" src=doc/assets/behavior.png>
 <figcaption align = "center"><b>Figure 2: Finite State Machine for Cart Behavior</b></figcaption>
 </figure><br><br>
 
@@ -55,7 +66,7 @@ Generates actuator (brake, throttle, steering) commands to implement a given tra
 Lets the user start and stop the golf cart. The golf cart will feature an easily accessible touch screen that will serve as a User Interface. The UI will be a simple display split into two sections.
 The left section will always provide any relevant information about the cart’s motion such as vehicle speed. Below this telemetry data will be a set of buttons that are shown depending on the state of the vehicle. If the vehicle is currently stopped, the user will be presented with a large “Go” button followed by two buttons that allow the user to choose where they would like to go. Once the user has selected either the “Next TeeBox” button or the “Next Green” button, they can press the “Go” button and the cart will switch states and begin transit. Once the golf cart is in transit, the user will be presented with a simple “Stop” button. Once pressed, this button will apply the brakes until the cart is back to the stop state. This simple system of stopping the cart will be necessary in case user input is needed to stop the cart. Similarly, if the user needs to apply corrective steering, they can do this directly through the steering wheel rather than interacting with the UI.
 <figure>
-<img width="400" src=assets/initial_ui.png>
+<img width="400" src=doc/assets/initial_ui.png>
 <figcaption align = "center"><b>Figure 3: Draft UI Design</b></figcaption>
 </figure><br><br>
 
