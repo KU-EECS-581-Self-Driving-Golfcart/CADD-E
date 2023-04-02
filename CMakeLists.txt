@@ -72,20 +72,7 @@ if(UNIX AND NOT APPLE)
         src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Car.cpp
         src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Car.h)
 
-    #ament_target_dependencies(main rclcpp interfaces)
-    #ament_target_dependencies(bruh rclcpp std_msgs)
-
     target_link_libraries(main PRIVATE ${cadd_e_interface_LIBRARIES} ${ament_cmake_LIBRARIES} ${rclcpp_LIBRARIES} matioCpp::matioCpp Eigen3::Eigen Qt5::Gui Qt5::Widgets)
-
-    #install(TARGETS
-    #    main
-    #    DESTINATION lib/${PROJECT_NAME})
 
     ament_package()
 endif(UNIX AND NOT APPLE)
-
-# add_executable(mapInit routePlanner.cpp)
-# target_link_libraries(mapInit PRIVATE matioCpp::matioCpp)
-# if(UNIX AND NOT APPLE)
-#     target_link_libraries(mapInit PRIVATE ${PYTHON_LIBRARIES})
-# endif(UNIX AND NOT APPLE)
