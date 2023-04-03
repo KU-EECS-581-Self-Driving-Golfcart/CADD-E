@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <unistd.h>
 #include <chrono>
 #include <pthread.h>
@@ -16,6 +17,9 @@
 #include "cadd_e_interface/msg/route.hpp"
 #include "cadd_e_interface/msg/imu.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "cadd_e_interface/msg/reference.hpp"
+#include "cadd_e_interface/msg/state.hpp"
+#include "cadd_e_interface/msg/controls.hpp"
 
 using std::placeholders::_1;
 
@@ -54,7 +58,7 @@ class IMUSubscriber : public rclcpp::Node {
   	void topic_callback(const cadd_e_interface::msg::IMU::SharedPtr msg) const {
 		RCLCPP_INFO(this->get_logger(), "I heard [h: %f; l_a: %f, %f, %f]", msg->heading, msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z);
         std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-		telem.update_imu(msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z, msg->heading, time);
+		telem.update_imu(msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z, msg->heading, msg->ang_vel[2], time);
 	}
   	rclcpp::Subscription<cadd_e_interface::msg::IMU>::SharedPtr subscription_;
 };
@@ -104,6 +108,69 @@ class RoutePublisher : public rclcpp::Node
         }
 };
 
+class StatePublisher : public rclcpp::Node
+{
+    private:
+        rclcpp::Publisher<cadd_e_interface::msg::State>::SharedPtr publisher_;
+
+    public:
+        StatePublisher() : Node("state_publisher")
+        {
+            this->publisher_ = this->create_publisher<cadd_e_interface::msg::State>("State", 1);
+        }
+
+        void publish(float X, float Y, float xdot, float ydot, float psi, float psidot)
+        {
+            auto statemsg = cadd_e_interface::msg::State();
+            statemsg.x = X;
+            statemsg.y = Y;
+            statemsg.xdot = xdot;
+            statemsg.ydot = ydot;
+            statemsg.psi = psi;
+            statemsg.psidot = psidot;
+
+            std::cout << "Publishing state (" << X << ','
+                << Y << ',' << xdot << ',' << ydot << ','
+                << psi << ',' << psidot << ")\n";
+            this->publisher_->publish(statemsg);
+        }
+};
+
+class ReferencePublisher : public rclcpp::Node
+{
+    private:
+        rclcpp::Publisher<cadd_e_interface::msg::Reference>::SharedPtr publisher_;
+
+    public:
+        ReferencePublisher() : Node("reference_publisher")
+        {
+            this->publisher_ = this->create_publisher<cadd_e_interface::msg::Reference>("Reference", 1);
+        }
+
+        void publish(vector<double> x,
+                     vector<double> y,
+                     vector<double> vel,
+                     vector<double> yaw,
+                     vector<double> curvatures)
+        {
+            auto refmsg = cadd_e_interface::msg::Reference();
+            for(int i=0; i < x.size(); i++) {
+                refmsg.x.push_back(x[i]);
+                refmsg.y.push_back(y[i]);
+                refmsg.vel.push_back(vel[i]);
+                refmsg.yaw.push_back(yaw[i]);
+                refmsg.curvatures.push_back(curvatures[i]);
+            }
+            refmsg.length = x.size();
+
+            std::cout << "Publishing reference: first entry(" << x[0] << ','
+                << y[0] << ',' << vel[0] << ',' << yaw[0] << ','
+                << curvatures[0] << ")\n";
+            this->publisher_->publish(refmsg);
+        }
+};
+
+
 void* spin_sub_executor(void* exec_ptr) {
     std::cout << "Created ROS subscriber thread\n";
     rclcpp::executors::SingleThreadedExecutor* exec = (rclcpp::executors::SingleThreadedExecutor*) exec_ptr;
@@ -119,7 +186,11 @@ int main(int argc, char* argv[]) {
     rclcpp::Node::SharedPtr gps_sub_node = std::make_shared<GPSSubscriber>();
     rclcpp::Node::SharedPtr imu_sub_node = std::make_shared<IMUSubscriber>();
     rclcpp::Node::SharedPtr tgt_loc_sub_node = std::make_shared<TargetLocationSubscriber>();
+
+    // Create publisher nodes.
     std::shared_ptr<RoutePublisher> route_pub_node = std::make_shared<RoutePublisher>();
+    std::shared_ptr<StatePublisher> state_pub_node = std::make_shared<StatePublisher>();
+    std::shared_ptr<ReferencePublisher> ref_pub_node = std::make_shared<ReferencePublisher>();
 
     // Add subscriber nodes to executor
     rclcpp::executors::SingleThreadedExecutor ros_sub_executor;
@@ -131,9 +202,11 @@ int main(int argc, char* argv[]) {
     pthread_t subscriber_thread;
     pthread_create(&subscriber_thread, nullptr, spin_sub_executor, (void*) &ros_sub_executor);
 
-    // Add publihser node to executor
+    // Add publisher node to executor
     rclcpp::executors::SingleThreadedExecutor ros_pub_executor;
     ros_pub_executor.add_node(route_pub_node);
+    ros_pub_executor.add_node(state_pub_node);
+    ros_pub_executor.add_node(ref_pub_node);
 
     // Init route planning and path planning modules
     PathPlanner pp(1);
@@ -200,7 +273,14 @@ int main(int argc, char* argv[]) {
         } else {
             std::cout << "no path found\n";
         }
-        // TODO: Convert path to clothoid
+
+        /*
+         * Generate controls.
+         */
+
+        // TODO send state
+        // TODO send reference
+        // TODO get result?
     }
     rclcpp::shutdown();
     return 0;
