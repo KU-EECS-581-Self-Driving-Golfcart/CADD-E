@@ -1,8 +1,11 @@
+import rclpy
+from rclpy.node import Node
 from dataclasses import dataclass
 import numpy as np
 import copy
 import cvxpy
 from cvxpy.expressions import constants
+from interfaces.msg import Reference, Controls, State
 
 """
 MODELS
@@ -158,17 +161,17 @@ class ControllerConfig:
 
 
 @dataclass
-class Reference:
+class ReferenceTraj:
     states: np.array  # [X, Y, vel, psi] x prediction_horizon
     curvature: np.array  # [k] x prediction_horizon
 
     def __copy__(self):
-        return Reference(copy.copy(self.states), copy.copy(self.curvature))
+        return ReferenceTraj(copy.copy(self.states), copy.copy(self.curvature))
 
 
 class MPC:
     def __init__(self,
-                 reference: Reference,
+                 reference: ReferenceTraj,
                  model: KBModel,
                  config: ControllerConfig):
         self.reference = reference
@@ -264,9 +267,72 @@ class MPC:
         return u.value[0, 0], u.value[1, 0]  # Acceleration, steering.
 
 
-def main():
-    print("hello world")
+"""
+ROS2
+"""
 
+
+def get_controls(ref):
+    model_car = Car(CarParams())
+    model_car.set_state(state)
+
+    controller = MPC(ref, KBModel(model_car, 0.1), ControllerConfig())
+    c = controller.control()
+
+    return c[0], c[1]
+
+
+class MinimalSubscriber(Node):
+
+    def __init__(self, pub):
+        super().__init__('control_sub')
+        self.subscription = self.create_subscription(
+            Reference,                                             
+            'reference',
+            self.listener_callback,
+            10)
+        self.subscription
+        self.pub = pub
+
+    def listener_callback(self, msg):
+        ref_states = np.array(zip(msg.x, msg.y, msg.vel, msg.yaw))
+        ref_k = np.array(msg.curvatures)
+        ref = ReferenceTraj(ref_states, ref_k)
+
+        # TODO: debug here.
+
+        a, s = get_controls(ref)
+        self.pub.publish(Controls(a, s))
+
+
+class StateSubscriber(Node):
+
+    def __init__(self, pub):
+        super().__init__('state_sub')
+        self.subscription = self.create_subscription(
+            State,                                             
+            'state',
+            self.listener_callback,
+            10)
+        self.subscription
+
+    def listener_callback(self, msg):
+        global state
+        state = [msg.x, msg.y, msg.xdot, msg.ydot, msg.psi, msg.psidot]
+            
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    node = rclpy.create_node('control_pub')
+    pub = node.create_publisher(Controls, 'controls', 1)
+
+    sub = MinimalSubscriber(pub)
+
+    while True:
+        rclpy.spin(sub)
+
+state = list()
 
 if __name__ == '__main__':
     main()
