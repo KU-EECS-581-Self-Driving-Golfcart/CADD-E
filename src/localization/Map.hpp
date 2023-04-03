@@ -8,9 +8,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-//#include "r_tree.h" // TODO: include
-//#include "waypoint.h" // TODO: include
-
 typedef std::pair<float, int> edge_entry_pair;
 
 namespace LCC{
@@ -37,7 +34,7 @@ public:
             return;
         }
 
-        std::tie(local_origin_x, local_origin_y) = latlon2local(38.9753690, -95.2690418);
+        std::tie(local_origin_x, local_origin_y) = latlon2local(global_origin_lat, global_origin_lon);
 
         // Create hash map mapping Node IDs to vector indexes
         InitNodeID2Idx();
@@ -45,6 +42,7 @@ public:
         // Reserve space for entries for each node
         adj_list.resize(N);
         node_xy.resize(N);
+        node_latlon.resize(N);
         node_id.resize(N);
 
         // Create adjacency list and store node IDs and coordinates in vectors
@@ -71,11 +69,12 @@ public:
     }
 
     // Find shortest route from source node to destination node using Dijkstra's algorithm
-    std::pair<std::vector<float>, std::vector<float>> ShortestRoute(long src_id, long dst_id) {
+    std::vector<int> ShortestRoute(long src_id, long dst_id) {
         // Check that graph has been initialized
         if(!init) {
             std::cout << "Map hasn't been initialized. Init with Map.Init()\n";
-            std::pair<std::vector<float>, std::vector<float>> empty_return;
+            std::vector<int> empty_return;
+            // std::pair<std::vector<float>, std::vector<float>> empty_return;
             return empty_return;
         }
 
@@ -130,16 +129,18 @@ public:
         }
 
         // Create vector of waypoint coordinates from route indexes
-        std::vector<float> routeX, routeY;
-        routeX.reserve(N);
-        routeY.reserve(N);
+        std::vector<int> routeIdxs;
+        //std::vector<float> routeX, routeY;
+        routeIdxs.reserve(N);
+        //routeY.reserve(N);
 
         // Trace optimal route from target to source
         int U = d_idx;
         if(prev[U] != -1 || U == s_idx) {
             while(U > 0){
-                routeX.push_back(node_xy[U].first);
-                routeY.push_back(node_xy[U].second);
+                routeIdxs.push_back(U);
+                // routeX.push_back(node_xy[U].first);
+                // routeY.push_back(node_xy[U].second);
                 // Stop after adding source node
                 if(U == s_idx) {
                     break;
@@ -149,10 +150,12 @@ public:
         }
 
         // Reverse route (D->S) -> (S->D)
-        std::reverse(routeX.begin(), routeX.end());
-        std::reverse(routeY.begin(), routeY.end());
+        std::reverse(routeIdxs.begin(), routeIdxs.end());
+        // std::reverse(routeX.begin(), routeX.end());
+        // std::reverse(routeY.begin(), routeY.end());
 
-        return std::pair<std::vector<float>, std::vector<float>>(routeX, routeY);
+        return routeIdxs;
+        //return std::pair<std::vector<float>, std::vector<float>>(routeX, routeY);
     }
 
     // Print Adjacency List contents between (and including) upper and lower bounds
@@ -204,9 +207,14 @@ public:
         std::cout << "N = " << adj_list.size() << "\n";
     }
 
-    // Return vector of node coordinates
+    // Return vector of node local coordinates
     std::vector<std::pair<float, float>> NodeXY() {
         return node_xy;
+    }
+
+    // Return vector of node global coordinates
+    std::vector<std::pair<double, double>> NodeLatLon() {
+        return node_latlon;
     }
 
     // Return vector of node IDs
@@ -229,6 +237,31 @@ public:
         return std::pair<float, float>(global_x_cart - local_origin_x, global_y_cart - local_origin_y);
     }
 
+    float distance(float x1, float y1, float x2, float y2) {
+        float x = x1 - x2;
+        float y = y1 - y2;
+        float dist = pow(x, 2) + pow(y, 2);       //calculating Euclidean distance
+        dist = sqrt(dist);                  
+
+        return dist;
+    }
+
+    long closest_wp_id(float x, float y) {
+        float min_distance = std::numeric_limits<float>::max();
+        long id = 0;
+
+        for(size_t i = 0; i < node_xy.size(); i++) {
+            std::pair<float, float> p_xy = node_xy[i];
+            float dist_i = distance(x, y, p_xy.first, p_xy.second);
+            if(dist_i < min_distance) {
+                min_distance = dist_i;
+                id = node_id[i];
+            }
+        }
+
+        return id;
+    }
+
 private:
     // File names relative to build directory
     const std::string nodes_mat_file = "src/localization/maps/lcc_nodes.mat";
@@ -239,12 +272,15 @@ private:
     const std::string adj_list_mat_var = "adjacency_list";
 
     std::vector<std::vector<edge_entry_pair>> adj_list; // Graph representation
-    std::vector<std::pair<float, float>> node_xy; // Node coordinates
-    std::vector<long> node_id; // Node coordinates
+    std::vector<std::pair<float, float>> node_xy; // Node local coordinates
+    std::vector<std::pair<double, double>> node_latlon; // Node global coordinates
+    std::vector<long> node_id; // Node IDs
     int N = 0; // Number of nodes
     bool init = false;
     float local_origin_x = 0.0;
     float local_origin_y = 0.0;
+    float global_origin_lat = 38.9753690;
+    float global_origin_lon = -95.2690418;
 
     // Build graph using adj_list_mat_file - an adjancency list created in MATLAB
     void InitGraph() {
@@ -289,8 +325,9 @@ private:
             // std::cout << "read node_xy\n";
             // std::cout << "x: " << node_xy_ML[idx*2] << "\n";
             // std::cout << "y: " << node_xy_ML[idx*2 + 1] << "\n";
-            //node_xy[i] = std::pair<float, float>(node_xy_ML[idx*2], node_xy_ML[idx*2 + 1]);
+            node_latlon[i] = std::pair<double, double>(node_xy_ML[idx*2 + 1], node_xy_ML[idx*2]);
             node_xy[i] = latlon2local(node_xy_ML[idx*2 + 1], node_xy_ML[idx*2]);
+            // node_latlon[i] = latlon2local(node_xy_ML[idx*2 + 1], node_xy_ML[idx*2]);
             // std::cout << "read node_id\n";
             node_id[i] = static_cast<long>(node_id_ML[idx]);
 

@@ -1,0 +1,1 @@
+With the library, the frenetframe objecct contains a representation of the curve as a curvature. This representation does not have to be sent via a ROS message, but can just be passed to the controller code.

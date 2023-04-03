@@ -1,9 +1,6 @@
 [submodule "deepracer_api"]
 	path = deep_racer/deepracer_api
 	url = https://github.com/cskroonenberg/deepracer_api
-[submodule "localization/R_Tree"]
-	path = src/localization/R_Tree
-	url = https://github.com/cskroonenberg/R_Tree
 [submodule "localization/matio-cpp"]
 	path = src/localization/matio-cpp
 	url = https://github.com/ami-iit/matio-cpp
