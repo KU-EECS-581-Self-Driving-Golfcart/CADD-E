@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import {pathOne, pathTwo, pathThree} from '../paths.js'
 import {tee1,tee2,tee3,tee4,tee5,tee6,tee7,tee8,tee9} from '../Data/tees';
 import { setTeeOrGreen } from './teeInfoSlice';
 import { useLocation } from 'react-router-dom'
@@ -84,6 +85,7 @@ const Buttons = (props) => {
         if(props.tee === "silver") props.setNextPosition(tee9.silverPos);
         if(props.tee === "gold") props.setNextPosition(tee9.goldPos);
       }
+      // props.setRoutePos(pathTwo);
       dispatch(setTeeOrGreen) //Set 0 to signal that the current target is a Tee
       // let obj = {
       //   teeBox: targetTee+1,
