@@ -271,6 +271,8 @@ class MPC:
 ROS2
 """
 
+state = list()
+
 
 def get_controls(ref):
     model_car = Car(CarParams())
@@ -282,7 +284,7 @@ def get_controls(ref):
     return c[0], c[1]
 
 
-class MinimalSubscriber(Node):
+class ReferenceSubscriber(Node):
 
     def __init__(self, pub):
         super().__init__('control_sub')
@@ -299,15 +301,19 @@ class MinimalSubscriber(Node):
         ref_k = np.array(msg.curvatures)
         ref = ReferenceTraj(ref_states, ref_k)
 
-        # TODO: debug here.
+        print("Received reference: ")
+        for i, s in enumerate(zip(*ref.states, ref.curvature)):
+            print(i, ":", s)
+        print("Initial state: ", state)
 
         a, s = get_controls(ref)
         self.pub.publish(Controls(a, s))
+        print(f"Published controls ({a}, {s})") 
 
 
 class StateSubscriber(Node):
 
-    def __init__(self, pub):
+    def __init__(self):
         super().__init__('state_sub')
         self.subscription = self.create_subscription(
             State,                                             
@@ -327,12 +333,13 @@ def main(args=None):
     node = rclpy.create_node('control_pub')
     pub = node.create_publisher(Controls, 'controls', 1)
 
-    sub = MinimalSubscriber(pub)
+    state_sub = StateSubscriber()
+    ref_sub = ReferenceSubscriber(pub)
 
+    print('ready')
     while True:
-        rclpy.spin(sub)
-
-state = list()
+        rclpy.spin(state_sub)
+        rclpy.spin(ref_sub)
 
 if __name__ == '__main__':
     main()

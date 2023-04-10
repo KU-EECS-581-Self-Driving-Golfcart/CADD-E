@@ -11,7 +11,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
-set(CMAKE_PREFIX_PATH "/opt/ros/foxy; ${CMAKE_MODULE_PATH}; ${CMAKE_MODULE_PATH}/cadd_e_interface/install")
+set(CMAKE_PREFIX_PATH "/opt/ros/foxy; ${CMAKE_MODULE_PATH}; ${CMAKE_MODULE_PATH}/cadd_e_interface/install; ${CMAKE_MODULE_PATH}/mpc/install")
 
 find_package(matioCpp REQUIRED)
 
@@ -22,6 +22,7 @@ if(UNIX AND NOT APPLE)
     find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
     find_package(cadd_e_interface REQUIRED)
+    find_package(interfaces REQUIRED)  # MPC interfaces.
 
     find_package(Qt5 COMPONENTS Widgets REQUIRED)
     find_package(Qt5 COMPONENTS Core REQUIRED)
@@ -42,6 +43,7 @@ if(UNIX AND NOT APPLE)
 
     include_directories(${ament_cmake_INCLUDE_DIRS})
     include_directories(${cadd_e_interface_INCLUDE_DIRS})
+    include_directories(${interfaces_INCLUDE_DIRS})
 
     include_directories(${PYTHON_INCLUDE_DIRS})
     include_directories("localization/frenet_optimal_trajectory_planner")
@@ -72,7 +74,10 @@ if(UNIX AND NOT APPLE)
         src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Car.cpp
         src/localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Car.h)
 
-    target_link_libraries(main PRIVATE ${cadd_e_interface_LIBRARIES} ${ament_cmake_LIBRARIES} ${rclcpp_LIBRARIES} matioCpp::matioCpp Eigen3::Eigen Qt5::Gui Qt5::Widgets)
+    # ament_target_dependencies(cadde rclcpp)
+    # install(TARGETS cadde DESTINATION lib/${PROJECT_NAME})
+
+    target_link_libraries(main PRIVATE ${cadd_e_interface_LIBRARIES} ${interfaces_LIBRARIES} ${ament_cmake_LIBRARIES} ${rclcpp_LIBRARIES} matioCpp::matioCpp Eigen3::Eigen Qt5::Gui Qt5::Widgets)
 
     ament_package()
 endif(UNIX AND NOT APPLE)

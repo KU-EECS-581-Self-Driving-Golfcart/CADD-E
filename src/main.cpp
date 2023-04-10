@@ -17,9 +17,10 @@
 #include "cadd_e_interface/msg/route.hpp"
 #include "cadd_e_interface/msg/imu.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "cadd_e_interface/msg/reference.hpp"
-#include "cadd_e_interface/msg/state.hpp"
-#include "cadd_e_interface/msg/controls.hpp"
+
+#include "interfaces/msg/reference.hpp"
+#include "interfaces/msg/state.hpp"
+#include "interfaces/msg/controls.hpp"
 
 using std::placeholders::_1;
 
@@ -111,17 +112,17 @@ class RoutePublisher : public rclcpp::Node
 class StatePublisher : public rclcpp::Node
 {
     private:
-        rclcpp::Publisher<cadd_e_interface::msg::State>::SharedPtr publisher_;
+        rclcpp::Publisher<interfaces::msg::State>::SharedPtr publisher_;
 
     public:
         StatePublisher() : Node("state_publisher")
         {
-            this->publisher_ = this->create_publisher<cadd_e_interface::msg::State>("State", 1);
+            this->publisher_ = this->create_publisher<interfaces::msg::State>("state", 1);
         }
 
         void publish(float X, float Y, float xdot, float ydot, float psi, float psidot)
         {
-            auto statemsg = cadd_e_interface::msg::State();
+            auto statemsg = interfaces::msg::State();
             statemsg.x = X;
             statemsg.y = Y;
             statemsg.xdot = xdot;
@@ -139,12 +140,12 @@ class StatePublisher : public rclcpp::Node
 class ReferencePublisher : public rclcpp::Node
 {
     private:
-        rclcpp::Publisher<cadd_e_interface::msg::Reference>::SharedPtr publisher_;
+        rclcpp::Publisher<interfaces::msg::Reference>::SharedPtr publisher_;
 
     public:
         ReferencePublisher() : Node("reference_publisher")
         {
-            this->publisher_ = this->create_publisher<cadd_e_interface::msg::Reference>("Reference", 1);
+            this->publisher_ = this->create_publisher<interfaces::msg::Reference>("reference", 1);
         }
 
         void publish(vector<double> x,
@@ -153,7 +154,7 @@ class ReferencePublisher : public rclcpp::Node
                      vector<double> yaw,
                      vector<double> curvatures)
         {
-            auto refmsg = cadd_e_interface::msg::Reference();
+            auto refmsg = interfaces::msg::Reference();
             for(int i=0; i < x.size(); i++) {
                 refmsg.x.push_back(x[i]);
                 refmsg.y.push_back(y[i]);
@@ -230,11 +231,13 @@ int main(int argc, char* argv[]) {
 
     int i = 0;
     while(rclcpp::ok()) {
+        /*
         if(i == 1) {            // TODO: Remove test start
             rclcpp::shutdown(); // TODO: Remove test start
             return 0;           // TODO: Remove test start
         }                       // TODO: Remove test start
         std::cout << "Iteration (" << i++ << ")\n";
+        */
 
         // Localize position from GPS
         std::tie(telem.pos_x, telem.pos_y) = rp.m.latlon2local(lat, lon);
@@ -277,10 +280,19 @@ int main(int argc, char* argv[]) {
         /*
          * Generate controls.
          */
+        state_pub_node->publish(telem.pos_x,
+            telem.pos_y,
+            telem.vel_x,
+            telem.vel_y,
+            telem.heading,
+            telem.headingdot);
+        ref_pub_node->publish(path->x,
+            path->y,
+            path->s_d,
+            path->yaw,
+            path->c);
 
-        // TODO send state
-        // TODO send reference
-        // TODO get result?
+        sleep(1);
     }
     rclcpp::shutdown();
     return 0;
