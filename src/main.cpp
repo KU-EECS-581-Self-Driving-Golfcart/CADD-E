@@ -24,6 +24,9 @@
 
 using std::placeholders::_1;
 
+bool gps_init = false;
+bool imu_init = false;
+
 // Globals updated by ROS subscribers
 double lat = 0.0;        // GPS Latitude
 double lon = 0.0;        // GPS Longitude
@@ -44,8 +47,11 @@ class GPSSubscriber : public rclcpp::Node {
 		RCLCPP_INFO(this->get_logger(), "I heard: '%f, %f'", msg->lat, msg->lon);
         lat = msg->lat;
         lon = msg->lon;
+        gps_init = true;
     }
     rclcpp::Subscription<cadd_e_interface::msg::GPS>::SharedPtr subscription_;
+
+
 };
 
 class IMUSubscriber : public rclcpp::Node {
@@ -60,6 +66,7 @@ class IMUSubscriber : public rclcpp::Node {
 		RCLCPP_INFO(this->get_logger(), "I heard [h: %f; l_a: %f, %f, %f]", msg->heading, msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z);
         std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 		telem.update_imu(msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z, msg->heading, msg->ang_vel[2], time);
+        imu_init = true;
 	}
   	rclcpp::Subscription<cadd_e_interface::msg::IMU>::SharedPtr subscription_;
 };
@@ -72,7 +79,7 @@ class TargetLocationSubscriber : public rclcpp::Node
     }
   	private:
     void topic_callback(const std_msgs::msg::String::SharedPtr msg) const {
-    	//RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+    	RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
     	tgt_hole = stoi(std::string(1, msg->data.at(0)));
     	tgt_loc = msg->data.at(1);
     }
@@ -103,7 +110,7 @@ class RoutePublisher : public rclcpp::Node
                 message.lon.push_back((latlon + i)->second);
             }
             message.route_size = size;
-            std::cout << "Publishing route of size " << message.route_size << "\n";
+            std::cout << "# Publishing route of size " << message.route_size << "\n";
             RCLCPP_INFO(this->get_logger(), "Publishing: route of size %d'", message.route_size);
             this->publisher_->publish(message);
         }
@@ -173,7 +180,7 @@ class ReferencePublisher : public rclcpp::Node
 
 
 void* spin_sub_executor(void* exec_ptr) {
-    std::cout << "Created ROS subscriber thread\n";
+    //std::cout << "Created ROS subscriber thread\n";
     rclcpp::executors::SingleThreadedExecutor* exec = (rclcpp::executors::SingleThreadedExecutor*) exec_ptr;
     exec->spin();
     return NULL;
@@ -223,58 +230,74 @@ int main(int argc, char* argv[]) {
 
     // TODO: Remove dummy variable
     // Hole 1 Gold tee box
-    lat = 38.9777938333;
-    lon = -95.2642973333;
+    //lat = 38.9777938333;
+    //lon = -95.2642973333;
 
-    tgt_hole = 1;     // TODO: Remove dummy variable
-    tgt_loc = 'H';    // TODO: Remove dummy variable
+    lat = 38.977760;
+    lon = -95.264381;
+
+    //tgt_hole = 1;     // TODO: Remove dummy variable
+    //tgt_loc = 'H';    // TODO: Remove dummy variable
+
+    while(!(imu_init && gps_init)) {}
 
     int i = 0;
     while(rclcpp::ok()) {
-        /*
-        if(i == 1) {            // TODO: Remove test start
-            rclcpp::shutdown(); // TODO: Remove test start
-            return 0;           // TODO: Remove test start
-        }                       // TODO: Remove test start
-        std::cout << "Iteration (" << i++ << ")\n";
-        */
+        //if(i == 1) {            // TODO: Remove test start
+        //    rclcpp::shutdown(); // TODO: Remove test start
+        //    return 0;           // TODO: Remove test start
+        //}                       // TODO: Remove test start
+        std::cout << "# Iteration (" << i++ << ")\n";
+
+        // TODO: Check distance to target location -> don't do anything if within certain distance (2 meters for example). Wait until target location is updated
 
         // Localize position from GPS
         std::tie(telem.pos_x, telem.pos_y) = rp.m.latlon2local(lat, lon);
 
-        std::cout << "Position:   [" << telem.pos_x << ", " << telem.pos_y << "] (local)\n";
-        std::cout << "            [" << lat << ", " << lon << "] (global)\n";
-        std::cout << "Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "]\n";
-        std::cout << "Target loc: [" << tgt_hole << tgt_loc << "]\n";
+        std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] #(local)\n";
+        std::cout << "#             [" << lat << ", " << lon << "] (global)\n";
+        std::cout << "# Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "]\n";
+        std::cout << "# Target loc: [" << tgt_hole << tgt_loc << "]\n";
 
         // Generate route
         std::vector<int> routeIdxs = rp.ShortestRouteIdxs(lat, lon, tgt_hole, tgt_loc);
 
         std::tie(routeX, routeY) = rp.LocalRoute(routeIdxs);
 
+        // TODO: Remove
+        //telem.pos_x = routeX[0] - .33;
+        //telem.pos_y = routeY[0] + 0.22;
+        //std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] \n";
+
         route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
-        ros_pub_executor.spin_once();
 
         std::cout << "route = [\n";
-        for(size_t i = 0; i < routeX.size(); i++) {
+        for(size_t i = 0; i < 7; i++) {
+        //for(size_t i = 0; i < routeX.size(); i++) {
             std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
         }
         std::cout << "]\n";
 
         // Generate path
-        path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
-        //path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
+        //path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
+        path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
         if(path) {
             //std::cout << "got path\n";
             // TODO: Remove
-            std::cout << "path = [\n";
+            std::cout << "best_path = [\n";
             for(size_t i = 0; i < path->x.size(); i++) {
-                std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
+                if(path->x[i] < 1.0 || path->y[i] < 1.0) {
+                    std::cout << "\t#[" << path->x[i] << ", " << path->y[i] << "],\n";
+                } else {
+                    std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
+                }
             }
             std::cout << "]\n";
         } else {
-            std::cout << "no path found\n";
+            std::cout << "# no path found\n";
+            std::cout << "print(\"No path found\")\n";
+            std::cout << "best_path = [[" << telem.pos_x << ", " << telem.pos_y << "]]\n";
         }
 
         /*
