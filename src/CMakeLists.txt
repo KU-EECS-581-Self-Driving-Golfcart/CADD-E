@@ -63,7 +63,7 @@ if(UNIX AND NOT APPLE)
             localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Obstacle.h
             localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Car.cpp
             localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/Car.h)
-
+            
             target_link_libraries(main PRIVATE matioCpp::matioCpp Eigen3::Eigen Qt5::Gui Qt5::Widgets)
 endif(UNIX AND NOT APPLE)
 
