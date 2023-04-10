@@ -10,8 +10,11 @@ git clone --recurse-submodules https://github.com/KU-EECS-581-Self-Driving-Golfc
 # Enter the repository
 cd CADD-E
 
-# Change permissions on build script to allow execution (this only needs to be done once)
-chmod +x build.sh
+# Change permissions on build and setup scripts to allow execution (this only needs to be done once)
+chmod +x build.sh setup.sh
+
+# Install dependencies
+./setup.sh
 ```
 
 ## Building and Executing
