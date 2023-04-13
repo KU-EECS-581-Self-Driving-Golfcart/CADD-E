@@ -30,6 +30,7 @@ bool imu_init = false;
 // Globals updated by ROS subscribers
 double lat = 0.0;        // GPS Latitude
 double lon = 0.0;        // GPS Longitude
+float speed_mps = 0.0;   // Ground speed
 float heading = 0.0;    // Heading (in degrees)
 int tgt_hole = 1;   // Target hole (1-9)
 char tgt_loc = 'H';    // Target location ("H"(ole), "B"(lack), (B)"R"(onze), "S"(ilver), "G"(old))
@@ -44,9 +45,11 @@ class GPSSubscriber : public rclcpp::Node {
 
 	private:
   	void topic_callback(const cadd_e_interface::msg::GPS::SharedPtr msg) const {
-		RCLCPP_INFO(this->get_logger(), "I heard: '%f, %f'", msg->lat, msg->lon);
-        lat = msg->lat;
-        lon = msg->lon;
+		//RCLCPP_INFO(this->get_logger(), "I heard: '%f, %f'", msg->lat, msg->lon);
+        //lat = msg->lat;
+        //lon = msg->lon;
+        speed_mps = msg->speed_mps;
+        telem.update_gps(speed_mps);
         gps_init = true;
     }
     rclcpp::Subscription<cadd_e_interface::msg::GPS>::SharedPtr subscription_;
@@ -63,7 +66,7 @@ class IMUSubscriber : public rclcpp::Node {
 
   	private:
   	void topic_callback(const cadd_e_interface::msg::IMU::SharedPtr msg) const {
-		RCLCPP_INFO(this->get_logger(), "I heard [h: %f; l_a: %f, %f, %f]", msg->heading, msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z);
+		//RCLCPP_INFO(this->get_logger(), "I heard [h: %f; l_a: %f, %f, %f]", msg->heading, msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z);
         std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 		telem.update_imu(msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z, msg->heading, msg->ang_vel[2], time);
         imu_init = true;
@@ -238,8 +241,11 @@ int main(int argc, char* argv[]) {
 
     //tgt_hole = 1;     // TODO: Remove dummy variable
     //tgt_loc = 'H';    // TODO: Remove dummy variable
-
-    while(!(imu_init && gps_init)) {}
+    std::cout << "#Waiting for sensors";
+    while(!(imu_init && gps_init)) {
+        std::cout << ".";
+    }
+    std::cout << "\n";
 
     int i = 0;
     while(rclcpp::ok()) {
@@ -256,7 +262,7 @@ int main(int argc, char* argv[]) {
 
         std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] #(local)\n";
         std::cout << "#             [" << lat << ", " << lon << "] (global)\n";
-        std::cout << "# Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "]\n";
+        std::cout << "# Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "; speed: [" << telem.speed_mps << "]\n";
         std::cout << "# Target loc: [" << tgt_hole << tgt_loc << "]\n";
 
         // Generate route
@@ -272,12 +278,23 @@ int main(int argc, char* argv[]) {
         route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
 
         std::cout << "route = [\n";
-        for(size_t i = 0; i < 7; i++) {
-        //for(size_t i = 0; i < routeX.size(); i++) {
-            std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
+        if (routeX.size() >= 7) {
+            for(size_t i = 0; i < 7; i++) {
+            //for(size_t i = 0; i < routeX.size(); i++) {
+                std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
+            }
+        } else {
+            for(size_t i = 0; i < routeX.size(); i++) {
+                std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
+            }
         }
+        
         std::cout << "]\n";
 
+        if(routeX.size() < 2) {
+            std::cout << "# No route\n";
+            continue;
+        }
         // Generate path
         //path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
         path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
@@ -303,7 +320,7 @@ int main(int argc, char* argv[]) {
         /*
          * Generate controls.
          */
-        state_pub_node->publish(telem.pos_x,
+        /*state_pub_node->publish(telem.pos_x,
             telem.pos_y,
             telem.vel_x,
             telem.vel_y,
@@ -314,7 +331,7 @@ int main(int argc, char* argv[]) {
             path->s_d,
             path->yaw,
             path->c);
-
+        */
         sleep(1);
     }
     rclcpp::shutdown();
