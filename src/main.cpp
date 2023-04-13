@@ -46,8 +46,8 @@ class GPSSubscriber : public rclcpp::Node {
 	private:
   	void topic_callback(const cadd_e_interface::msg::GPS::SharedPtr msg) const {
 		//RCLCPP_INFO(this->get_logger(), "I heard: '%f, %f'", msg->lat, msg->lon);
-        //lat = msg->lat;
-        //lon = msg->lon;
+        lat = msg->lat;
+        lon = msg->lon;
         speed_mps = msg->speed_mps;
         telem.update_gps(speed_mps);
         gps_init = true;
