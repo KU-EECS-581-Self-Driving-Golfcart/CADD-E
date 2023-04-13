@@ -18,9 +18,9 @@
 #include "cadd_e_interface/msg/imu.hpp"
 #include "std_msgs/msg/string.hpp"
 
-#include "interfaces/msg/reference.hpp"
-#include "interfaces/msg/state.hpp"
-#include "interfaces/msg/controls.hpp"
+//#include "interfaces/msg/reference.hpp"
+//#include "interfaces/msg/state.hpp"
+//#include "interfaces/msg/controls.hpp"
 
 using std::placeholders::_1;
 
@@ -119,6 +119,7 @@ class RoutePublisher : public rclcpp::Node
         }
 };
 
+/*
 class StatePublisher : public rclcpp::Node
 {
     private:
@@ -180,7 +181,7 @@ class ReferencePublisher : public rclcpp::Node
             this->publisher_->publish(refmsg);
         }
 };
-
+*/
 
 void* spin_sub_executor(void* exec_ptr) {
     //std::cout << "Created ROS subscriber thread\n";
@@ -190,6 +191,7 @@ void* spin_sub_executor(void* exec_ptr) {
 }
 
 int main(int argc, char* argv[]) {
+    std::cout << "Start!\n";
     // Init ROS
     rclcpp::init(argc, argv);
 
@@ -200,8 +202,8 @@ int main(int argc, char* argv[]) {
 
     // Create publisher nodes.
     std::shared_ptr<RoutePublisher> route_pub_node = std::make_shared<RoutePublisher>();
-    std::shared_ptr<StatePublisher> state_pub_node = std::make_shared<StatePublisher>();
-    std::shared_ptr<ReferencePublisher> ref_pub_node = std::make_shared<ReferencePublisher>();
+    //std::shared_ptr<StatePublisher> state_pub_node = std::make_shared<StatePublisher>();
+    //std::shared_ptr<ReferencePublisher> ref_pub_node = std::make_shared<ReferencePublisher>();
 
     // Add subscriber nodes to executor
     rclcpp::executors::SingleThreadedExecutor ros_sub_executor;
@@ -216,8 +218,8 @@ int main(int argc, char* argv[]) {
     // Add publisher node to executor
     rclcpp::executors::SingleThreadedExecutor ros_pub_executor;
     ros_pub_executor.add_node(route_pub_node);
-    ros_pub_executor.add_node(state_pub_node);
-    ros_pub_executor.add_node(ref_pub_node);
+    //ros_pub_executor.add_node(state_pub_node);
+    //ros_pub_executor.add_node(ref_pub_node);
 
     // Init route planning and path planning modules
     PathPlanner pp(1);
@@ -233,26 +235,16 @@ int main(int argc, char* argv[]) {
 
     // TODO: Remove dummy variable
     // Hole 1 Gold tee box
-    //lat = 38.9777938333;
-    //lon = -95.2642973333;
+    lat = 38.9777938333;
+    lon = -95.2642973333;
 
-    lat = 38.977760;
-    lon = -95.264381;
-
-    //tgt_hole = 1;     // TODO: Remove dummy variable
-    //tgt_loc = 'H';    // TODO: Remove dummy variable
-    std::cout << "#Waiting for sensors";
-    while(!(imu_init && gps_init)) {
-        std::cout << ".";
-    }
-    std::cout << "\n";
+    std::cout << "#Waiting for sensors...\n";
+    //while(!(imu_init && gps_init)) {}
+    std::cout << " Done\n";
 
     int i = 0;
     while(rclcpp::ok()) {
-        //if(i == 1) {            // TODO: Remove test start
-        //    rclcpp::shutdown(); // TODO: Remove test start
-        //    return 0;           // TODO: Remove test start
-        //}                       // TODO: Remove test start
+        auto start_time = std::chrono::high_resolution_clock::now();
         std::cout << "# Iteration (" << i++ << ")\n";
 
         // TODO: Check distance to target location -> don't do anything if within certain distance (2 meters for example). Wait until target location is updated
@@ -270,17 +262,11 @@ int main(int argc, char* argv[]) {
 
         std::tie(routeX, routeY) = rp.LocalRoute(routeIdxs);
 
-        // TODO: Remove
-        //telem.pos_x = routeX[0] - .33;
-        //telem.pos_y = routeY[0] + 0.22;
-        //std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] \n";
-
         route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
 
         std::cout << "route = [\n";
         if (routeX.size() >= 7) {
             for(size_t i = 0; i < 7; i++) {
-            //for(size_t i = 0; i < routeX.size(); i++) {
                 std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
             }
         } else {
@@ -300,8 +286,6 @@ int main(int argc, char* argv[]) {
         path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
         if(path) {
-            //std::cout << "got path\n";
-            // TODO: Remove
             std::cout << "best_path = [\n";
             for(size_t i = 0; i < path->x.size(); i++) {
                 if(path->x[i] < 1.0 || path->y[i] < 1.0) {
@@ -332,6 +316,9 @@ int main(int argc, char* argv[]) {
             path->yaw,
             path->c);
         */
+        auto stop_time = std::chrono::high_resolution_clock::now();
+        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
+        std::cout << "# Duration: " << duration_ms.count() << " ms\n";
         sleep(1);
     }
     rclcpp::shutdown();
