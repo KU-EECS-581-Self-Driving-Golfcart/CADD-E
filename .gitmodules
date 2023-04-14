@@ -1,6 +1,3 @@
-[submodule "deepracer_api"]
-	path = deep_racer/deepracer_api
-	url = https://github.com/cskroonenberg/deepracer_api
 [submodule "localization/matio-cpp"]
 	path = src/localization/matio-cpp
 	url = https://github.com/ami-iit/matio-cpp
@@ -10,3 +7,9 @@
 [submodule "src/localization/frenet_optimal_trajectory_planner"]
 	path = src/localization/frenet_optimal_trajectory_planner
 	url = https://github.com/cskroonenberg/frenet_optimal_trajectory_planner
+[submodule "src/sensors/gps_pubsub"]
+	path = src/sensors/gps_pubsub
+	url = https://github.com/KU-EECS-581-Self-Driving-Golfcart/gps_pubsub
+[submodule "src/sensors/us_imu_pubsub"]
+	path = src/sensors/us_imu_pubsub
+	url = https://github.com/KU-EECS-581-Self-Driving-Golfcart/us_imu_pubsub
