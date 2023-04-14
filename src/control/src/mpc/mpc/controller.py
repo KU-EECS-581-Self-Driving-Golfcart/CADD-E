@@ -3,6 +3,7 @@ from rclpy.node import Node
 from dataclasses import dataclass
 import numpy as np
 import copy
+import threading
 import cvxpy
 from cvxpy.expressions import constants
 from interfaces.msg import Reference, Controls, State
@@ -178,6 +179,9 @@ class MPC:
         self.model = model
         self.config = config
 
+        if self.reference.states.shape[1] != 4:
+            raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
+
         self.predicted_steer = np.zeros((self.config.tracking_horizon, 1))
         self.predicted_accel = np.zeros((self.config.tracking_horizon, 1))
 
@@ -185,6 +189,9 @@ class MPC:
         self.predicted_state = np.zeros((self.num_state, self.config.tracking_horizon + 1))
 
         self.set_imminent_ref()
+        
+        if self.reference.states.shape[1] != 4:
+            raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
 
     def set_imminent_ref(self):
         """
@@ -203,6 +210,9 @@ class MPC:
         # Truncate.
         self.reference.states = self.reference.states[start_idx:end_idx, :]
         self.reference.curvature = self.reference.curvature[start_idx:end_idx]
+
+        if self.reference.states.shape[1] != 4:
+            raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
 
     def get_predicted_states(self):
         """
@@ -228,43 +238,43 @@ class MPC:
         """
         self.predicted_state = self.get_predicted_states()
 
-        x = cvxpy.Variable((self.num_state, self.config.tracking_horizon+1))  # [X, Y, v, psi]
-        u = cvxpy.Variable((2, self.config.tracking_horizon))
+        x = cvxpy.Variable((self.config.tracking_horizon+1, self.num_state))  # [X, Y, v, psi]
+        u = cvxpy.Variable((self.config.tracking_horizon, 2))
         cost = constants.Constant(0.0)
         constraints = []
 
         for t in range(self.config.tracking_horizon):
-            cost += cvxpy.quad_form(u[:, t], self.config.R)  # Penalize control inputs.
+            cost += cvxpy.quad_form(u[t, :], self.config.R)  # Penalize control inputs.
 
             if t != 0:
                 # Penalize deviation from reference trajectory.
-                cost += cvxpy.quad_form(self.reference.states[t, :] - x[:, t],
+                cost += cvxpy.quad_form(self.reference.states[t, :] - x[t, :],
                                         self.config.Q)
 
             # Define the model.
             A, B, C = self.model.lin_step(self.predicted_state[2, t], self.predicted_state[3, t],
                                           self.predicted_steer[t])
-            constraints += [x[:, t+1] == A @ x[:, t] + B @ u[:, t] + C]
+            constraints += [x[t+1, :] == A @ x[t, :] + B @ u[t, :] + C]
 
             # Penalize changes in control.
             if t < self.config.tracking_horizon-1:
-                cost += cvxpy.quad_form(u[:, t+1] - u[:, t],
+                cost += cvxpy.quad_form(u[t+1, :] - u[t, :],
                                         self.config.S)
 
         # Natural contraints arising from car design.
-        constraints += [x[:, 0] == self.model.get_state()]
-        constraints += [x[2, :] <= self.model.car.params.vel_max]
-        constraints += [x[2, :] >= self.model.car.params.vel_min]
-        constraints += [u[0, :] <= self.model.car.params.accel_max]
-        constraints += [u[0, :] >= self.model.car.params.accel_min]
-        constraints += [u[1, :] <= self.model.car.params.steer_max]
-        constraints += [u[1, :] >= self.model.car.params.steer_min]
+        constraints += [x[0, :] == self.model.get_state()]
+        constraints += [x[:, 2] <= self.model.car.params.vel_max]
+        constraints += [x[:, 2] >= self.model.car.params.vel_min]
+        constraints += [u[:, 0] <= self.model.car.params.accel_max]
+        constraints += [u[:, 0] >= self.model.car.params.accel_min]
+        constraints += [u[:, 1] <= self.model.car.params.steer_max]
+        constraints += [u[:, 1] >= self.model.car.params.steer_min]
 
         # Solve the problem.
         prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
         res = prob.solve(solver=cvxpy.OSQP, verbose=False, warm_start=True)
 
-        return u.value[0, 0], u.value[1, 0]  # Acceleration, steering.
+        return u.value[0, 0], u.value[0, 1]  # Acceleration, steering.
 
 
 """
@@ -297,17 +307,29 @@ class ReferenceSubscriber(Node):
         self.pub = pub
 
     def listener_callback(self, msg):
-        ref_states = np.array(zip(msg.x, msg.y, msg.vel, msg.yaw))
-        ref_k = np.array(msg.curvatures)
-        ref = ReferenceTraj(ref_states, ref_k)
+        # ref_states = np.array(zip(msg.x, msg.y, msg.vel, msg.yaw))
+        # ref_k = np.array(msg.curvatures)
+        # ref = ReferenceTraj(ref_states, ref_k)
+
+        X = list(msg.x)
+        Y = list(msg.y)
+        vel = list(msg.vel)
+        psi = list(msg.yaw)
+        k = list(msg.curvatures)
+
+        ref_traj = ReferenceTraj(np.transpose(np.array([X, Y, vel, psi])), np.array(k))
 
         print("Received reference: ")
-        for i, s in enumerate(zip(*ref.states, ref.curvature)):
-            print(i, ":", s)
+        print("ref.states: ", ref_traj.states, " is dim ", ref_traj.states.shape)
+        print("ref.curvatures: ", ref_traj.curvature, " is dim ", ref_traj.curvature.shape)
+
         print("Initial state: ", state)
 
-        a, s = get_controls(ref)
-        self.pub.publish(Controls(a, s))
+        a, s = get_controls(ref_traj)
+        control_msg = Controls()
+        control_msg.accel = a
+        control_msg.steer = s
+        self.pub.publish(control_msg)
         print(f"Published controls ({a}, {s})") 
 
 
@@ -336,10 +358,24 @@ def main(args=None):
     state_sub = StateSubscriber()
     ref_sub = ReferenceSubscriber(pub)
 
+    executor = rclpy.executors.SingleThreadedExecutor()
+    executor.add_node(state_sub)
+    executor.add_node(ref_sub)
+
+    exec_thread = threading.Thread(target=executor.spin, daemon=True)
+    exec_thread.start()
+    rate = node.create_rate(2)
+
     print('ready')
-    while True:
-        rclpy.spin(state_sub)
-        rclpy.spin(ref_sub)
+    try:    
+        while rclpy.ok():
+            rate.sleep()
+    except KeyboardInterrupt:
+        pass
+
+    rclpy.shutdown()
+    exec_thread.join()
+
 
 if __name__ == '__main__':
     main()
