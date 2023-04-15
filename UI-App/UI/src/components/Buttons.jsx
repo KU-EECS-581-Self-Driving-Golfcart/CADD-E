@@ -5,7 +5,7 @@ import {tee1,tee2,tee3,tee4,tee5,tee6,tee7,tee8,tee9} from '../Data/tees';
 import { setTeeOrGreen } from './teeInfoSlice';
 import { useLocation } from 'react-router-dom'
 import ROSLIB from 'roslib'
-import {teePub} from '../app/Main'
+import {teePub} from '../app/App.js'
 
 export const selectFilter = state => state.filter;
 
