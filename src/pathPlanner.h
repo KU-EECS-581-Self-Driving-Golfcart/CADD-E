@@ -26,19 +26,19 @@ class PathPlanner {
             7,	// max curvature
             0.75,	// max_road_width_l;
             0.75,	// max_road_width_r;
-            0.25, //0.025,	// d_road_w;
+            0.05, //0.025,	// d_road_w;
             0.1,	// dt;
             5.0, //10.0,	// maxt;
             0.5,	// mint;
             0.1,	// d_t_s;
             2.0, //5.0,	// n_s_sample;
             0.1,	// obstacle_clearance;
-            85,	// kd;    75 - 100
+            500, //85,	// kd;    75 - 100
             0.1,	// kv;
             0.1,	// ka;
             0.1,	// kj;
-            0.1,	// kt;
-            1000,	// ko; 512.90906 - 512.909125
+            -1000,	// kt;
+            500,	// ko; 512.90906 - 512.909125
             1.0,	// klat;
             1.0,	// klon;
             num_threads // num thread
@@ -228,15 +228,15 @@ class PathPlanner {
         // }
 
         FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(&fot_ic, &fot_hp);
-        //std::cout << "paths = [\n";
-        //for (FrenetPath *path : fot.frenet_paths) {
-        //    std::cout << "\t[\n";
-        //    for(size_t i = 0; i < path->x.size(); i++) {
-        //        std::cout << "\t\t[" << path->x[i] << ", " << path->y[i] << "],\n";
-        //    }
-        //    std::cout << "\t],\n";
-        //}
-        //std::cout << "]\n";
+        std::cout << "paths = [\n";
+        for (FrenetPath *path : fot.frenet_paths) {
+            std::cout << "\t[\n";
+            for(size_t i = 0; i < path->x.size(); i++) {
+                std::cout << "\t\t[" << path->x[i] << ", " << path->y[i] << "],\n";
+            }
+            std::cout << "\t],\n";
+        }
+        std::cout << "]\n";
 
         return fot.getBestPath();
     }
