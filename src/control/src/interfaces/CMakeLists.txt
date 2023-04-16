@@ -38,6 +38,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Controls.msg"
   "msg/Reference.msg"
   "msg/State.msg"
+  "msg/ServoCtrlMsg.msg"
 )
 
 ament_package()
