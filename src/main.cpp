@@ -286,6 +286,10 @@ int main(int argc, char* argv[]) {
         
         std::cout << "]\n";
 
+        auto rp_split = std::chrono::high_resolution_clock::now();
+        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(rp_split - start_time);
+        std::cout << "# RP Duration: " << duration_ms.count() << " ms\n";
+
         if(routeX.size() < 2) {
             std::cout << "# No route\n";
             continue;
@@ -294,8 +298,8 @@ int main(int argc, char* argv[]) {
         //path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
         path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
-        int last_bad_i = -1;
         if(path) {
+            int last_bad_i = -1;
             //std::cout << "#path->x.size() = " << path->x.size() << "\n";
             //std::cout << "best_path = [\n";
             for(size_t i = 0; i < path->x.size(); i++) {
@@ -306,52 +310,52 @@ int main(int argc, char* argv[]) {
                     //std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
                 }
             }
-            std::cout << "]\n";
-        } else {
-            std::cout << "# no path found\n";
-            std::cout << "print(\"No path found\")\n";
-            std::cout << "best_path = [[" << telem.pos_x << ", " << telem.pos_y << "]]\n";
-        }
+            //std::cout << "]\n";
+            std::cout << "last_bad_i = " << last_bad_i << "\n";
+            std::vector<double> new_x(path->x.begin() + last_bad_i + 1, path->x.end());
+            path->x = new_x;
+            std::vector<double> new_y(path->y.begin() + last_bad_i + 1, path->y.end());
+            path->y = new_y;
+            std::vector<double> new_s_d(path->s_d.begin() + last_bad_i + 1, path->s_d.end());
+            path->s_d = new_s_d;
+            std::vector<double> new_yaw(path->yaw.begin() + last_bad_i + 1, path->yaw.end());
+            path->yaw = new_yaw;
+            std::vector<double> new_c(path->c.begin() + last_bad_i + 1, path->c.end());
+            path->c = new_c;
 
-        std::cout << "last_bad_i = " << last_bad_i << "\n";
-        std::vector<double> new_x(path->x.begin() + last_bad_i + 1, path->x.end());
-        path->x = new_x;
-        std::vector<double> new_y(path->y.begin() + last_bad_i + 1, path->y.end());
-        path->y = new_y;
-        std::vector<double> new_s_d(path->s_d.begin() + last_bad_i + 1, path->s_d.end());
-        path->s_d = new_s_d;
-        std::vector<double> new_yaw(path->yaw.begin() + last_bad_i + 1, path->yaw.end());
-        path->yaw = new_yaw;
-        std::vector<double> new_c(path->c.begin() + last_bad_i + 1, path->c.end());
-        path->c = new_c;
-
-        if(path) {
             std::cout << "best_path = [\n";
             
             for(size_t i = 0; i < path->x.size(); i++) {
                 std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
             }
             std::cout << "]\n";
+            /*
+            * Generate controls.
+            */
+            state_pub_node->publish(telem.pos_x,
+                telem.pos_y,
+                telem.speed_mps*cos(telem.heading),
+                telem.speed_mps*sin(telem.heading),
+                telem.heading,
+                telem.headingdot);
+            ref_pub_node->publish(
+                path->x,
+                path->y,
+                path->s_d,
+                path->yaw,
+                path->c
+            );
+        } else {
+            std::cout << "# no path found\n";
+            std::cout << "print(\"No path found\")\n";
+            std::cout << "best_path = [[" << telem.pos_x << ", " << telem.pos_y << "]]\n";
         }
-
-        /*
-         * Generate controls.
-         */
-        state_pub_node->publish(telem.pos_x,
-            telem.pos_y,
-            telem.speed_mps*cos(telem.heading),
-            telem.speed_mps*sin(telem.heading),
-            telem.heading,
-            telem.headingdot);
-        ref_pub_node->publish(
-            path->x,
-            path->y,
-            path->s_d,
-            path->yaw,
-            path->c
-        );
         
+
         auto stop_time = std::chrono::high_resolution_clock::now();
+        duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - rp_split);
+        std::cout << "# PP Duration: " << duration_ms.count() << " ms\n";
+
         auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
         std::cout << "# Duration: " << duration_ms.count() << " ms\n";
         sleep(1);
