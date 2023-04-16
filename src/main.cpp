@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <unistd.h>
+#include <cmath>
 #include <chrono>
 #include <pthread.h>
 
@@ -18,9 +19,9 @@
 #include "cadd_e_interface/msg/imu.hpp"
 #include "std_msgs/msg/string.hpp"
 
-//#include "interfaces/msg/reference.hpp"
-//#include "interfaces/msg/state.hpp"
-//#include "interfaces/msg/controls.hpp"
+#include "interfaces/msg/reference.hpp"
+#include "interfaces/msg/state.hpp"
+#include "interfaces/msg/controls.hpp"
 
 using std::placeholders::_1;
 
@@ -119,7 +120,7 @@ class RoutePublisher : public rclcpp::Node
         }
 };
 
-/*
+
 class StatePublisher : public rclcpp::Node
 {
     private:
@@ -181,7 +182,7 @@ class ReferencePublisher : public rclcpp::Node
             this->publisher_->publish(refmsg);
         }
 };
-*/
+
 
 void* spin_sub_executor(void* exec_ptr) {
     //std::cout << "Created ROS subscriber thread\n";
@@ -202,8 +203,8 @@ int main(int argc, char* argv[]) {
 
     // Create publisher nodes.
     std::shared_ptr<RoutePublisher> route_pub_node = std::make_shared<RoutePublisher>();
-    //std::shared_ptr<StatePublisher> state_pub_node = std::make_shared<StatePublisher>();
-    //std::shared_ptr<ReferencePublisher> ref_pub_node = std::make_shared<ReferencePublisher>();
+    std::shared_ptr<StatePublisher> state_pub_node = std::make_shared<StatePublisher>();
+    std::shared_ptr<ReferencePublisher> ref_pub_node = std::make_shared<ReferencePublisher>();
 
     // Add subscriber nodes to executor
     rclcpp::executors::SingleThreadedExecutor ros_sub_executor;
@@ -218,8 +219,8 @@ int main(int argc, char* argv[]) {
     // Add publisher node to executor
     rclcpp::executors::SingleThreadedExecutor ros_pub_executor;
     ros_pub_executor.add_node(route_pub_node);
-    //ros_pub_executor.add_node(state_pub_node);
-    //ros_pub_executor.add_node(ref_pub_node);
+    ros_pub_executor.add_node(state_pub_node);
+    ros_pub_executor.add_node(ref_pub_node);
 
     // Init route planning and path planning modules
     PathPlanner pp(1);
@@ -304,18 +305,20 @@ int main(int argc, char* argv[]) {
         /*
          * Generate controls.
          */
-        /*state_pub_node->publish(telem.pos_x,
+        state_pub_node->publish(
+            telem.pos_x,
             telem.pos_y,
-            telem.vel_x,
-            telem.vel_y,
+            telem.speed_mps * cos(telem.heading),
+            telem.speed_mps * sin(telem.heading),
             telem.heading,
             telem.headingdot);
-        ref_pub_node->publish(path->x,
+        ref_pub_node->publish(
+            path->x,
             path->y,
             path->s_d,
             path->yaw,
             path->c);
-        */
+        
         auto stop_time = std::chrono::high_resolution_clock::now();
         auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
         std::cout << "# Duration: " << duration_ms.count() << " ms\n";
