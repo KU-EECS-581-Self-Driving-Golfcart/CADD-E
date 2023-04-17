@@ -21,4 +21,10 @@ git clone https://github.com/RobotWebTools/rosbridge_suite
 cd rosbridge_suite
 colcon build
 . install/setup.bash
-pip3 install pymongo tornado
+
+echo "Install and setup Cyclone DDS"
+sudo apt-get install ros-foxy-rmw-cyclonedds-cpp
+echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
+
+echo "Installing Python dependencies"
+pip3 install pymongo tornado cvxpy

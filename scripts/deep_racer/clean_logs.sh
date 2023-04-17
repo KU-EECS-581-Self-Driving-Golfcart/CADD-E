@@ -1,0 +1,1 @@
+sudo rm -f ./root/.ros/log
