@@ -352,8 +352,9 @@ class ReferenceSubscriber(Node):
         last_time = time_now
 
         control_msg = ServoCtrlMsg()
-        v = 0
-        s = 0
+        v = 0.0
+        s = 0.0
+        a = 0.0
         try:
             a, s = get_controls(ref_traj)
             v = last_vel + a * duration_between_cmds
