@@ -8,7 +8,12 @@ import cvxpy
 import time
 from cvxpy.expressions import constants
 from interfaces.msg import Reference, State
-from deepracer_interfaces_pkg.msg import ServoCtrlMsg
+
+DEBUG = True
+if DEBUG:
+    from sim_msg.msg import ServoCtrlMsg
+else:
+    from deepracer_interfaces_pkg.msg import ServoCtrlMsg
 
 """
 MODELS
@@ -215,6 +220,7 @@ class MPC:
         self.reference.states = self.reference.states[start_idx:end_idx, :]
         self.reference.curvature = self.reference.curvature[start_idx:end_idx]
 
+        print('truncated ref: ', self.reference.states, ' is dim ', self.reference.states.shape)
         if self.reference.states.shape[1] != 4:
             raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
 
