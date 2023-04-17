@@ -355,12 +355,10 @@ class ReferenceSubscriber(Node):
         v = 0.0
         s = 0.0
         a = 0.0
-        try:
-            a, s = get_controls(ref_traj)
-            v = last_vel + a * duration_between_cmds
-            v, s = scale_controls(v, s)
-        except:
-            pass
+        
+        a, s = get_controls(ref_traj)
+        v = last_vel + a * duration_between_cmds
+        v, s = scale_controls(v, s)
 
         control_msg.throttle = np.clip(v, 0.3, 0.7)
         control_msg.angle = s
