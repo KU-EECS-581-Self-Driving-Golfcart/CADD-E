@@ -7,7 +7,8 @@ import threading
 import cvxpy
 import time
 from cvxpy.expressions import constants
-from interfaces.msg import Reference, ServoCtrlMsg, State
+from interfaces.msg import Reference, State
+from deepracer_interfaces_pkg.msg import ServoCtrlMsg
 
 """
 MODELS
