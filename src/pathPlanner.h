@@ -29,7 +29,7 @@ class PathPlanner {
             0.05, //0.025,	// d_road_w;
             0.1,	// dt;
             5.0, //10.0,	// maxt;
-            0.5,	// mint;
+            1.0,	// mint;
             0.1,	// d_t_s;
             2.0, //5.0,	// n_s_sample;
             0.1,	// obstacle_clearance;
@@ -228,6 +228,7 @@ class PathPlanner {
         // }
 
         FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(&fot_ic, &fot_hp);
+        /*
         std::cout << "paths = [\n";
         for (FrenetPath *path : fot.frenet_paths) {
             std::cout << "\t[\n";
@@ -237,7 +238,7 @@ class PathPlanner {
             std::cout << "\t],\n";
         }
         std::cout << "]\n";
-
+        */
         return fot.getBestPath();
     }
 

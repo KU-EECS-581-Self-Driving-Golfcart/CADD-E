@@ -84,7 +84,7 @@ class TargetLocationSubscriber : public rclcpp::Node
     }
   	private:
     void topic_callback(const std_msgs::msg::String::SharedPtr msg) const {
-    	RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+    	RCLCPP_INFO(this->get_logger(), "# I heard: '%s'", msg->data.c_str());
     	tgt_hole = stoi(std::string(1, msg->data.at(0)));
     	tgt_loc = msg->data.at(1);
     }
@@ -116,7 +116,7 @@ class RoutePublisher : public rclcpp::Node
             }
             message.route_size = size;
             std::cout << "# Publishing route of size " << message.route_size << "\n";
-            RCLCPP_INFO(this->get_logger(), "Publishing: route of size %d'", message.route_size);
+            RCLCPP_INFO(this->get_logger(), "# Publishing: route of size %d'", message.route_size);
             this->publisher_->publish(message);
         }
 };
@@ -142,7 +142,7 @@ class StatePublisher : public rclcpp::Node
             statemsg.psi = psi;
             statemsg.psidot = psidot;
 
-            std::cout << "Publishing state (" << X << ','
+            std::cout << "# Publishing state (" << X << ','
                 << Y << ',' << xdot << ',' << ydot << ','
                 << psi << ',' << psidot << ")\n";
             this->publisher_->publish(statemsg);
@@ -167,7 +167,7 @@ class ReferencePublisher : public rclcpp::Node
                      vector<double> curvatures)
         {
             auto refmsg = interfaces::msg::Reference();
-            for(int i=0; i < x.size(); i++) {
+            for(size_t i=0; i < x.size(); i++) {
                 refmsg.x.push_back(x[i]);
                 refmsg.y.push_back(y[i]);
                 refmsg.vel.push_back(vel[i]);
@@ -176,7 +176,7 @@ class ReferencePublisher : public rclcpp::Node
             }
             refmsg.length = x.size();
 
-            std::cout << "Publishing reference: first entry(" << x[0] << ','
+            std::cout << "# Publishing reference: first entry(" << x[0] << ','
                 << y[0] << ',' << vel[0] << ',' << yaw[0] << ','
                 << curvatures[0] << ")\n";
             this->publisher_->publish(refmsg);
@@ -234,10 +234,10 @@ int main(int argc, char* argv[]) {
 
     // Init route planning and path planning modules
     PathPlanner pp(1);
-    //RoutePlanner rp;
-    int radius = 5;
-    TestRoutePlanner rp(lat, lon, 24, radius);
-    std::cout << "radius = " << radius << "\n";
+    RoutePlanner rp;
+    //int radius = 5;
+    //TestRoutePlanner rp(lat, lon, 24, radius);
+    //std::cout << "radius = " << radius << "\n";
     telem.heading = 0.0;
 
     // Init route and path variables
@@ -247,10 +247,6 @@ int main(int argc, char* argv[]) {
 
     int i = 0;
     while(rclcpp::ok()) {
-        if(i == 1) {
-            rclcpp::shutdown();
-            return 0;
-        }
         auto start_time = std::chrono::high_resolution_clock::now();
         std::cout << "# Iteration (" << i++ << ")\n";
 
@@ -258,8 +254,8 @@ int main(int argc, char* argv[]) {
 
         // Localize position from GPS
         std::tie(telem.pos_x, telem.pos_y) = rp.latlon2local(lat, lon);
-        telem.pos_x += radius*2;
-        telem.pos_y += radius;
+        //telem.pos_x += radius*2;
+        //telem.pos_y += radius;
 
         std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] #(local)\n";
         std::cout << "#             [" << lat << ", " << lon << "] (global)\n";
@@ -271,7 +267,7 @@ int main(int argc, char* argv[]) {
 
         std::tie(routeX, routeY) = rp.LocalRoute(routeIdxs);
 
-        //route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
+        route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
 
         std::cout << "route = [\n";
         if (routeX.size() >= 7 || false) {
@@ -298,10 +294,15 @@ int main(int argc, char* argv[]) {
         //path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
         path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
+        auto path_gen_split = std::chrono::high_resolution_clock::now();
+        duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(path_gen_split - rp_split);
+        std::cout << "# PP Pathgen Duration: " << duration_ms.count() << " ms\n";
+
         if(path) {
             int last_bad_i = -1;
             //std::cout << "#path->x.size() = " << path->x.size() << "\n";
             //std::cout << "best_path = [\n";
+            std::cout << "path_x_size: " << path->x.size() << "\n";
             for(size_t i = 0; i < path->x.size(); i++) {
                 if(path->x[i] < 0.1 || path->y[i] < 0.1) {
                     //std::cout << "\t#[" << path->x[i] << ", " << path->y[i] << "],\n";
@@ -353,12 +354,12 @@ int main(int argc, char* argv[]) {
         
 
         auto stop_time = std::chrono::high_resolution_clock::now();
-        duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - rp_split);
-        std::cout << "# PP Duration: " << duration_ms.count() << " ms\n";
+        duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - path_gen_split);
+        std::cout << "# PP Path Handling Duration: " << duration_ms.count() << " ms\n";
 
-        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
+        duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
         std::cout << "# Duration: " << duration_ms.count() << " ms\n";
-        sleep(1);
+        //sleep(1);
     }
     rclcpp::shutdown();
     return 0;
