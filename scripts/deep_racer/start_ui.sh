@@ -3,6 +3,7 @@ echo "Sourcing ROS"
 source /opt/ros/foxy/setup.bash
 
 echo "Sourcing cadd_e_interface"
+cd ~/CADD-E/cadd_e_interface
 colcon build --packages-select cadd_e_interface
 . install/setup.bash
 
