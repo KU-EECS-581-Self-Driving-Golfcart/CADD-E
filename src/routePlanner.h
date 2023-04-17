@@ -181,7 +181,8 @@ class RoutePlanner {
 		// Find closest graph node
 		long s_id = m.closest_wp_id(local_x, local_y);
 		int s_idx = m.nd_id_2_idx_map[s_id];
-		std::cout << "Closest point: ID = " << s_id<< " XY  = [" << m.NodeXY()[s_idx].first << ", " << m.NodeXY()[s_idx].second  << "]\n"; 
+		std::cout << "#Closest point: ID = " << s_id<< " XY  = [" << m.NodeXY()[s_idx].first << ", " << m.NodeXY()[s_idx].second  << "]\n"; 
+		std::cout << "closest_wp  = [" << m.NodeXY()[s_idx].first << ", " << m.NodeXY()[s_idx].second  << "]\n"; 
 
 		// Find target node
 		long t_id = sig_loc(hole, loc);
@@ -216,6 +217,11 @@ class RoutePlanner {
 
 		return routeLatLon;
 	}
+
+	// Convert a global coordinate point to a localized system
+    std::pair<float, float> latlon2local(float lat, float lon) {
+        return m.latlon2local(lat, lon);
+    }
 
 	int size(){
 		return m.Size();

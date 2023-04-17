@@ -61,6 +61,15 @@ public:
         adj_list[1304][0].second = 1305;
 
         init = true;
+
+        // std::cout << "adj_list = [\n";
+        // for(int i = 0; i < N; i++){
+        //     for(size_t j = 0; j < adj_list[i].size(); j++) {
+        //         int e_idx = adj_list[i][j].second;
+        //         std::cout << "\t[" << node_xy[i].first << ", " << node_xy[i].second << ", " << node_xy[e_idx].first - node_xy[i].first << ", " << node_xy[e_idx].second - node_xy[i].second << "],\n";
+        //     }
+        // }
+        // std::cout << "]\n";
     }
 
     // Return # of nodes in graph

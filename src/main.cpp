@@ -3,11 +3,13 @@
 #include <unistd.h>
 #include <chrono>
 #include <pthread.h>
+#include <cmath>
 
 // Locatization and planning includes
 #include "telemetry.h"
 #include "pathPlanner.h"
 #include "routePlanner.h"
+#include "testRoutePlanner.h"
 #include "localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/FrenetPath.h"
 #include "localization/frenet_optimal_trajectory_planner/src/FrenetOptimalTrajectory/py_cpp_struct.h"
 
@@ -30,6 +32,7 @@ bool imu_init = false;
 // Globals updated by ROS subscribers
 double lat = 0.0;        // GPS Latitude
 double lon = 0.0;        // GPS Longitude
+float speed_mps = 0.0;   // Ground speed
 float heading = 0.0;    // Heading (in degrees)
 int tgt_hole = 1;   // Target hole (1-9)
 char tgt_loc = 'H';    // Target location ("H"(ole), "B"(lack), (B)"R"(onze), "S"(ilver), "G"(old))
@@ -44,9 +47,11 @@ class GPSSubscriber : public rclcpp::Node {
 
 	private:
   	void topic_callback(const cadd_e_interface::msg::GPS::SharedPtr msg) const {
-		RCLCPP_INFO(this->get_logger(), "I heard: '%f, %f'", msg->lat, msg->lon);
+		//RCLCPP_INFO(this->get_logger(), "I heard: '%f, %f'", msg->lat, msg->lon);
         lat = msg->lat;
         lon = msg->lon;
+        speed_mps = msg->speed_mps;
+        telem.update_gps(speed_mps);
         gps_init = true;
     }
     rclcpp::Subscription<cadd_e_interface::msg::GPS>::SharedPtr subscription_;
@@ -63,7 +68,7 @@ class IMUSubscriber : public rclcpp::Node {
 
   	private:
   	void topic_callback(const cadd_e_interface::msg::IMU::SharedPtr msg) const {
-		RCLCPP_INFO(this->get_logger(), "I heard [h: %f; l_a: %f, %f, %f]", msg->heading, msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z);
+		//RCLCPP_INFO(this->get_logger(), "I heard [h: %f; l_a: %f, %f, %f]", msg->heading, msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z);
         std::chrono::milliseconds time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 		telem.update_imu(msg->lin_acc_x, msg->lin_acc_y, msg->lin_acc_z, msg->heading, msg->ang_vel[2], time);
         imu_init = true;
@@ -178,7 +183,6 @@ class ReferencePublisher : public rclcpp::Node
         }
 };
 
-
 void* spin_sub_executor(void* exec_ptr) {
     //std::cout << "Created ROS subscriber thread\n";
     rclcpp::executors::SingleThreadedExecutor* exec = (rclcpp::executors::SingleThreadedExecutor*) exec_ptr;
@@ -216,47 +220,50 @@ int main(int argc, char* argv[]) {
     ros_pub_executor.add_node(state_pub_node);
     ros_pub_executor.add_node(ref_pub_node);
 
+    // Init IMU telemetry tracker
+    telem.start();
+
+    // TODO: Remove dummy variable
+    // Hole 1 Gold tee box
+    lat = 38.9777938333;
+    lon = -95.2642973333;
+
+    std::cout << "#Waiting for sensors... ";
+    //while(!(imu_init && gps_init)) {}
+    std::cout << " Done!\n";
+
     // Init route planning and path planning modules
     PathPlanner pp(1);
-    RoutePlanner rp;
+    //RoutePlanner rp;
+    int radius = 5;
+    TestRoutePlanner rp(lat, lon, 24, radius);
+    std::cout << "radius = " << radius << "\n";
+    telem.heading = 0.0;
 
     // Init route and path variables
     std::vector<float> routeX(rp.size());
     std::vector<float> routeY(rp.size());
     FrenetPath* path = nullptr;
 
-    // Init IMU telemetry tracker
-    telem.start();
-
-    // TODO: Remove dummy variable
-    // Hole 1 Gold tee box
-    //lat = 38.9777938333;
-    //lon = -95.2642973333;
-
-    lat = 38.977760;
-    lon = -95.264381;
-
-    //tgt_hole = 1;     // TODO: Remove dummy variable
-    //tgt_loc = 'H';    // TODO: Remove dummy variable
-
-    while(!(imu_init && gps_init)) {}
-
     int i = 0;
     while(rclcpp::ok()) {
-        //if(i == 1) {            // TODO: Remove test start
-        //    rclcpp::shutdown(); // TODO: Remove test start
-        //    return 0;           // TODO: Remove test start
-        //}                       // TODO: Remove test start
+        if(i == 1) {
+            rclcpp::shutdown();
+            return 0;
+        }
+        auto start_time = std::chrono::high_resolution_clock::now();
         std::cout << "# Iteration (" << i++ << ")\n";
 
         // TODO: Check distance to target location -> don't do anything if within certain distance (2 meters for example). Wait until target location is updated
 
         // Localize position from GPS
-        std::tie(telem.pos_x, telem.pos_y) = rp.m.latlon2local(lat, lon);
+        std::tie(telem.pos_x, telem.pos_y) = rp.latlon2local(lat, lon);
+        telem.pos_x += radius*2;
+        telem.pos_y += radius;
 
         std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] #(local)\n";
         std::cout << "#             [" << lat << ", " << lon << "] (global)\n";
-        std::cout << "# Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "]\n";
+        std::cout << "# Telemetry:  [h: " << telem.heading << "; l_a: " << telem.acc_x << ", " << telem.acc_y << ", " << telem.acc_z << "; speed: [" << telem.speed_mps << "]\n";
         std::cout << "# Target loc: [" << tgt_hole << tgt_loc << "]\n";
 
         // Generate route
@@ -264,57 +271,93 @@ int main(int argc, char* argv[]) {
 
         std::tie(routeX, routeY) = rp.LocalRoute(routeIdxs);
 
-        // TODO: Remove
-        //telem.pos_x = routeX[0] - .33;
-        //telem.pos_y = routeY[0] + 0.22;
-        //std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] \n";
-
-        route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
+        //route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
 
         std::cout << "route = [\n";
-        for(size_t i = 0; i < 7; i++) {
-        //for(size_t i = 0; i < routeX.size(); i++) {
-            std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
+        if (routeX.size() >= 7 || false) {
+            for(size_t i = 0; i < 7; i++) {
+                std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
+            }
+        } else {
+            for(size_t i = 0; i < routeX.size(); i++) {
+                std::cout << "\t[" << routeX[i] << ", " << routeY[i] << "],\n";
+            }
         }
+        
         std::cout << "]\n";
 
+        auto rp_split = std::chrono::high_resolution_clock::now();
+        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(rp_split - start_time);
+        std::cout << "# RP Duration: " << duration_ms.count() << " ms\n";
+
+        if(routeX.size() < 2) {
+            std::cout << "# No route\n";
+            continue;
+        }
         // Generate path
         //path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
         path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
         if(path) {
-            //std::cout << "got path\n";
-            // TODO: Remove
-            std::cout << "best_path = [\n";
+            int last_bad_i = -1;
+            //std::cout << "#path->x.size() = " << path->x.size() << "\n";
+            //std::cout << "best_path = [\n";
             for(size_t i = 0; i < path->x.size(); i++) {
-                if(path->x[i] < 1.0 || path->y[i] < 1.0) {
-                    std::cout << "\t#[" << path->x[i] << ", " << path->y[i] << "],\n";
+                if(path->x[i] < 0.1 || path->y[i] < 0.1) {
+                    //std::cout << "\t#[" << path->x[i] << ", " << path->y[i] << "],\n";
+                    last_bad_i = i;
                 } else {
-                    std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
+                    //std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
                 }
             }
+            //std::cout << "]\n";
+            std::cout << "last_bad_i = " << last_bad_i << "\n";
+            std::vector<double> new_x(path->x.begin() + last_bad_i + 1, path->x.end());
+            path->x = new_x;
+            std::vector<double> new_y(path->y.begin() + last_bad_i + 1, path->y.end());
+            path->y = new_y;
+            std::vector<double> new_s_d(path->s_d.begin() + last_bad_i + 1, path->s_d.end());
+            path->s_d = new_s_d;
+            std::vector<double> new_yaw(path->yaw.begin() + last_bad_i + 1, path->yaw.end());
+            path->yaw = new_yaw;
+            std::vector<double> new_c(path->c.begin() + last_bad_i + 1, path->c.end());
+            path->c = new_c;
+
+            std::cout << "best_path = [\n";
+            
+            for(size_t i = 0; i < path->x.size(); i++) {
+                std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
+            }
             std::cout << "]\n";
+            /*
+            * Generate controls.
+            */
+            state_pub_node->publish(telem.pos_x,
+                telem.pos_y,
+                telem.speed_mps*cos(telem.heading),
+                telem.speed_mps*sin(telem.heading),
+                telem.heading,
+                telem.headingdot);
+            ref_pub_node->publish(
+                path->x,
+                path->y,
+                path->s_d,
+                path->yaw,
+                path->c
+            );
         } else {
             std::cout << "# no path found\n";
             std::cout << "print(\"No path found\")\n";
             std::cout << "best_path = [[" << telem.pos_x << ", " << telem.pos_y << "]]\n";
         }
+        
 
-        /*
-         * Generate controls.
-         */
-        state_pub_node->publish(telem.pos_x,
-            telem.pos_y,
-            telem.vel_x,
-            telem.vel_y,
-            telem.heading,
-            telem.headingdot);
-        ref_pub_node->publish(path->x,
-            path->y,
-            path->s_d,
-            path->yaw,
-            path->c);
+        auto stop_time = std::chrono::high_resolution_clock::now();
+        duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - rp_split);
+        std::cout << "# PP Duration: " << duration_ms.count() << " ms\n";
 
+        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
+        std::cout << "# Duration: " << duration_ms.count() << " ms\n";
         sleep(1);
     }
     rclcpp::shutdown();

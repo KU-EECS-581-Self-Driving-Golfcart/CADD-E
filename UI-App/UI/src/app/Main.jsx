@@ -14,46 +14,54 @@ import GoButton from '../components/GoButton.jsx';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {incrementCurrent, incrementGreen, incrementTarget} from "../components/teeInfoSlice"
-export let teePub;
 let path = [];
 
 const Main = (props) => {
 
-  
-  var ros = new ROSLIB.Ros({
-    url : 'ws://localhost:9090'
-  });
+  // let connectionSet = false;
 
-  ros.on('connection', function() {
-    console.log('Connected to websocket server.');
-  });
+  // if(connectionSet == false) {
+  //   var ros = new ROSLIB.Ros({
+  //     url : 'ws://localhost:9090'
+  //   });
+  // }
 
-  ros.on('error', function(error) {
-    console.log('Error connecting to websocket server: ', error);
-  });
+  // ros.on('connection', function() {
+  //   console.log('Connected to websocket server.');
+  // });
 
-  ros.on('close', function() {
-    console.log('Connection to websocket server closed.');
-  });
+  // ros.on('error', function(error) {
+  //   console.log('Error connecting to websocket server: ', error);
+  // });
 
-  teePub = new ROSLIB.Topic({
-    ros : ros,
-    name : '/teeInfo',
-    messageType : 'std_msgs/String'
-  });
+  // ros.on('close', function() {
+  //   console.log('Connection to websocket server closed.');
+  // });
 
-  let goPub = new ROSLIB.Topic({
-    ros : ros,
-    name : '/IsGO',
-    messageType : 'std_msgs/Bool'
-  });
+  // teePub = new ROSLIB.Topic({
+  //   ros : ros,
+  //   name : '/teeInfo',
+  //   messageType : 'std_msgs/String'
+  // });
+
+  // let goPub = new ROSLIB.Topic({
+  //   ros : ros,
+  //   name : '/IsGO',
+  //   messageType : 'std_msgs/Bool'
+  // });
 
 
-  var listener = new ROSLIB.Topic({
-    ros : ros,
-    name : '/route',
-    messageType : 'cadd_e_interface/msg/Route'
-  }); 
+  // var listener = new ROSLIB.Topic({
+  //   ros : ros,
+  //   name : '/route',
+  //   messageType : 'cadd_e_interface/msg/Route'
+  // }); 
+
+  // var listenerGPS = new ROSLIB.Topic({
+  //   ros : ros,
+  //   name : '/gps',
+  //   messageType : 'cadd_e_interface/msg/GPS'
+  // }); 
 
   const dispatch = useDispatch();
   const currentTee = useSelector(state => state.teeInfo.currentTee);
@@ -79,12 +87,12 @@ const Main = (props) => {
   const timerId = useRef();
   const [routePos, setRoutePos] = useState([[0,0]])
   const [speed, setSpeed] = useState(0);
-  const [currentPosition, setCurrentPosition] = useState(startPos)
+  const [currentPosition, setCurrentPosition] = useState(startPos);
   const [nextPosition, setNextPosition] = useState([0,0])
   const [data, setData] = useState({}) //Used to inform target locations 
 
-  listener.subscribe(function(message) {
-    console.log('Received message on ' + listener.name + ': ' + message.route_size);
+  props.listener.subscribe(function(message) {
+    console.log('Received message on ' + props.listener.name + ': ' + message.route_size);
     let tempPath = [];
     for(let i=0; i<message.route_size; i++) {
       let pathInstance = [message.lat[i], message.lon[i]];
@@ -92,7 +100,14 @@ const Main = (props) => {
     }
     path = tempPath;
     if(isActive) setRoutePos(path);
-    listener.unsubscribe();
+    // listener.unsubscribe();
+  }); 
+
+  props.listenerGPS.subscribe(function(message) {
+    console.log('Received messages ' + message.lat + ' ' + message.lon + ' ' + message.speed_mps);
+    setCurrentPosition([message.lat, message.lon]);
+    setSpeed(message.speed_mps);
+    // listenerGPS.unsubscribe();
   }); 
 
   /*This useEffect is called whenever the nextPosition state value is updated,
@@ -102,26 +117,26 @@ const Main = (props) => {
 
   //Temporary timer to show a proof of concept on displaying a dynamic vehicle speed. 
   //Eventually, this will be replaced by the vehicles real speed. 
-  const startTimer = () => {
-    clearInterval(timerId.current);
-      let i = 0;
-      timerId.current = setInterval(() => {
-          setSpeed(speed => speed + 1);
-          i +=1;
-          if(i >= 20) clearInterval(timerId.current);
-      }, 200)
-  }
+  // const startTimer = () => {
+  //   clearInterval(timerId.current);
+  //     let i = 0;
+  //     timerId.current = setInterval(() => {
+  //         setSpeed(speed => speed + 1);
+  //         i +=1;
+  //         if(i >= 20) clearInterval(timerId.current);
+  //     }, 200)
+  // }
 
   //Temporary timer functino to stop the stop the displayed "speed"
-  const stopTimer = () => {
-    clearInterval(timerId.current);
-    let i = speed;
-    timerId.current = setInterval(() => {
-      setSpeed(speed => speed - 1);
-      i -= 1;
-      if(i === 0) clearInterval(timerId.current);
-    }, 200)
-}
+//   const stopTimer = () => {
+//     clearInterval(timerId.current);
+//     let i = speed;
+//     timerId.current = setInterval(() => {
+//       setSpeed(speed => speed - 1);
+//       i -= 1;
+//       if(i === 0) clearInterval(timerId.current);
+//     }, 200)
+// }
 
 //Function handler for when the GoButton is pressed
 function go() {
@@ -151,10 +166,10 @@ function go() {
     var changeGo = new ROSLIB.Message({
       data: isGo
     });
-    goPub.publish(changeGo);
+    props.goPub.publish(changeGo);
     setIsActive(!isActive)
     console.log(isActive);
-    startTimer();
+    //startTimer();
     dispatch(incrementCurrent());
     dispatch(incrementTarget());
     dispatch(incrementGreen());
@@ -167,7 +182,7 @@ function stop() {
   //Hide the stop button and display the go button once again.
   setIsGo(!isGo)
   setValidTarget(!validTarget)
-  stopTimer();
+  //stopTimer();
 //   fetch("/StopCommand").then(
 //     res => res.json()
 // ).then(
@@ -179,10 +194,10 @@ function stop() {
 var changeGo = new ROSLIB.Message({
   data: isGo
 });
-goPub.publish(changeGo);
+props.goPub.publish(changeGo);
   setIsActive(!isActive)
   //Set the next positions and route
-  setCurrentPosition(nextPosition)
+  // setCurrentPosition(nextPosition)
   setNextPosition([0,0])
   setRoutePos([[0,0]])
   //Modify these boolean variables so that they can be selected once again

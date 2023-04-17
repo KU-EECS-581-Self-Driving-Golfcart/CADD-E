@@ -6,4 +6,4 @@ ros2 run mpc control
 ```
 The package name is `mpc` and the entry point is named `control`.
 
-Topics are `/reference` and `controls`.
+Topics are `/reference`, `/state`, and `controls`.
