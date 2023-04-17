@@ -361,7 +361,7 @@ class ReferenceSubscriber(Node):
         except:
             pass
 
-        control_msg.throttle = v
+        control_msg.throttle = np.clip(v, 0.3, 0.7)
         control_msg.angle = s
 
         self.pub.publish(control_msg)
