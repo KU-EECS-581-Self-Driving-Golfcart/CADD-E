@@ -177,6 +177,8 @@ class MPC:
         self.reference = reference
         self.model = model
         self.config = config
+        
+        self.state0 = self.model.get_state()
 
         self.predicted_steer = np.zeros((self.config.tracking_horizon, 1))
         self.predicted_accel = np.zeros((self.config.tracking_horizon, 1))
@@ -252,7 +254,7 @@ class MPC:
                                         self.config.S)
 
         # Natural contraints arising from car design.
-        constraints += [x[:, 0] == self.model.get_state()]
+        constraints += [x[:, 0] == np.transpose(self.state0)]
         constraints += [x[2, :] <= self.model.car.params.vel_max]
         constraints += [x[2, :] >= self.model.car.params.vel_min]
         constraints += [u[0, :] <= self.model.car.params.accel_max]
