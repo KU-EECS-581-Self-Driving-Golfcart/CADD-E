@@ -180,6 +180,8 @@ class MPC:
         self.reference = reference
         self.model = model
         self.config = config
+        
+        self.state0 = self.model.get_state()
 
         if self.reference.states.shape[1] != 4:
             raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
@@ -264,7 +266,7 @@ class MPC:
                                         self.config.S)
 
         # Natural contraints arising from car design.
-        constraints += [x[0, :] == self.model.get_state()]
+        constraints += [x[0, :] == self.state0]
         constraints += [x[:, 2] <= self.model.car.params.vel_max]
         constraints += [x[:, 2] >= self.model.car.params.vel_min]
         constraints += [u[:, 0] <= self.model.car.params.accel_max]
@@ -359,7 +361,7 @@ class ReferenceSubscriber(Node):
         except:
             pass
 
-        control_msg.throttle = v
+        control_msg.throttle = np.clip(v, 0.3, 0.7)
         control_msg.angle = s
 
         self.pub.publish(control_msg)
