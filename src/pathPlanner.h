@@ -28,7 +28,7 @@ class PathPlanner {
             0.75,	// max_road_width_r;
             0.05, //0.025,	// d_road_w;
             0.1,	// dt;
-            5.0, //10.0,	// maxt;
+            10.0, //10.0,	// maxt;
             1.0,	// mint;
             0.1,	// d_t_s;
             2.0, //5.0,	// n_s_sample;
@@ -46,79 +46,13 @@ class PathPlanner {
     }
 
     FrenetPath* getPathAnytime(Telemetry telem, float* wp_X, float* wp_Y, int wp_no) {
-        double s0 = 0.0; // Initial guess at longitudinal offset
-
-        FrenetInitialConditions fot_ic;
-
-        // std::cout << "Position: " << telem.pos_x << ", " << telem.pos_y << "\n";
-
         std::vector<double> wx(wp_X, wp_X + wp_no);
         std::vector<double> wy(wp_Y, wp_Y + wp_no);
 
-        // std::cout << "PP pre route = [\n";
-        // for(int i = 0; i < wx.size(); i++) {
-        //     std::cout << "\t[" << wx[i] << ", " << wy[i] << "],\n";
-        // }
-
-        CubicSpline2D* csp = new CubicSpline2D(wx, wy);
-
-        // get distance from car to spline and projection
-        double s = csp->find_s(telem.pos_x, telem.pos_y, s0);
-        double distance = norm(csp->calc_x(s) - telem.pos_x, csp->calc_y(s) - telem.pos_y);
-        tuple<double, double> bvec ((csp->calc_x(s) - telem.pos_x) / distance, (csp->calc_y(s) - telem.pos_y) / distance);
-
-        // normal spline vector
-        double x0 = csp->calc_x(s0);
-        double y0 = csp->calc_y(s0);
-        double x1 = csp->calc_x(s0 + 2);
-        double y1 = csp->calc_y(s0 + 2);
-
-        // unit vector orthog. to spline
-        tuple<double, double> tvec (y1-y0, -(x1-x0));
-        as_unit_vector(tvec);
-
-        // Compute X, Y components of velocity
-        float heading_rad = 0.0174533 * telem.heading;
-
-        double v_x = telem.speed_mps * cos(heading_rad);
-        double v_y = telem.speed_mps * sin(heading_rad);
-
-        // compute tangent / normal car vectors
-        tuple<double, double> fvec (v_x, v_y);
-        as_unit_vector(fvec);
-
-        double o_llx[1] = {417};
-        double o_lly[1] = {129};
-        double o_urx[1] = {417.1};
-        double o_ury[1] = {129.25};
-
-        // get initial conditions in frenet frame
-        fot_ic = {
-            s, // Current longitudinal position s
-            telem.speed_mps, // Speed [m/s]
-            copysign(distance, dot(tvec, bvec)), // Lateral position c_d [m]
-            -telem.speed_mps * dot(tvec, fvec), // Lateral speed c_d_d [m/s].
-            telem.acc_x, // Lateral acceleration c_d_dd [m/s^2]            This assumes the car is facing in the direction of the spline
-            1.5, // Target speed [m/s]
-            wx.data(), // Waypoints X
-            wy.data(), // Waypoints Y
-            wp_no, // Number of waypoints
-            o_llx, //o_llx
-            o_lly, //o_lly
-            o_urx, //o_urx
-            o_ury, //o_ury
-            1        // number of obstacles
-        };
-
-        delete csp;
-
-        // std::cout << "PP set route = [\n";
-        // for(int i = 0; i < fot_ic.nw; i++) {
-        //     std::cout << "\t[" << *(fot_ic.wx + i) << ", " << *(fot_ic.wy + i) << "],\n";
-        // }
+        FrenetInitialConditions* fot_ic = generate_ic(telem, &wx, &wy, wp_no);
 
         // run experiment
-        AnytimeFrenetOptimalTrajectory fot = AnytimeFrenetOptimalTrajectory(&fot_ic, &fot_hp);
+        AnytimeFrenetOptimalTrajectory fot = AnytimeFrenetOptimalTrajectory(fot_ic, &fot_hp);
         
         fot.asyncPlan(); // start planning
 
@@ -143,27 +77,30 @@ class PathPlanner {
             prev_final_cf = curr_cf;
             usleep(TEST_INTERVAL_TIME);
         }
-        
+        delete fot_ic;
 
         return fot.getBestPath();
     }
 
     FrenetPath* getPathRegular(Telemetry telem, float* wp_X, float* wp_Y, int wp_no) {
-        double s0 = 0.0; // Initial guess at longitudinal offset
-
-        FrenetInitialConditions fot_ic;
-
-        // std::cout << "Position: " << telem.pos_x << ", " << telem.pos_y << "\n";
-
         std::vector<double> wx(wp_X, wp_X + wp_no);
         std::vector<double> wy(wp_Y, wp_Y + wp_no);
 
-        // std::cout << "PP pre route = [\n";
-        // for(int i = 0; i < wx.size(); i++) {
-        //     std::cout << "\t[" << wx[i] << ", " << wy[i] << "],\n";
-        // }
+        FrenetInitialConditions* fot_ic = generate_ic(telem, &wx, &wy, wp_no);
 
-        CubicSpline2D* csp = new CubicSpline2D(wx, wy);
+        FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(fot_ic, &fot_hp);
+
+        delete fot_ic;
+
+        return fot.getBestPath();
+    }
+
+    FrenetInitialConditions* generate_ic(Telemetry telem, std::vector<double>* wp_X, std::vector<double>* wp_Y, int wp_no) {
+        double s0 = 0.0; // Initial guess at longitudinal offset
+
+        FrenetInitialConditions* fot_ic;
+
+        CubicSpline2D* csp = new CubicSpline2D(*wp_X, *wp_Y);
 
         // get distance from car to spline and projection
         double s = csp->find_s(telem.pos_x, telem.pos_y, s0);
@@ -191,128 +128,85 @@ class PathPlanner {
         as_unit_vector(fvec);
 
         int obs_count = 0;
-        double o_llx[obs_count] = {}; //{415.5, 410.25, 412.75};
-        double o_lly[obs_count] = {}; //{129, 131.25, 130.5};
-        double o_urx[obs_count] = {}; //{416.3, 411.25, 413};
-        double o_ury[obs_count] = {}; //{129.5, 131.85, 130.75};
+        double o_llx[obs_count] = {};
+        double o_lly[obs_count] = {};
+        double o_urx[obs_count] = {};
+        double o_ury[obs_count] = {};
 
-        std::cout << "obstacles = [\n";
+        std::cout << "obstacles = [";
         for(int i = 0; i < obs_count; i++) {
-            std::cout << "\t[" << o_llx[i] << ", " << o_lly[i] << ", " << o_urx[i] - o_llx[i] << ", " << o_ury[i] - o_lly[i] << "],\n";
+            std::cout << "\n\t[" << o_llx[i] << ", " << o_lly[i] << ", " << o_urx[i] - o_llx[i] << ", " << o_ury[i] - o_lly[i] << "],";
         }
         std::cout << "]\n";
 
         // get initial conditions in frenet frame
-        fot_ic = {
+        fot_ic = new FrenetInitialConditions({
             s, // Current longitudinal position s
             telem.speed_mps, // Speed [m/s]
             copysign(distance, dot(tvec, bvec)), // Lateral position c_d [m]
             -telem.speed_mps * dot(tvec, fvec), // Lateral speed c_d_d [m/s].
             telem.acc_x, // Lateral acceleration c_d_dd [m/s^2]            This assumes the car is facing in the direction of the spline
             1.5, // Target speed [m/s]
-            wx.data(), // Waypoints X
-            wy.data(), // Waypoints Y
+            wp_X->data(), // Waypoints X
+            wp_Y->data(), // Waypoints Y
             wp_no, // Number of waypoints
-            nullptr, //o_llx, //o_llx
-            nullptr, //o_lly, //o_lly
-            nullptr, //o_urx, //o_urx
-            nullptr, //o_ury, //o_ury
-            0// obs_count        // number of obstacles
-        };
+            o_llx, //o_llx
+            o_lly, //o_lly
+            o_urx, //o_urx
+            o_ury, //o_ury
+            obs_count        // number of obstacles
+        });
 
         delete csp;
-
-        // std::cout << "PP set route = [\n";
-        // for(int i = 0; i < fot_ic.nw; i++) {
-        //     std::cout << "\t[" << *(fot_ic.wx + i) << ", " << *(fot_ic.wy + i) << "],\n";
-        // }
-
-        FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(&fot_ic, &fot_hp);
-        /*
-        std::cout << "paths = [\n";
-        for (FrenetPath *path : fot.frenet_paths) {
-            std::cout << "\t[\n";
-            for(size_t i = 0; i < path->x.size(); i++) {
-                std::cout << "\t\t[" << path->x[i] << ", " << path->y[i] << "],\n";
-            }
-            std::cout << "\t],\n";
-        }
-        std::cout << "]\n";
-        */
-        return fot.getBestPath();
-    }
-
-    FrenetInitialConditions generate_ic(Telemetry telem, float* wp_X, float* wp_Y, int wp_no) {
-            //double s0, double x, double y, double vx,
-            //double vy, double forward_speed, double* xp, double* yp, int np,
-            //double* initial_conditions
-        double s0 = 0.0; // Initial guess at longitudinal offset
-
-        FrenetInitialConditions fot_ic;
-
-        // std::cout << "Position: " << telem.pos_x << ", " << telem.pos_y << "\n";
-
-        std::vector<double> wx(wp_X, wp_X + wp_no);
-        std::vector<double> wy(wp_Y, wp_Y + wp_no);
-
-        // std::cout << "PP pre route = [\n";
-        // for(int i = 0; i < wx.size(); i++) {
-        //     std::cout << "\t[" << wx[i] << ", " << wy[i] << "],\n";
-        // }
-
-        CubicSpline2D* csp = new CubicSpline2D(wx, wy);
-
-        // get distance from car to spline and projection
-        double s = csp->find_s(telem.pos_x, telem.pos_y, s0);
-        double distance = norm(csp->calc_x(s) - telem.pos_x, csp->calc_y(s) - telem.pos_y);
-        tuple<double, double> bvec ((csp->calc_x(s) - telem.pos_x) / distance, (csp->calc_y(s) - telem.pos_y) / distance);
-
-        // normal spline vector
-        double x0 = csp->calc_x(s0);
-        double y0 = csp->calc_y(s0);
-        double x1 = csp->calc_x(s0 + 2);
-        double y1 = csp->calc_y(s0 + 2);
-
-        // unit vector orthog. to spline
-        tuple<double, double> tvec (y1-y0, -(x1-x0));
-        as_unit_vector(tvec);
-
-        // Compute X, Y components of velocity
-        float heading_rad = 0.0174533 * telem.heading;
-
-        double v_x = telem.speed_mps * cos(heading_rad);
-        double v_y = telem.speed_mps * sin(heading_rad);
-
-        // compute tangent / normal car vectors
-        tuple<double, double> fvec (v_x, v_y);
-        as_unit_vector(fvec);
-
-        // get initial conditions in frenet frame
-        fot_ic = {
-            s, // Current longitudinal position s
-            telem.speed_mps, // Speed [m/s]
-            copysign(distance, dot(tvec, bvec)), // Lateral position c_d [m]
-            -telem.speed_mps * dot(tvec, fvec), // Lateral speed c_d_d [m/s].
-            telem.acc_x, // Lateral acceleration c_d_dd [m/s^2]            This assumes the car is facing in the direction of the spline
-            1.5, // Target speed [m/s]
-            wx.data(), // Waypoints X
-            wy.data(), // Waypoints Y
-            wp_no, // Number of waypoints
-            nullptr, //o_llx
-            nullptr, //o_lly
-            nullptr, //o_urx
-            nullptr, //o_ury
-            0        // number of obstacles
-        };
-
-        delete csp;
-
-        // std::cout << "PP set route = [\n";
-        // for(int i = 0; i < fot_ic.nw; i++) {
-        //     std::cout << "\t[" << *(fot_ic.wx + i) << ", " << *(fot_ic.wy + i) << "],\n";
-        // }
 
         return fot_ic;
+    }
+
+    FrenetPath* cleanPath(FrenetPath* path) {
+        if(path == nullptr) {
+            std::cout << "# no path found\n";
+            return nullptr;
+        } else if (path->x.size() == 0) {
+            std::cout << "# path found with length 0\n";
+            delete path;
+            return nullptr;
+        }
+
+        int last_bad_i = -1;
+
+        // Check for bad values
+        for(size_t i = 0; i < path->x.size(); i++) {
+            if(path->x[i] < 0.1 || path->y[i] < 0.1) {
+                last_bad_i = i;
+            }
+        }
+
+        if(last_bad_i + 1 >= int(path->x.size())) {
+            std::cout << "# path data entirely corrupted";
+            delete path;
+            return nullptr;
+        }
+
+        if (last_bad_i != -1) {
+            std::vector<double> new_x(path->x.begin() + last_bad_i + 1, path->x.end());
+            path->x = new_x;
+            std::vector<double> new_y(path->y.begin() + last_bad_i + 1, path->y.end());
+            path->y = new_y;
+            std::vector<double> new_s_d(path->s_d.begin() + last_bad_i + 1, path->s_d.end());
+            path->s_d = new_s_d;
+            std::vector<double> new_yaw(path->yaw.begin() + last_bad_i + 1, path->yaw.end());
+            path->yaw = new_yaw;
+            std::vector<double> new_c(path->c.begin() + last_bad_i + 1, path->c.end());
+            path->c = new_c;
+        }
+
+        if(path->x.size() <= 5) {
+            std::cout << "# path size = " << path->x.size() << " <= 5. Destroying path\n";
+            delete path;
+            return nullptr;
+        }
+
+        return path;
     }
 
 };
