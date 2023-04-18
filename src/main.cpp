@@ -4,6 +4,7 @@
 #include <chrono>
 #include <pthread.h>
 #include <cmath>
+#include <cstdlib>
 
 // Locatization and planning includes
 #include "telemetry.h"
@@ -34,7 +35,7 @@ double lat = 0.0;        // GPS Latitude
 double lon = 0.0;        // GPS Longitude
 float speed_mps = 0.0;   // Ground speed
 float heading = 0.0;    // Heading (in degrees)
-int tgt_hole = 1;   // Target hole (1-9)
+int tgt_hole = 9;   // Target hole (1-9)
 char tgt_loc = 'H';    // Target location ("H"(ole), "B"(lack), (B)"R"(onze), "S"(ilver), "G"(old))
 Telemetry telem;
 
@@ -225,37 +226,56 @@ int main(int argc, char* argv[]) {
 
     // TODO: Remove dummy variable
     // Hole 1 Gold tee box
-    lat = 38.9777938333;
-    lon = -95.2642973333;
+    // lat = 38.9777938333;
+    // lon = -95.2642973333;
 
-    std::cout << "#Waiting for sensors... ";
-    //while(!(imu_init && gps_init)) {}
-    std::cout << " Done!\n";
+    std::cout << "#Waiting for sensors... \n";
+    while(!(imu_init && gps_init)) {}
+    std::cout << "#\t\tDone!\n";
 
     // Init route planning and path planning modules
-    PathPlanner pp(1);
+    PathPlanner pp(2);
     RoutePlanner rp;
-    //int radius = 5;
-    //TestRoutePlanner rp(lat, lon, 24, radius);
-    //std::cout << "radius = " << radius << "\n";
+
+    // CIRCLE TEST - Test route planner to generate circular waypoints
+        //int radius = 5;
+        //TestRoutePlanner rp(lat, lon, 24, radius);
+        //std::cout << "radius = " << radius << "\n";
+
     telem.heading = 0.0;
 
     // Init route and path variables
     std::vector<float> routeX(rp.size());
     std::vector<float> routeY(rp.size());
-    FrenetPath* path = nullptr;
 
-    int i = 0;
+    int runtime_ms = 0;  // Track total program runtime in ms. Used for average iteration time calculation
+    int path_misses = 0; // Track # of iterations where path planner fails to generate path
+
+    int i = 0; // Iteration count
+    // UPDATED RANDOM POSITION TEST - Random seed for simulating random offsets from position.
+        // srand((unsigned) time(NULL)); Testing only
     while(rclcpp::ok()) {
+        // UPDATED RANDOM POSITION TEST - Set car position to i'th waypoint.
+            // std::tie(lat, lon) = rp.m.NodeLatLon()[i];
+
         auto start_time = std::chrono::high_resolution_clock::now();
         std::cout << "# Iteration (" << i++ << ")\n";
 
-        // TODO: Check distance to target location -> don't do anything if within certain distance (2 meters for example). Wait until target location is updated
-
         // Localize position from GPS
         std::tie(telem.pos_x, telem.pos_y) = rp.latlon2local(lat, lon);
-        //telem.pos_x += radius*2;
-        //telem.pos_y += radius;
+        
+        // UPDATED RANDOM POSITION TEST - Offset position of car by some random value [-0.75, 0.75] in X and Y direction.
+            // float offset_x = 0.15*(rand() % 10) - 0.75;
+            // float offset_y = 0.15*(rand() % 10) - 0.75;
+
+            // std::cout << "pos_offset =   [" << offset_x << ", " << offset_y << "]\n";
+
+            // telem.pos_x += offset_x;
+            // telem.pos_y += offset_y;
+
+        // CIRCLE TEST - Offset position for circular route testing.
+            //telem.pos_x += radius*2;
+            //telem.pos_y += radius;
 
         std::cout << "pos_actual =   [" << telem.pos_x << ", " << telem.pos_y << "] #(local)\n";
         std::cout << "#             [" << lat << ", " << lon << "] (global)\n";
@@ -267,6 +287,7 @@ int main(int argc, char* argv[]) {
 
         std::tie(routeX, routeY) = rp.LocalRoute(routeIdxs);
 
+        // CIRCLE TEST - Route publisher must be commented
         route_pub_node->publish(int(routeIdxs.size()), rp.GlobalRoute(routeIdxs).data());
 
         std::cout << "route = [\n";
@@ -291,41 +312,16 @@ int main(int argc, char* argv[]) {
             continue;
         }
         // Generate path
-        //path = pp.getPathAnytime(telem, routeX.data(), routeY.data(), routeX.size());
-        path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
+        FrenetPath* path = pp.getPathRegular(telem, routeX.data(), routeY.data(), routeX.size());
 
         auto path_gen_split = std::chrono::high_resolution_clock::now();
         duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(path_gen_split - rp_split);
         std::cout << "# PP Pathgen Duration: " << duration_ms.count() << " ms\n";
 
-        if(path) {
-            int last_bad_i = -1;
-            //std::cout << "#path->x.size() = " << path->x.size() << "\n";
-            //std::cout << "best_path = [\n";
-            std::cout << "path_x_size: " << path->x.size() << "\n";
-            for(size_t i = 0; i < path->x.size(); i++) {
-                if(path->x[i] < 0.1 || path->y[i] < 0.1) {
-                    //std::cout << "\t#[" << path->x[i] << ", " << path->y[i] << "],\n";
-                    last_bad_i = i;
-                } else {
-                    //std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
-                }
-            }
-            //std::cout << "]\n";
-            std::cout << "last_bad_i = " << last_bad_i << "\n";
-            std::vector<double> new_x(path->x.begin() + last_bad_i + 1, path->x.end());
-            path->x = new_x;
-            std::vector<double> new_y(path->y.begin() + last_bad_i + 1, path->y.end());
-            path->y = new_y;
-            std::vector<double> new_s_d(path->s_d.begin() + last_bad_i + 1, path->s_d.end());
-            path->s_d = new_s_d;
-            std::vector<double> new_yaw(path->yaw.begin() + last_bad_i + 1, path->yaw.end());
-            path->yaw = new_yaw;
-            std::vector<double> new_c(path->c.begin() + last_bad_i + 1, path->c.end());
-            path->c = new_c;
+        path = pp.cleanPath(path);
 
+        if(path) {
             std::cout << "best_path = [\n";
-            
             for(size_t i = 0; i < path->x.size(); i++) {
                 std::cout << "\t[" << path->x[i] << ", " << path->y[i] << "],\n";
             }
@@ -347,19 +343,21 @@ int main(int argc, char* argv[]) {
                 path->c
             );
         } else {
+            path_misses++;
             std::cout << "# no path found\n";
-            std::cout << "print(\"No path found\")\n";
-            std::cout << "best_path = [[" << telem.pos_x << ", " << telem.pos_y << "]]\n";
+            std::cout << "best_path = []\n";
         }
         
-
         auto stop_time = std::chrono::high_resolution_clock::now();
         duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - path_gen_split);
-        std::cout << "# PP Path Handling Duration: " << duration_ms.count() << " ms\n";
+        std::cout << "# PP Path Cleaning Duration: " << duration_ms.count() << " ms\n";
 
         duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
         std::cout << "# Duration: " << duration_ms.count() << " ms\n";
-        //sleep(1);
+        runtime_ms += duration_ms.count();
+        std::cout << "# Average Duration: " << runtime_ms/i << " ms\n";
+        std::cout << "# Path Misses=" << path_misses << "\n";
+        std::cout << "# Path Success Rate = " << float((float(i) - float(path_misses))/(float(i))) << "\n";
     }
     rclcpp::shutdown();
     return 0;

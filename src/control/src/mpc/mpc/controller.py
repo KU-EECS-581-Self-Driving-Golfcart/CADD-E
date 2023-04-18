@@ -366,7 +366,7 @@ class ReferenceSubscriber(Node):
         v = last_vel + a * duration_between_cmds
         v, s = scale_controls(v, s)
 
-        control_msg.throttle = np.clip(v, 0.3, 0.7)
+        control_msg.throttle = np.clip(v, 0.35, 0.7)
         control_msg.angle = s
 
         self.pub.publish(control_msg)

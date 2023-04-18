@@ -1,1 +1,2 @@
-sudo rm -f ./root/.ros/log
+cd /
+sudo rm -rf ./root/.ros/log
