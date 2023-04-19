@@ -10,9 +10,7 @@ from cvxpy.expressions import constants
 from interfaces.msg import Reference, State
 
 DEBUG = True
-if DEBUG:
-    from sim_msg.msg import ServoCtrlMsg
-else:
+if DEBUG is False:
     from deepracer_interfaces_pkg.msg import ServoCtrlMsg
 
 """
@@ -28,12 +26,12 @@ class CarParams:
     lr: int = 0.085  # Longitudinal distance from c.g. to reartires [m]
     # Cf: int = 19000  # Front tire cornering stiffness [N/rad]
     # Cr: int = 33000  # Rear tire cornering stiffness [N/rad]
-    accel_max: float = 1  # [m/s^s]
-    accel_min: float = -1  # [m/s^s]
+    accel_max: float = 1.  # [m/s^s]
+    accel_min: float = -1.  # [m/s^s]
     steer_max: float = 0.52  # [rad]
     steer_min: float = -0.52  # [rad]
-    vel_max: float = 6.5  # [m/s]
-    vel_min: float = 0  # [m/s]
+    vel_max: float = 3.  # [m/s]
+    vel_min: float = 0.  # [m/s]
 
 
 class Car:
@@ -77,6 +75,9 @@ class Model:
 class KBModel(Model):
     def __init__(self, car, dt):
         super().__init__(car, dt)
+    
+    def get_speed(self):
+        return self.car.get_v()
 
     def get_state(self):
         return np.array([self.car.x, self.car.y, self.car.get_v(), self.car.psi])
@@ -161,11 +162,11 @@ by Gao (page 33)
 
 @dataclass
 class ControllerConfig:
-    Q: np.array = np.diag([1.0, 1.0, 0.01, 0.01])  # Weight on reference deviations.
+    Q: np.array = np.diag([1.0, 1.0, 0.5, 0.01])   # Weight on reference deviations.
     R: np.array = np.diag([0.01, 0.10])            # Weight on control input.
-    S: np.array = np.diag([1.0, 1.0])             # Weight on change in control input.
+    S: np.array = np.diag([0.1, 1.0])              # Weight on change in control input.
     prediction_horizon: int = 20
-    tracking_horizon: int = 5                     # tracking_horizon < prediction_horizon
+    tracking_horizon: int = 5                      # tracking_horizon < prediction_horizon
 
 
 @dataclass
@@ -185,8 +186,8 @@ class MPC:
         self.reference = reference
         self.model = model
         self.config = config
-        
-        self.state0 = self.model.get_state()
+
+        self.reference.states[:, 2] = self.reference.states[-1, 2]
 
         if self.reference.states.shape[1] != 4:
             raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
@@ -198,6 +199,10 @@ class MPC:
         self.predicted_state = np.zeros((self.num_state, self.config.tracking_horizon + 1))
 
         self.set_imminent_ref()
+
+        self.model.car.x = self.reference.states[0, 0]
+        self.model.car.y = self.reference.states[0, 1]
+        self.state0 = self.model.get_state()
         
         if self.reference.states.shape[1] != 4:
             raise AttributeError("Reference does not have 4 columns; has shape ", self.reference.states.shape)
@@ -216,6 +221,14 @@ class MPC:
         start_idx = np.argmin(dist)  # Get the index of the closest waypoint.
         end_idx = min(len(self.reference.states)-2, start_idx+self.config.tracking_horizon+1)
 
+        diff = (end_idx - start_idx) - self.config.tracking_horizon
+        if diff < 0:
+            start_idx = np.clip(start_idx + diff, 0, end_idx)
+
+            diff = (end_idx - start_idx) - self.config.tracking_horizon
+            if diff < 0:
+                end_idx = np.clip(end_idx - diff, start_idx, self.config.tracking_horizon)
+        
         # Truncate.
         self.reference.states = self.reference.states[start_idx:end_idx, :]
         self.reference.curvature = self.reference.curvature[start_idx:end_idx]
@@ -233,6 +246,9 @@ class MPC:
         predicted_state[:, 0] = self.model.get_state()
         self.predicted_steer = self.reference.curvature
 
+        if self.model.get_speed() < self.reference.states[0, 2]:
+            self.predicted_accel[:, 0] = 0.2
+
         # Propagate forward in time.
         for accel, steer, t in zip(self.predicted_accel,
                                    self.predicted_steer,
@@ -246,6 +262,8 @@ class MPC:
         Formulate and solve the control problem.
         :return: accel, steering
         """
+        # TODO: Account for the acceleration due to friction. 
+
         self.predicted_state = self.get_predicted_states()
 
         x = cvxpy.Variable((self.config.tracking_horizon+1, self.num_state))  # [X, Y, v, psi]
@@ -272,6 +290,7 @@ class MPC:
                                         self.config.S)
 
         # Natural contraints arising from car design.
+        print('Initial state: ', self.state0)
         constraints += [x[0, :] == self.state0]
         constraints += [x[:, 2] <= self.model.car.params.vel_max]
         constraints += [x[:, 2] >= self.model.car.params.vel_min]
@@ -283,6 +302,9 @@ class MPC:
         # Solve the problem.
         prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
         res = prob.solve(solver=cvxpy.OSQP, verbose=False, warm_start=True)
+
+        print(x.value)
+        print(u.value)
 
         return u.value[0, 0], u.value[0, 1]  # Acceleration, steering.
 
@@ -297,11 +319,20 @@ last_time = None
 duration_between_cmds = None
 
 
+def calc_dt(ref):
+    """
+    The objective is to choose a discretization time which,
+    given the expected velocity, will make the final ref
+    point and the final calculated state near.
+    """
+    pass
+
+
 def get_controls(ref):
     model_car = Car(CarParams())
     model_car.set_state(state)
 
-    controller = MPC(ref, KBModel(model_car, 0.1), ControllerConfig())
+    controller = MPC(ref, KBModel(model_car, 0.3), ControllerConfig())
     c = controller.control()
 
     return c[0], c[1]
@@ -329,11 +360,14 @@ class ReferenceSubscriber(Node):
             Reference,                                             
             'reference',
             self.listener_callback,
-            10)
+            1)
         self.subscription
         self.pub = pub
 
     def listener_callback(self, msg):
+        if(len(state)) == 0:
+            return None
+        
         global last_vel, last_time, duration_between_cmds
 
         X = list(msg.x)
@@ -357,7 +391,6 @@ class ReferenceSubscriber(Node):
             duration_between_cmds = 0.1
         last_time = time_now
 
-        control_msg = ServoCtrlMsg()
         v = 0.0
         s = 0.0
         a = 0.0
@@ -366,11 +399,14 @@ class ReferenceSubscriber(Node):
         v = last_vel + a * duration_between_cmds
         v, s = scale_controls(v, s)
 
-        control_msg.throttle = np.clip(v, 0.35, 0.7)
-        control_msg.angle = s
+        v = np.clip(v, 0.4, 0.7)
+        if DEBUG is False:
+            control_msg = ServoCtrlMsg()
+            control_msg.throttle = v
+            control_msg.angle = s
 
-        self.pub.publish(control_msg)
-        print(f"Published controls ({a}, {s})") 
+            self.pub.publish(control_msg)
+        print(f"Published controls ({v}, {s})") 
 
 
 class StateSubscriber(Node):
@@ -381,7 +417,7 @@ class StateSubscriber(Node):
             State,                                             
             'state',
             self.listener_callback,
-            10)
+            1)
         self.subscription
 
     def listener_callback(self, msg):
@@ -393,18 +429,22 @@ def main(args=None):
     rclpy.init(args=args)
 
     node = rclpy.create_node('control_pub')
-    pub = node.create_publisher(ServoCtrlMsg, '/ctrl_pkg/servo_msg', 1)
+    if DEBUG is False:
+        pub = node.create_publisher(ServoCtrlMsg, '/ctrl_pkg/servo_msg', 1)
+        ref_sub = ReferenceSubscriber(pub)
+    else:
+        ref_sub = ReferenceSubscriber(None)
 
     state_sub = StateSubscriber()
-    ref_sub = ReferenceSubscriber(pub)
 
     executor = rclpy.executors.SingleThreadedExecutor()
     executor.add_node(state_sub)
     executor.add_node(ref_sub)
 
+
     exec_thread = threading.Thread(target=executor.spin, daemon=True)
     exec_thread.start()
-    rate = node.create_rate(2)
+    rate = node.create_rate(20)
 
     print('ready')
     try:    
