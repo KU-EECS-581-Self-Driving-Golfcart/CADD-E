@@ -1,0 +1,1 @@
+The controller uses Amazon's custom message definition for sending the commands over the proper topic once the optimization problem has been solved. This results in the controller providing commands which steer the car.

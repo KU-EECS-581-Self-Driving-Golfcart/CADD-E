@@ -1,0 +1,1 @@
+I added a ros message custom definition which consists of arrays for the location, yaw, and velocity of the car. The controller subscribes to a topic with these messages and converts them into numpy arrays for use in the controller.
