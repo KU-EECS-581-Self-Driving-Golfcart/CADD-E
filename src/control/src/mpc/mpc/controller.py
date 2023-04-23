@@ -1,3 +1,10 @@
+"""
+MPC controller and ROS subscribers/publishers to exchange the information necessary
+for it to work.
+
+Author: Alex Gisi
+Date: 4-23-23
+"""
 import rclpy
 from rclpy.node import Node
 from dataclasses import dataclass
@@ -8,6 +15,8 @@ import cvxpy
 import time
 from cvxpy.expressions import constants
 from interfaces.msg import Reference, State
+from std_msgs.msg import Bool
+from cadd_e_interface.msg import Ultrasonic
 
 DEBUG = True
 if DEBUG is False:
@@ -34,6 +43,8 @@ class CarParams:
     vel_min: float = 0.  # [m/s]
 
 
+# The underlying representation of the car which is used in the model.
+# Represents the true location and parameters.
 class Car:
     def __init__(self, params: CarParams):
         self.x = 0
@@ -72,6 +83,7 @@ class Model:
         raise NotImplementedError
 
 
+# Represents a model in that it can step through discrete time periods.
 class KBModel(Model):
     def __init__(self, car, dt):
         super().__init__(car, dt)
@@ -160,6 +172,7 @@ by Gao (page 33)
 """
 
 
+# Holder for controller configuration "parameters".
 @dataclass
 class ControllerConfig:
     Q: np.array = np.diag([1.0, 1.0, 0.5, 0.01])   # Weight on reference deviations.
@@ -169,6 +182,7 @@ class ControllerConfig:
     tracking_horizon: int = 5                      # tracking_horizon < prediction_horizon
 
 
+# Holds representation for current reference trajectory.
 @dataclass
 class ReferenceTraj:
     states: np.array  # [X, Y, vel, psi] x prediction_horizon
@@ -178,6 +192,7 @@ class ReferenceTraj:
         return ReferenceTraj(copy.copy(self.states), copy.copy(self.curvature))
 
 
+# Holds functions for the controller.
 class MPC:
     def __init__(self,
                  reference: ReferenceTraj,
@@ -290,7 +305,7 @@ class MPC:
                                         self.config.S)
 
         # Natural contraints arising from car design.
-        print('Initial state: ', self.state0)
+        print('Initial self.state0: ', self.state0)
         constraints += [x[0, :] == self.state0]
         constraints += [x[:, 2] <= self.model.car.params.vel_max]
         constraints += [x[:, 2] >= self.model.car.params.vel_min]
@@ -317,6 +332,7 @@ state = list()
 last_vel = 0
 last_time = None
 duration_between_cmds = None
+user_stop = False
 
 
 def calc_dt(ref):
@@ -328,15 +344,17 @@ def calc_dt(ref):
     pass
 
 
+# Wrapper around optimization function.
 def get_controls(ref):
     model_car = Car(CarParams())
     model_car.set_state(state)
 
-    controller = MPC(ref, KBModel(model_car, 0.3), ControllerConfig())
+    controller = MPC(ref, KBModel(model_car, 0.15), ControllerConfig())
     c = controller.control()
 
     return c[0], c[1]
 
+# Scales controls to the deepracer range.
 def scale_controls(v, s):
     V_MAX = 6.5
     V_MIN = 0
@@ -352,6 +370,7 @@ def scale_controls(v, s):
     return scaled_v, scaled_s
 
 
+# Subscribe to the topic for getting the reference.
 class ReferenceSubscriber(Node):
 
     def __init__(self, pub):
@@ -402,13 +421,18 @@ class ReferenceSubscriber(Node):
         v = np.clip(v, 0.4, 0.7)
         if DEBUG is False:
             control_msg = ServoCtrlMsg()
-            control_msg.throttle = v
+            print("user stop: ", user_stop)
+            if user_stop:
+                control_msg.throttle = 0
+            else:
+                control_msg.throttle = v
             control_msg.angle = s
 
             self.pub.publish(control_msg)
         print(f"Published controls ({v}, {s})") 
 
 
+# Subscribe to the topic for getting the car's current state.
 class StateSubscriber(Node):
 
     def __init__(self):
@@ -423,6 +447,40 @@ class StateSubscriber(Node):
     def listener_callback(self, msg):
         global state
         state = [msg.x, msg.y, msg.xdot, msg.ydot, msg.psi, msg.psidot]
+
+
+# Subscribe to the topic for getting the user stop signal.
+class StopSubscriber(Node):
+
+    def __init__(self):
+        super().__init__('stop_sub')
+        self.subscription = self.create_subscription(
+            Bool,                                             
+            'IsGo',
+            self.listener_callback,
+            1)
+        self.subscription
+
+    def listener_callback(self, msg):
+        global user_stop
+        user_stop = not msg.data
+
+
+# Subscribe to the topic for getting the ultrasonic sensor data.
+class DistanceSubscriber(Node):
+
+    def __init__(self):
+        super().__init__('dist_sub')
+        self.subscription = self.create_subscription(
+            Ultrasonic,                                             
+            'ultrasonic',
+            self.listener_callback,
+            1)
+        self.subscription
+
+    def listener_callback(self, msg):
+        if msg.L_dist < 20 or msg.R_dist < 20:
+            user_stop = True
             
 
 def main(args=None):
@@ -436,10 +494,14 @@ def main(args=None):
         ref_sub = ReferenceSubscriber(None)
 
     state_sub = StateSubscriber()
+    stop_sub = StopSubscriber()
+    dist_sub = DistanceSubscriber()
 
     executor = rclpy.executors.SingleThreadedExecutor()
     executor.add_node(state_sub)
     executor.add_node(ref_sub)
+    executor.add_node(stop_sub)
+    executor.add_node(dist_sub)
 
 
     exec_thread = threading.Thread(target=executor.spin, daemon=True)
