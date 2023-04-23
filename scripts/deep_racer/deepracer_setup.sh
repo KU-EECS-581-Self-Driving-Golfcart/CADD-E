@@ -4,8 +4,8 @@ echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 echo "Setting up CADD-E repo"
 git clone --recurse-submodules https://github.com/KU-EECS-581-Self-Driving-Golfcart/CADD-E
 cd CADD-E
-sudo chmod +x build.sh setup.sh
-./setup.sh
+sudo chmod +x build.sh scripts/setup.sh scripts/deepracer/* scripts/pi/*
+./scripts/setup.sh
 
 echo "CADD-E repo dependencies setup"
 echo "Setting up UI dependencies"
