@@ -1,3 +1,9 @@
+# Requirement 3 
+## Setup and run control loop on DeepRacer
+
+In order to get the control loop running on the DeepRacer, I had to install some dependencies. Because the DeepRacer was susceptible to needing to be rebooted from BIOS, I created a script to automate this process:
+
+```bash
 source /opt/ros/foxy/setup.bash
 echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
@@ -24,3 +30,6 @@ colcon build
 
 echo "Installing Python dependencies"
 pip3 install pymongo tornado cvxpy
+```
+
+This script can be found at `scripts/deep_racer/deepracer_setup.sh`
