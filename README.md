@@ -2,35 +2,129 @@
 ## Overview
 Computer Science capstone project at the University of Kansas - an autonomous golf cart system capable of driving the cart path for 9 holes of golf at Lawrence Country Club with minimal input from the driver.
 
+<figure>
+<img src=doc/assets/cadd_e.jpg>
+<figcaption align = "center"><b>Figure 1: CADD-E</b></figcaption>
+</figure><br>
+
 ## Getting Started
+Please review the bill of materials [here](doc/BOM.pdf). This document outlines the components needed to replicate this project, noteably: AWS DeepRacer (the car's platform), Raspberry Pi 3B+ (computer for processing sensor data), a BNO-055 IMU (responsible for providing the car's heading and angular velocity), a ZED-F9P GPS kit (responsible for providing the car's position and ground speed), a USB camera, and two HC-SR04 ultrasonic sensors. The following sections detail the steps required to prepare the DeepRacer and Raspberry Pi to run CADD-E's software.
+
+#### Getting Started: DeepRacer
+First, make sure your DeepRacer is running Ubuntu 20. If not, follow [these steps](https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-ubuntu-update.html) to upgrade it. Then run the following commands (these steps are also outlined in `scripts/deep_racer/deepracer_setup.sh`):
 ```console
-# Clone the repository
+source /opt/ros/foxy/setup.bash
+echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+
+echo "Setting up CADD-E repo"
 git clone --recurse-submodules https://github.com/KU-EECS-581-Self-Driving-Golfcart/CADD-E
-
-# Enter the repository
 cd CADD-E
+sudo chmod +x build.sh scripts/setup.sh scripts/deepracer/* scripts/pi/*
+./scripts/setup.sh
 
-# Change permissions on build and setup scripts to allow execution (this only needs to be done once)
-chmod +x build.sh setup.sh
+echo "CADD-E repo dependencies setup"
+echo "Setting up UI dependencies"
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
+echo "Node installed"
+cd UI-App/UI
+npm install react
+echo "React installed"
+echo "Building rosbridge system"
+cd ~
+git clone https://github.com/RobotWebTools/rosbridge_suite
+cd rosbridge_suite
+colcon build
+. install/setup.bash
 
-# Install dependencies
-./setup.sh
+echo "Installing Python dependencies"
+pip3 install pymongo tornado cvxpy
 ```
 
-## Building and Executing
+#### Getting Started: Raspberry Pi
+First, make sure your Raspberry Pi 3B+ is running Ubuntu 20 Server Edition and has ROS 2 Foxy installed ([install steps](https://docs.ros.org/en/foxy/Installation.html)). Then run the following commands (these steps are also outlined in `scripts/pi/pi_setup.sh`):
 ```console
-# Build
-./build.sh
+mkdir -p ros2_sensor_ws/src
+cd ros2_sensor_ws/src
+git clone https://github.com/KU-EECS-581-Self-Driving-Golfcart/cadd_e_interface
+git clone https://github.com/KU-EECS-581-Self-Driving-Golfcart/gps_pubsub
+git clone https://github.com/KU-EECS-581-Self-Driving-Golfcart/us_imu_pubsub
+git clone --recurse-submodules https://github.com/KU-EECS-581-Self-Driving-Golfcart/CADD-E
 
-# Execute
-./build/cadd-e/main
+sudo apt install libopencv-dev python3-opencv
+```
+
+### Getting Started: Hardware
+CADD-E's hardware is fairly simple. It is comprised of a 3D printed mount which sits on top of the DeepRacer and holds the sensors. The sensors connect to the Raspberry Pi's USB ports. The Raspberry Pi and DeepRacer are connected by an Ethernet cable.
+
+Print the following:
+- [DeepRacer Mount](https://a360.co/3lBapGs) x1
+- [Ultrasonic Sensor Mount](https://cults3d.com/:667627) x2
+
+Drill holes into the mount to connect the Ultrasonic Sensor mounts and FT232H breakout board.
+
+Setup the hardware according to these pictures:
+<figure>
+<img src=doc/assets/cadd_e_top.png>
+<figcaption align = "center"><b>Figure 2: CADD-E Hardware Top View</b></figcaption>
+<img src=doc/assets/cadd_e_left.png>
+<img src=doc/assets/cadd_e_right.png>
+<figcaption align = "center"><b>Figure 3: CADD-E Hardware Left and Right View</b></figcaption>
+<img src=doc/assets/cadd_e_front.png>
+<figcaption align = "center"><b>Figure 4: CADD-E Hardware Front View</b></figcaption>
+</figure><br>
+
+## Building and Executing
+- Make sure all cables are connected correctly according to the "Getting Started: Hardware" section
+- Power on the DeepRacer (make sure to connect the servo battery)
+- Power on the Raspberry Pi
+- Open 2 terminals on the DeepRacer
+```console
+##### DeepRacer #####
+### Terminal One ###
+# Build
+cd CADD-E
+./scripts/kill_jobs.sh # Kill unnecessary background jobs
+./scripts/clean_logs.sh # Free up storage space
+./build.sh # Build CADD-E packages
+source cadd_e_interface/install/setup.bash
+source src/control/install/setup.bash
+
+### Terminal Two ###
+cd CADD-E
+source cadd_e_interface/install/setup.bash
+source src/control/install/setup.bash
+source install/setup.bash
+
+##### Raspberry Pi #####
+tmux # Use tmux to open two terminal windows. See https://tmuxcheatsheet.com for help
+# Ctrl+B "
+# Ctrl+B Up-Arrow
+source /opt/ros/foxy/setup.bash
+./CADD-E/scripts/pi/eth_setup.sh # Setup ethernet connection
+# Ctrl+B Down-Arrow
+source /opt/ros/setup.bash
+./CADD-E/scripts/pi/run_sensors.sh # Run sensors
+# Ctrl+B Up-Arrow
+ros2 topic list # Verify topics /position, /ultrasonic, and /telemetry are present
+
+##### DeepRacer #####
+### Terminal One ###
+./scripts/deep_racer/eth_setup.sh
+ping 169.254.0.3 # Verify connection to Raspberry Pi. If this doesn't work, run ethernet setup scripts on both devices and try again. Also make sure Wi-Fi is disabled on the DeepRacer
+
+### Terminal Two ###
+ros2 run mpc control # Run controller
+
+### Terminal One ###
+./build/cadd-e/main # Run route planner and path planner
 ```
 
 ## Architecture
 Our design adapts the self-driving car architecture presented by Badue et al. (2019) [1]. Figure 1 shows our adapted architecture. At the high level, we distinguish between the perception and decision making systems. The perception system receives information via the cart’s sensors (camera, radar, and GPS) in order to estimate the car’s state and build a representation of its surroundings. The decision-making system plans and carries out actions via the car’s actuators (throttle, brake, and steering) in order to navigate between a fixed initial point and destination while satisfying certain constraints, like passenger comfort and avoiding obstacles. Within those systems a number of subsystems can be identified.
 <figure>
 <img src=doc/assets/architecture.png>
-<figcaption align = "center"><b>Figure 1: CADD-E Architecture</b></figcaption>
+<figcaption align = "center"><b>Figure 5: CADD-E Architecture</b></figcaption>
 </figure><br>
 
 ### Offline Map
