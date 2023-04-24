@@ -169,6 +169,9 @@ https://github.com/erdos-project/pylot/tree/a71ae927328388dc44acc784662bf32a99f2
 
 Reference: "Model Predictive Control for Autonomous and Semiautonomous Vehicles"
 by Gao (page 33)
+
+In the controller, positive angle turns to the right.
+On the deepracer, positive angle value turns to the left.
 """
 
 
@@ -355,6 +358,8 @@ def get_controls(ref):
     return c[0], c[1]
 
 # Scales controls to the deepracer range.
+# Also, switch polarity of steering to agree
+# with deepracer.
 def scale_controls(v, s):
     V_MAX = 6.5
     V_MIN = 0
@@ -367,7 +372,7 @@ def scale_controls(v, s):
     scaled_v = (v - V_MIN) / (V_MAX - V_MIN)
     scaled_s = (s - S_MIN) / (S_MAX - S_MIN)
 
-    return scaled_v, scaled_s
+    return scaled_v, -scaled_s
 
 
 # Subscribe to the topic for getting the reference.
