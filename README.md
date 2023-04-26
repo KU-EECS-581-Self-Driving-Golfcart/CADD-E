@@ -12,7 +12,7 @@ Please review the bill of materials [here](doc/BOM.pdf). This document outlines 
 
 #### Getting Started: DeepRacer
 First, make sure your DeepRacer is running Ubuntu 20. If not, follow [these steps](https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-ubuntu-update.html) to upgrade it. Then run the following commands (these steps are also outlined in `scripts/deep_racer/deepracer_setup.sh`):
-```console
+```bash
 source /opt/ros/foxy/setup.bash
 echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
@@ -43,7 +43,7 @@ pip3 install pymongo tornado cvxpy
 
 #### Getting Started: Raspberry Pi
 First, make sure your Raspberry Pi 3B+ is running Ubuntu 20 Server Edition and has ROS 2 Foxy installed ([install steps](https://docs.ros.org/en/foxy/Installation.html)). Then run the following commands (these steps are also outlined in `scripts/pi/pi_setup.sh`):
-```console
+```bash
 mkdir -p ros2_sensor_ws/src
 cd ros2_sensor_ws/src
 git clone https://github.com/KU-EECS-581-Self-Driving-Golfcart/cadd_e_interface
@@ -79,7 +79,7 @@ Setup the hardware according to these pictures:
 - Power on the DeepRacer (make sure to connect the servo battery)
 - Power on the Raspberry Pi
 - Open 2 terminals on the DeepRacer
-```console
+```bash
 ##### DeepRacer #####
 ### Terminal One ###
 # Build
